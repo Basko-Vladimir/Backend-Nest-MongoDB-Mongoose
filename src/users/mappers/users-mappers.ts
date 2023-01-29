@@ -1,11 +1,5 @@
 import { UserDocument } from '../schemas/user.schema';
-
-export interface IUserOutputModel {
-  id: string;
-  login: string;
-  email: string;
-  createdAt?: string;
-}
+import { IUserOutputModel } from '../dto/users-models.dto';
 
 export const mapDbUserToUserOutputModel = (
   user: UserDocument,

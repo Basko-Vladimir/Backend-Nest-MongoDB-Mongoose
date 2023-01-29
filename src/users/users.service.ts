@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from './schemas/user.schema';
+import { User, UserDocument, UserModelType } from './schemas/user.schema';
+import { UserQueryParamsDto } from './dto/user-query-params.dto';
+import { AllUsersOutputModel } from './dto/users-models.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,11 +13,13 @@ export class UsersService {
     protected usersRepository: UsersRepository,
   ) {}
 
-  async findAllUsers() {
-    return this.usersRepository.findAllUsers();
+  async findAllUsers(
+    queryParams: UserQueryParamsDto,
+  ): Promise<AllUsersOutputModel> {
+    return this.usersRepository.findAllUsers(queryParams);
   }
 
-  async createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
     const createdUser = this.UserModel.createUserEntity(
       createUserDto,
       this.UserModel,
