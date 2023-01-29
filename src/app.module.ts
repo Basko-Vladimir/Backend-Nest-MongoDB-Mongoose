@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     MongooseModule.forRoot(
       'mongodb+srv://Vladimir:BaVlaG_192115@cluster0.nqlqdla.mongodb.net/?retryWrites=true&w=majority',
+      { dbName: 'Backend-Nest' },
     ),
     UsersModule,
   ],
