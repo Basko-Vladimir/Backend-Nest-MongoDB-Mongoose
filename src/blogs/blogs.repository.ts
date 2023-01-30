@@ -36,8 +36,8 @@ export class BlogsRepository {
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
-      page: pageNumber,
-      pageSize: pageSize,
+      page: Number(pageNumber),
+      pageSize: Number(pageSize),
       totalCount,
       items: blogs.map(mapDbBlogToBlogOutputModel),
     };

@@ -2,9 +2,7 @@ import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { UsersModule } from '../src/users/users.module';
 import { AppModule } from '../src/app.module';
-import { users } from './mockData';
-
-const INVALID_USER_ID = '63d6f799999997d58f77bc1f';
+import { INVALID_ID, notFoundException, users } from './mockData';
 
 describe('Users', () => {
   let app;
@@ -29,7 +27,6 @@ describe('Users', () => {
     const response1 = await request(app.getHttpServer()).delete(
       '/testing/all-data',
     );
-
     expect(response1.status).toBe(204);
 
     const response2 = await getUsersRequest();
@@ -37,7 +34,7 @@ describe('Users', () => {
     expect(response2.body.items).toHaveLength(0);
   });
 
-  it('/GET all users', async () => {
+  it('/GET ALL all users', async () => {
     const response = await getUsersRequest();
 
     expect(response.status).toBe(200);
@@ -62,16 +59,19 @@ describe('Users', () => {
     user3 = response3.body;
 
     const response4 = await getUsersRequest();
-    expect(response4.status).toBe(200);
     expect(response4.body.items).toHaveLength(3);
   });
 
-  it('/GET users with query Params', async () => {
+  it('/GET ALL users with query Params', async () => {
     const response1 = await getUsersRequest().query({
       pageNumber: 2,
       pageSize: 1,
     });
     expect(response1.body.items).toHaveLength(1);
+    expect(response1.body.totalCount).toBe(3);
+    expect(response1.body.pagesCount).toBe(3);
+    expect(response1.body.page).toBe(2);
+    expect(response1.body.pageSize).toBe(1);
     expect(response1.body.items[0].id).toBe(user2.id);
 
     const response2 = await getUsersRequest().query({
@@ -84,6 +84,7 @@ describe('Users', () => {
       searchEmailTerm: '1',
     });
     expect(response3.body.items).toHaveLength(1);
+    expect(response2.body.totalCount).toBe(1);
     expect(response3.body.items[0].id).toBe(user1.id);
 
     const response4 = await getUsersRequest().query({
@@ -96,17 +97,19 @@ describe('Users', () => {
     );
   });
 
-  it('/DELETE delete user', async () => {
-    const response1 = await deleteUserRequest(INVALID_USER_ID);
+  it('/DELETE ONE delete user by invalid id', async () => {
+    const response1 = await deleteUserRequest(INVALID_ID);
     expect(response1.status).toBe(404);
+    expect(response1.body).toEqual(notFoundException);
+  });
 
-    const response2 = await deleteUserRequest(user2.id);
-    expect(response2.status).toBe(204);
+  it('/DELETE ONE delete user by valid id', async () => {
+    const response1 = await deleteUserRequest(user2.id);
+    expect(response1.status).toBe(204);
 
-    const response3 = await getUsersRequest();
-    expect(response3.status).toBe(200);
-    expect(response3.body.items).toHaveLength(2);
-    expect(response3.body.items).not.toContainEqual(user2);
+    const response2 = await getUsersRequest();
+    expect(response2.body.items).toHaveLength(2);
+    expect(response2.body.items).not.toContainEqual(user2);
   });
 
   afterAll(async () => {

@@ -37,8 +37,8 @@ export class UsersRepository {
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
-      page: pageNumber,
-      pageSize: pageSize,
+      page: Number(pageNumber),
+      pageSize: Number(pageSize),
       totalCount,
       items: users.map(mapDbUserToUserOutputModel),
     };
