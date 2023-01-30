@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
+import { User, UserSchema } from './users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { UsersModule } from './users/users.module';
       'mongodb+srv://Vladimir:BaVlaG_192115@cluster0.nqlqdla.mongodb.net/?retryWrites=true&w=majority',
       { dbName: 'Backend-Nest' },
     ),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     UsersModule,
   ],
   controllers: [AppController],

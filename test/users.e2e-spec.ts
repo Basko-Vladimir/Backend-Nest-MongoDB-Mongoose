@@ -1,7 +1,6 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { UsersModule } from '../src/users/users.module';
-import { UsersService } from '../src/users/users.service';
 import { AppModule } from '../src/app.module';
 import { users } from './mockData';
 
@@ -9,16 +8,12 @@ const INVALID_USER_ID = '63d6f799999997d58f77bc1f';
 
 describe('Users', () => {
   let app;
-  let usersService;
   let user1, user2, user3;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, UsersModule],
-    })
-      .overrideProvider([UsersService])
-      .useValue(usersService)
-      .compile();
+    }).compile();
 
     app = moduleRef.createNestApplication();
     await app.init();
@@ -29,6 +24,18 @@ describe('Users', () => {
   const deleteUserRequest = (userId: string) => {
     return request(app.getHttpServer()).delete(`/users/${userId}`);
   };
+
+  it('/DELETE clear all database', async () => {
+    const response1 = await request(app.getHttpServer()).delete(
+      '/testing/all-data',
+    );
+
+    expect(response1.status).toBe(204);
+
+    const response2 = await getUsersRequest();
+    expect(response2.status).toBe(200);
+    expect(response2.body.items).toHaveLength(0);
+  });
 
   it('/GET all users', async () => {
     const response = await getUsersRequest();
