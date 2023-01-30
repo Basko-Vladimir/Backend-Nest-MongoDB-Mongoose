@@ -2,17 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from './schemas/userSchema';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
-import { UserQueryParamsDto } from './dto/user-query-params.dto';
+import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
 import { AllUsersOutputModel } from './dto/users-models.dto';
 import { SortDirection, UserSortByField } from '../common/enums';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
+  constructor(@InjectModel(User.name) protected UserModel: UserModelType) {}
 
   async findAllUsers(
-    queryParams: UserQueryParamsDto,
+    queryParams: UsersQueryParamsDto,
   ): Promise<AllUsersOutputModel> {
     const {
       sortBy = UserSortByField.createdAt,

@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
-import { UserQueryParamsDto } from './dto/user-query-params.dto';
+import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { AllUsersOutputModel, IUserOutputModel } from './dto/users-models.dto';
 
 @Controller('users')
@@ -20,7 +20,7 @@ export class UsersController {
 
   @Get()
   async findAllUsers(
-    @Query() query: UserQueryParamsDto,
+    @Query() query: UsersQueryParamsDto,
   ): Promise<AllUsersOutputModel> {
     return this.usersService.findAllUsers(query);
   }

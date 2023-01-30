@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { User, userSchema } from './users/schemas/userSchema';
+import { Blog, blogSchema } from './blogs/schemas/blog.schema';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
   imports: [
@@ -12,7 +14,9 @@ import { User, userSchema } from './users/schemas/userSchema';
       { dbName: 'Backend-Nest' },
     ),
     MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
+    MongooseModule.forFeature([{ name: Blog.name, schema: blogSchema }]),
     UsersModule,
+    BlogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

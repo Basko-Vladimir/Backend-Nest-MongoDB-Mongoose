@@ -3,18 +3,18 @@ import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from './schemas/userSchema';
-import { UserQueryParamsDto } from './dto/user-query-params.dto';
+import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { AllUsersOutputModel } from './dto/users-models.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private UserModel: UserModelType,
+    @InjectModel(User.name) protected UserModel: UserModelType,
     protected usersRepository: UsersRepository,
   ) {}
 
   async findAllUsers(
-    queryParams: UserQueryParamsDto,
+    queryParams: UsersQueryParamsDto,
   ): Promise<AllUsersOutputModel> {
     return this.usersRepository.findAllUsers(queryParams);
   }

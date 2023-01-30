@@ -5,6 +5,9 @@ import {
   generateRegExpError,
 } from '../../common/error-messages';
 import { HydratedDocument, Model, now } from 'mongoose';
+import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { CreateBlogDto } from '../dto/create-blog.dto';
+import { UpdateBlogDto } from '../dto/update-blog.dto';
 
 const {
   MAX_NAME_LENGTH,
@@ -65,14 +68,40 @@ export class Blog {
 
   @Prop({ default: now() })
   updatedAt: Date;
+
+  updateBlog(
+    updatingData: UpdateBlogDto,
+    currentBlog: BlogDocument,
+  ): BlogDocument {
+    const { name, websiteUrl, description } = updatingData;
+
+    currentBlog.name = name;
+    currentBlog.websiteUrl = websiteUrl;
+    currentBlog.description = description;
+
+    return currentBlog;
+  }
+
+  static createBlogEntity(
+    blogData: CreateUserDto,
+    BlogModel: BlogModelType,
+  ): BlogDocument {
+    return new BlogModel(blogData);
+  }
 }
 
 export type BlogDocument = HydratedDocument<Blog>;
 
 export interface IBlogsStaticMethods {
-  createBlogEntity(): BlogDocument;
+  createBlogEntity(
+    blogData: CreateBlogDto,
+    BlogModel: BlogModelType,
+  ): BlogDocument;
 }
 
 export type BlogModelType = Model<Blog> & IBlogsStaticMethods;
 
 export const blogSchema = SchemaFactory.createForClass(Blog);
+
+blogSchema.method('updateBlog', Blog.prototype.updateBlog);
+blogSchema.static('createBlogEntity', Blog.createBlogEntity);

@@ -1,6 +1,6 @@
 import { SortDirection, UserSortByField } from '../../common/enums';
 
-export class UserQueryParamsDto {
+export class UsersQueryParamsDto {
   sortBy: UserSortByField;
   sortDirection: SortDirection;
   pageNumber: number;
