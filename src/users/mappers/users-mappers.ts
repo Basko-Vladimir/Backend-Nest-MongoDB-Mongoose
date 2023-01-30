@@ -1,4 +1,4 @@
-import { UserDocument } from '../schemas/user.schema';
+import { UserDocument } from '../schemas/userSchema';
 import { IUserOutputModel } from '../dto/users-models.dto';
 
 export const mapDbUserToUserOutputModel = (

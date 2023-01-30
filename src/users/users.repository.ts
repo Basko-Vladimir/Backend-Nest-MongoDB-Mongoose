@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelType } from './schemas/user.schema';
+import { User, UserDocument, UserModelType } from './schemas/userSchema';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
 import { UserQueryParamsDto } from './dto/user-query-params.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';

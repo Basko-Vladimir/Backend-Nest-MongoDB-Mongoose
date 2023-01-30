@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelType } from './schemas/user.schema';
+import { User, UserDocument, UserModelType } from './schemas/userSchema';
 import { UserQueryParamsDto } from './dto/user-query-params.dto';
 import { AllUsersOutputModel } from './dto/users-models.dto';
 

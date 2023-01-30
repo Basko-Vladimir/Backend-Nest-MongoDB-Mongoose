@@ -7,8 +7,6 @@ import {
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HydratedDocument, Model, now } from 'mongoose';
 
-export type UserDocument = HydratedDocument<User>;
-
 const {
   MIN_LOGIN_LENGTH,
   MAX_LOGIN_LENGTH,
@@ -73,6 +71,8 @@ export class User {
   }
 }
 
+export type UserDocument = HydratedDocument<User>;
+
 export interface IUsersStaticMethods {
   createUserEntity(
     createUserDto: CreateUserDto,
@@ -82,6 +82,6 @@ export interface IUsersStaticMethods {
 
 export type UserModelType = Model<User> & IUsersStaticMethods;
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const userSchema = SchemaFactory.createForClass(User);
 
-UserSchema.static('createUserEntity', User.createUserEntity);
+userSchema.static('createUserEntity', User.createUserEntity);
