@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from './schemas/userSchema';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
-import { AllUsersOutputModel } from './dto/users-models.dto';
+import { AllUsersOutputModel } from './dto/users-output-models.dto';
 
 @Injectable()
 export class UsersService {

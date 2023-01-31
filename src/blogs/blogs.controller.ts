@@ -11,7 +11,10 @@ import {
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
-import { AllBlogsOutputModel, IBlogOutputModel } from './dto/blogs-models.dto';
+import {
+  AllBlogsOutputModel,
+  IBlogOutputModel,
+} from './dto/blogs-output-models.dto';
 import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';

@@ -4,7 +4,7 @@ import { User, UserDocument, UserModelType } from './schemas/userSchema';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
-import { AllUsersOutputModel } from './dto/users-models.dto';
+import { AllUsersOutputModel } from './dto/users-output-models.dto';
 import { SortDirection, UserSortByField } from '../common/enums';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { BlogDocument } from '../schemas/blog.schema';
-import { IBlogOutputModel } from '../dto/blogs-models.dto';
+import { IBlogOutputModel } from '../dto/blogs-output-models.dto';
 
 export const mapDbBlogToBlogOutputModel = (
   blog: BlogDocument,

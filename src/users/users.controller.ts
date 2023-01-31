@@ -12,7 +12,10 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
-import { AllUsersOutputModel, IUserOutputModel } from './dto/users-models.dto';
+import {
+  AllUsersOutputModel,
+  IUserOutputModel,
+} from './dto/users-output-models.dto';
 
 @Controller('users')
 export class UsersController {

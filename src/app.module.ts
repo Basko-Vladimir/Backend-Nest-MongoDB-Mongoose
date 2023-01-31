@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { User, userSchema } from './users/schemas/userSchema';
 import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { BlogsModule } from './blogs/blogs.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BlogsModule } from './blogs/blogs.module';
     MongooseModule.forFeature([{ name: Blog.name, schema: blogSchema }]),
     UsersModule,
     BlogsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

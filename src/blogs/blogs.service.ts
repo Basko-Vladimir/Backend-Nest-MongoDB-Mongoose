@@ -3,7 +3,7 @@ import { Blog, BlogDocument, BlogModelType } from './schemas/blog.schema';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
 import { BlogsRepository } from './blogs.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { AllBlogsOutputModel } from './dto/blogs-models.dto';
+import { AllBlogsOutputModel } from './dto/blogs-output-models.dto';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 

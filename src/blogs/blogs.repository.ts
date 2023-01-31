@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument, BlogModelType } from './schemas/blog.schema';
 import { BlogSortByField, SortDirection } from '../common/enums';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
-import { AllBlogsOutputModel } from './dto/blogs-models.dto';
+import { AllBlogsOutputModel } from './dto/blogs-output-models.dto';
 import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
 
 @Injectable()
