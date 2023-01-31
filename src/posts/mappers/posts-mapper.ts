@@ -1,7 +1,9 @@
 import { PostOutputModel } from '../dto/posts-output-models.dto';
+import { PostDocument } from '../schemas/post.schema';
 
-//TODO add post type
-export const mapDbPostToPostOutputModel = (post): PostOutputModel => {
+export const mapDbPostToPostOutputModel = (
+  post: PostDocument,
+): PostOutputModel => {
   return {
     id: String(post._id),
     title: post.title,

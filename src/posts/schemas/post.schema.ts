@@ -86,20 +86,22 @@ export class Post {
     updatingData: UpdatePostDto,
     currentPost: PostDocument,
   ): PostDocument {
-    // const { name, websiteUrl, description } = updatingData;
-    //
-    // currentPost.name = name;
-    // currentPost.websiteUrl = websiteUrl;
-    // currentPost.description = description;
+    const { title, content, shortDescription, blogId } = updatingData;
+
+    currentPost.title = title;
+    currentPost.content = content;
+    currentPost.shortDescription = shortDescription;
+    currentPost.blogId = new Types.ObjectId(blogId);
 
     return currentPost;
   }
 
   static createPostEntity(
     postData: CreatePostDto,
+    blogName: string,
     PostModel: PostModelType,
   ): PostDocument {
-    return new PostModel(postData);
+    return new PostModel({ ...postData, blogName });
   }
 }
 
@@ -108,6 +110,7 @@ export type PostDocument = HydratedDocument<Post>;
 export interface IPostsStaticMethods {
   createPostEntity(
     postData: CreatePostDto,
+    blogName: string,
     PostModel: PostModelType,
   ): PostDocument;
 }

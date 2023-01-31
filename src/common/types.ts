@@ -1,4 +1,4 @@
-import { DbSortDirection } from './enums';
+import { DbSortDirection, SortDirection } from './enums';
 
 export interface UpdateOrFilterModel<T = unknown> {
   [key: string]: T;
@@ -12,4 +12,11 @@ export interface AllEntitiesOutputModel<T> {
   pageSize: number;
   totalCount: number;
   items: T[];
+}
+
+export interface IQueryParams {
+  sortBy: string;
+  sortDirection: SortDirection;
+  pageNumber: number;
+  pageSize: number;
 }

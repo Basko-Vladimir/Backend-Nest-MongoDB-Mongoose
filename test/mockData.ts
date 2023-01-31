@@ -1,6 +1,17 @@
+import { CreateUserDto } from '../src/users/dto/create-user.dto';
+import { CreateBlogDto } from '../src/blogs/dto/create-blog.dto';
+import { UpdateBlogDto } from '../src/blogs/dto/update-blog.dto';
+import { IQueryParams } from '../src/common/types';
+import { SortDirection } from '../src/common/enums';
+
+interface Exception {
+  statusCode: number;
+  message: string;
+}
+
 export const INVALID_ID = '63d6f799999997d58f77bc1f';
 
-export const users = [
+export const users: CreateUserDto[] = [
   {
     login: 'User1',
     password: '111111',
@@ -18,7 +29,7 @@ export const users = [
   },
 ];
 
-export const blogs = [
+export const blogs: CreateBlogDto[] = [
   {
     name: 'Blog1',
     description: 'Lorem ipsum dolor sit amet #1.',
@@ -36,13 +47,20 @@ export const blogs = [
   },
 ];
 
-export const updatedBlogData = {
+export const updatedBlogData: UpdateBlogDto = {
   name: 'Updated Blog',
   description: 'New description',
   websiteUrl: 'https://new-site.io',
 };
 
-export const notFoundException = {
+export const notFoundException: Exception = {
   statusCode: 404,
   message: 'Not Found',
+};
+
+export const defaultPaginationResult: IQueryParams = {
+  sortDirection: SortDirection.desc,
+  pageSize: 10,
+  pageNumber: 1,
+  sortBy: SortDirection.desc,
 };
