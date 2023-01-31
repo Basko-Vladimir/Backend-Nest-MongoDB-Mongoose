@@ -18,8 +18,9 @@ export class PostsService {
 
   async findAllPosts(
     queryParams: PostsQueryParamsDto,
+    blogId?: string,
   ): Promise<AllPostOutputModel> {
-    return this.postsRepository.findAllPosts(queryParams);
+    return this.postsRepository.findAllPosts(queryParams, blogId);
   }
 
   async findPostById(id: string): Promise<PostDocument> {
@@ -47,6 +48,9 @@ export class PostsService {
 
   async updatePost(id: string, updatePostDto: UpdatePostDto): Promise<void> {
     const targetPost = await this.findPostById(id);
+
+    if (!targetPost) throw new NotFoundException();
+
     const updatedPost = targetPost.updatePost(updatePostDto, targetPost);
     await this.postsRepository.savePost(updatedPost);
   }

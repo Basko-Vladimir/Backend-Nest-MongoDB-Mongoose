@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -13,15 +14,29 @@ import { BlogsService } from './blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
 import {
   AllBlogsOutputModel,
+  BlogAllPostsOutputModel,
   IBlogOutputModel,
 } from './dto/blogs-output-models.dto';
 import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { CreatePostDto } from '../posts/dto/create-post.dto';
+import { FullPostOutputModel } from '../posts/dto/posts-output-models.dto';
+import { PostsService } from '../posts/posts.service';
+import {
+  getFullPostOutputModel,
+  mapDbPostToPostOutputModel,
+} from '../posts/mappers/posts-mapper';
+import { LikesService } from '../likes/likes.service';
+import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
 
 @Controller('blogs')
 export class BlogsController {
-  constructor(protected blogsService: BlogsService) {}
+  constructor(
+    protected blogsService: BlogsService,
+    protected postsService: PostsService,
+    protected likesService: LikesService,
+  ) {}
 
   @Get()
   async findAllBlogs(
@@ -37,8 +52,10 @@ export class BlogsController {
   }
 
   @Post()
-  async createBlog(@Body() body: CreateBlogDto): Promise<IBlogOutputModel> {
-    const createdBlog = await this.blogsService.createBlog(body);
+  async createBlog(
+    @Body() creatingData: CreateBlogDto,
+  ): Promise<IBlogOutputModel> {
+    const createdBlog = await this.blogsService.createBlog(creatingData);
 
     return mapDbBlogToBlogOutputModel(createdBlog);
   }
@@ -53,8 +70,57 @@ export class BlogsController {
   @HttpCode(204)
   async updateBlog(
     @Param('id') blogId: string,
-    @Body() body: UpdateBlogDto,
+    @Body() updatingData: UpdateBlogDto,
   ): Promise<void> {
-    return this.blogsService.updateBlog(blogId, body);
+    return this.blogsService.updateBlog(blogId, updatingData);
+  }
+
+  @Get(':id/posts')
+  async findAllPostsByBlogId(
+    @Query() queryParams: PostsQueryParamsDto,
+    @Param('id') blogId: string,
+  ): Promise<BlogAllPostsOutputModel> {
+    const targetBlog = await this.findBlogById(blogId);
+
+    if (!targetBlog) throw new NotFoundException();
+
+    const userId = null;
+    const postsOutputModel = await this.postsService.findAllPosts(
+      queryParams,
+      blogId,
+    );
+
+    const posts = postsOutputModel.items;
+    const fullPosts = [];
+
+    for (let i = posts.length - 1; i >= 0; i--) {
+      const extendedPostLikesInfo =
+        await this.likesService.getExtendedLikesInfo(posts[i].id, userId);
+      fullPosts.push(getFullPostOutputModel(posts[i], extendedPostLikesInfo));
+    }
+
+    return {
+      ...postsOutputModel,
+      items: fullPosts,
+    };
+  }
+
+  @Post(':id/posts')
+  async createPostForBlog(
+    @Param('id') blogId: string,
+    @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
+  ): Promise<FullPostOutputModel> {
+    const userId = null;
+    const createdPost = await this.postsService.createPost({
+      ...creatingData,
+      blogId,
+    });
+    const postOutputModel = mapDbPostToPostOutputModel(createdPost);
+    const extendedLikesInfo = await this.likesService.getExtendedLikesInfo(
+      createdPost.id,
+      userId,
+    );
+
+    return getFullPostOutputModel(postOutputModel, extendedLikesInfo);
   }
 }

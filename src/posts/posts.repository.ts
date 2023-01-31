@@ -13,6 +13,7 @@ export class PostsRepository {
 
   async findAllPosts(
     queryParams: PostsQueryParamsDto,
+    blogId?: string,
   ): Promise<AllPostOutputModel> {
     const {
       pageSize = 10,
@@ -20,10 +21,11 @@ export class PostsRepository {
       sortBy = PostSortByField.createdAt,
       sortDirection = SortDirection.desc,
     } = queryParams;
+    const filter = blogId ? { blogId } : {};
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
-    const totalCount = await this.PostModel.countDocuments();
-    const posts = await this.PostModel.find({})
+    const totalCount = await this.PostModel.find(filter).countDocuments();
+    const posts = await this.PostModel.find(filter)
       .skip(skip)
       .limit(pageSize)
       .sort(sortSetting);
