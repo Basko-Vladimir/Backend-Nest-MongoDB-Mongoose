@@ -13,33 +13,69 @@ import { PostsService } from './posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { FullPostOutputModel } from './dto/posts-output-models.dto';
 import {
-  AllPostOutputModel,
-  PostOutputModel,
-} from './dto/posts-output-models.dto';
-import { mapDbPostToPostOutputModel } from './mappers/posts-mapper';
+  getFullPostOutputModel,
+  mapDbPostToPostOutputModel,
+} from './mappers/posts-mapper';
+import { LikesService } from '../likes/likes.service';
+import { BlogAllPostsOutputModel } from '../blogs/dto/blogs-output-models.dto';
 
 @Controller('posts')
 export class PostsController {
-  constructor(protected postsService: PostsService) {}
+  constructor(
+    protected postsService: PostsService,
+    protected likesService: LikesService,
+  ) {}
 
   @Get()
   async findAllPosts(
     @Query() queryParams: PostsQueryParamsDto,
-  ): Promise<AllPostOutputModel> {
-    return this.postsService.findAllPosts(queryParams);
+  ): Promise<BlogAllPostsOutputModel> {
+    const userId = null;
+    const postsOutputModel = await this.postsService.findAllPosts(queryParams);
+
+    const posts = postsOutputModel.items;
+    const fullPosts = [];
+
+    for (let i = posts.length - 1; i >= 0; i--) {
+      const extendedPostLikesInfo =
+        await this.likesService.getExtendedLikesInfo(posts[i].id, userId);
+      fullPosts.push(getFullPostOutputModel(posts[i], extendedPostLikesInfo));
+    }
+
+    return {
+      ...postsOutputModel,
+      items: fullPosts,
+    };
   }
 
   @Get(':id')
-  async findPostById(@Param('id') postId: string): Promise<PostOutputModel> {
+  async findPostById(
+    @Param('id') postId: string,
+  ): Promise<FullPostOutputModel> {
+    const userId = null;
     const targetPost = await this.postsService.findPostById(postId);
-    return mapDbPostToPostOutputModel(targetPost);
+    const postOutputModel = mapDbPostToPostOutputModel(targetPost);
+    const extendedLikesInfo = await this.likesService.getExtendedLikesInfo(
+      targetPost.id,
+      userId,
+    );
+
+    return getFullPostOutputModel(postOutputModel, extendedLikesInfo);
   }
 
   @Post()
-  async createPost(@Body() body: CreatePostDto): Promise<PostOutputModel> {
+  async createPost(@Body() body: CreatePostDto): Promise<FullPostOutputModel> {
+    const userId = null;
     const createdPost = await this.postsService.createPost(body);
-    return mapDbPostToPostOutputModel(createdPost);
+    const postOutputModel = mapDbPostToPostOutputModel(createdPost);
+    const extendedLikesInfo = await this.likesService.getExtendedLikesInfo(
+      createdPost.id,
+      userId,
+    );
+
+    return getFullPostOutputModel(postOutputModel, extendedLikesInfo);
   }
 
   @Delete(':id')
