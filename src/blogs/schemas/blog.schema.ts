@@ -5,7 +5,6 @@ import {
   generateRegExpError,
 } from '../../common/error-messages';
 import { HydratedDocument, Model, now } from 'mongoose';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { CreateBlogDto } from '../dto/create-blog.dto';
 import { UpdateBlogDto } from '../dto/update-blog.dto';
 
@@ -83,7 +82,7 @@ export class Blog {
   }
 
   static createBlogEntity(
-    blogData: CreateUserDto,
+    blogData: CreateBlogDto,
     BlogModel: BlogModelType,
   ): BlogDocument {
     return new BlogModel(blogData);
