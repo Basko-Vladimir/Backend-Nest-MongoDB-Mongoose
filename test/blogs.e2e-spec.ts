@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
-import { BlogsModule } from '../src/blogs/blogs.module';
 import * as request from 'supertest';
 import {
   blogs,
@@ -15,7 +14,7 @@ describe('Blogs', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule, BlogsModule],
+      imports: [AppModule],
     }).compile();
 
     app = moduleRef.createNestApplication();

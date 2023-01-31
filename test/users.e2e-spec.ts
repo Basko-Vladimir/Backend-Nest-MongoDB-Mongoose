@@ -1,6 +1,5 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { UsersModule } from '../src/users/users.module';
 import { AppModule } from '../src/app.module';
 import { INVALID_ID, notFoundException, users } from './mockData';
 
@@ -10,7 +9,7 @@ describe('Users', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule, UsersModule],
+      imports: [AppModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
