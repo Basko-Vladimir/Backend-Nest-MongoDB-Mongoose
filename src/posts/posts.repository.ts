@@ -11,7 +11,7 @@ import { mapDbPostToPostOutputModel } from './mappers/posts-mapper';
 export class PostsRepository {
   constructor(@InjectModel(Post.name) protected PostModel: PostModelType) {}
 
-  async findAllPosts(
+  async findPosts(
     queryParams: PostsQueryParamsDto,
     blogId?: string,
   ): Promise<AllPostOutputModel> {

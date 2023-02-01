@@ -26,10 +26,10 @@ export class PostsController {
   ) {}
 
   @Get()
-  async findAllPosts(
+  async findPosts(
     @Query() queryParams: PostsQueryParamsDto,
   ): Promise<BlogAllFullPostsOutputModel> {
-    const postsOutputModel = await this.postsService.findAllPosts(queryParams);
+    const postsOutputModel = await this.postsService.findPosts(queryParams);
     const posts = postsOutputModel.items;
     const fullPosts = [];
 

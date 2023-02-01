@@ -16,11 +16,11 @@ export class PostsService {
     @InjectModel(Post.name) protected PostModel: PostModelType,
   ) {}
 
-  async findAllPosts(
+  async findPosts(
     queryParams: PostsQueryParamsDto,
     blogId?: string,
   ): Promise<AllPostOutputModel> {
-    return this.postsRepository.findAllPosts(queryParams, blogId);
+    return this.postsRepository.findPosts(queryParams, blogId);
   }
 
   async findPostById(id: string): Promise<PostDocument> {

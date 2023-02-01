@@ -81,7 +81,7 @@ export class BlogsController {
 
     if (!targetBlog) throw new NotFoundException();
 
-    const postsOutputModel = await this.postsService.findAllPosts(
+    const postsOutputModel = await this.postsService.findPosts(
       queryParams,
       blogId,
     );
