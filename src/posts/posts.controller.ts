@@ -34,7 +34,7 @@ export class PostsController {
     const fullPosts = [];
 
     for (let i = posts.length - 1; i >= 0; i--) {
-      fullPosts.push(getFullPostOutputModel(posts[i], this.likesService));
+      fullPosts.push(await getFullPostOutputModel(posts[i], this.likesService));
     }
 
     return {
