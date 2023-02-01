@@ -14,7 +14,7 @@ import { BlogsService } from './blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
 import {
   AllBlogsOutputModel,
-  BlogAllPostsOutputModel,
+  BlogAllFullPostsOutputModel,
   IBlogOutputModel,
 } from './dto/blogs-output-models.dto';
 import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
@@ -23,10 +23,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { FullPostOutputModel } from '../posts/dto/posts-output-models.dto';
 import { PostsService } from '../posts/posts.service';
-import {
-  getFullPostOutputModel,
-  mapDbPostToPostOutputModel,
-} from '../posts/mappers/posts-mapper';
+import { getFullPostOutputModel } from '../posts/mappers/posts-mapper';
 import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
 
@@ -79,24 +76,20 @@ export class BlogsController {
   async findAllPostsByBlogId(
     @Query() queryParams: PostsQueryParamsDto,
     @Param('id') blogId: string,
-  ): Promise<BlogAllPostsOutputModel> {
+  ): Promise<BlogAllFullPostsOutputModel> {
     const targetBlog = await this.findBlogById(blogId);
 
     if (!targetBlog) throw new NotFoundException();
 
-    const userId = null;
     const postsOutputModel = await this.postsService.findAllPosts(
       queryParams,
       blogId,
     );
-
     const posts = postsOutputModel.items;
     const fullPosts = [];
 
     for (let i = posts.length - 1; i >= 0; i--) {
-      const extendedPostLikesInfo =
-        await this.likesService.getExtendedLikesInfo(posts[i].id, userId);
-      fullPosts.push(getFullPostOutputModel(posts[i], extendedPostLikesInfo));
+      fullPosts.push(getFullPostOutputModel(posts[i], this.likesService));
     }
 
     return {
@@ -110,17 +103,11 @@ export class BlogsController {
     @Param('id') blogId: string,
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
   ): Promise<FullPostOutputModel> {
-    const userId = null;
     const createdPost = await this.postsService.createPost({
       ...creatingData,
       blogId,
     });
-    const postOutputModel = mapDbPostToPostOutputModel(createdPost);
-    const extendedLikesInfo = await this.likesService.getExtendedLikesInfo(
-      createdPost.id,
-      userId,
-    );
 
-    return getFullPostOutputModel(postOutputModel, extendedLikesInfo);
+    return await getFullPostOutputModel(createdPost, this.likesService);
   }
 }

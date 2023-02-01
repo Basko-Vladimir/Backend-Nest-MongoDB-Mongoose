@@ -2,8 +2,8 @@ import {
   FullPostOutputModel,
   PostOutputModel,
 } from '../dto/posts-output-models.dto';
-import { PostDocument } from '../schemas/post.schema';
-import { ExtendedLikesInfoOutputModel } from '../../likes/dto/likes-output-models.dto';
+import { Post, PostDocument } from '../schemas/post.schema';
+import { LikesService } from '../../likes/likes.service';
 
 export const mapDbPostToPostOutputModel = (
   post: PostDocument,
@@ -19,16 +19,32 @@ export const mapDbPostToPostOutputModel = (
   };
 };
 
-export const getFullPostOutputModel = (
-  post: PostOutputModel,
-  extendedLikesInfo: ExtendedLikesInfoOutputModel,
-): FullPostOutputModel => ({
-  id: post.id,
-  title: post.title,
-  shortDescription: post.shortDescription,
-  content: post.content,
-  blogId: post.blogId,
-  blogName: post.blogName,
-  createdAt: post.createdAt,
-  extendedLikesInfo: extendedLikesInfo,
-});
+export const getFullPostOutputModel = async (
+  post: PostDocument | PostOutputModel,
+  likesService: LikesService,
+  userId: string = null,
+): Promise<FullPostOutputModel> => {
+  let postOutputModel: PostOutputModel;
+
+  if (post instanceof Post) {
+    postOutputModel = mapDbPostToPostOutputModel(post);
+  } else {
+    postOutputModel = post;
+  }
+
+  const extendedLikesInfo = await likesService.getExtendedLikesInfo(
+    post.id,
+    userId,
+  );
+
+  return {
+    id: postOutputModel.id,
+    title: postOutputModel.title,
+    shortDescription: postOutputModel.shortDescription,
+    content: postOutputModel.content,
+    blogId: postOutputModel.blogId,
+    blogName: postOutputModel.blogName,
+    createdAt: postOutputModel.createdAt,
+    extendedLikesInfo: extendedLikesInfo,
+  };
+};

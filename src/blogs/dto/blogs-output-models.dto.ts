@@ -10,4 +10,5 @@ export interface IBlogOutputModel {
 }
 
 export type AllBlogsOutputModel = AllEntitiesOutputModel<IBlogOutputModel>;
-export type BlogAllPostsOutputModel = AllEntitiesOutputModel<PostOutputModel>;
+export type BlogAllFullPostsOutputModel =
+  AllEntitiesOutputModel<PostOutputModel>;
