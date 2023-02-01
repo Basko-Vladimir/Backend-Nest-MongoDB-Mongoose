@@ -5,7 +5,7 @@ import { Post, PostDocument, PostModelType } from './schemas/post.schema';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { AllPostOutputModel } from './dto/posts-output-models.dto';
+import { AllPostsOutputModel } from './dto/posts-output-models.dto';
 import { BlogsRepository } from '../blogs/blogs.repository';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class PostsService {
   async findPosts(
     queryParams: PostsQueryParamsDto,
     blogId?: string,
-  ): Promise<AllPostOutputModel> {
+  ): Promise<AllPostsOutputModel> {
     return this.postsRepository.findPosts(queryParams, blogId);
   }
 

@@ -1,7 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { FullCommentOutputModel } from './dto/comments-output-models.dto';
-import { getFullCommentOutputModel } from './mappers/comments-mapper';
+import {
+  getFullCommentOutputModel,
+  mapDbCommentToCommentOutputModel,
+} from './mappers/comments-mapper';
 import { LikesService } from '../likes/likes.service';
 
 @Controller('comments')
@@ -16,6 +19,7 @@ export class CommentsController {
     @Param('id') commentId: string,
   ): Promise<FullCommentOutputModel> {
     const targetComment = await this.commentsService.findCommentById(commentId);
-    return getFullCommentOutputModel(targetComment, this.likesService);
+    const commentOutputModel = mapDbCommentToCommentOutputModel(targetComment);
+    return getFullCommentOutputModel(commentOutputModel, this.likesService);
   }
 }

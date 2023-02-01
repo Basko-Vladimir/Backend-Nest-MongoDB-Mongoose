@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument, PostModelType } from './schemas/post.schema';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
-import { AllPostOutputModel } from './dto/posts-output-models.dto';
+import { AllPostsOutputModel } from './dto/posts-output-models.dto';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
 import { PostSortByField, SortDirection } from '../common/enums';
 import { mapDbPostToPostOutputModel } from './mappers/posts-mapper';
@@ -14,7 +14,7 @@ export class PostsRepository {
   async findPosts(
     queryParams: PostsQueryParamsDto,
     blogId?: string,
-  ): Promise<AllPostOutputModel> {
+  ): Promise<AllPostsOutputModel> {
     const {
       pageSize = 10,
       pageNumber = 1,

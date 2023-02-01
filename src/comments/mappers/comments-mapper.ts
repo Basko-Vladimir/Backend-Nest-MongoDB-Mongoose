@@ -20,18 +20,11 @@ export const mapDbCommentToCommentOutputModel = (
 };
 
 export const getFullCommentOutputModel = async (
-  comment: CommentDocument,
+  comment: CommentOutputModel,
   likesService: LikesService,
   userId: string = null,
 ): Promise<FullCommentOutputModel> => {
-  const commentOutputModel = mapDbCommentToCommentOutputModel(comment);
-  const likesInfo = await likesService.getLikesInfo(
-    userId,
-    commentOutputModel.id,
-  );
+  const likesInfo = await likesService.getLikesInfo(userId, comment.id);
 
-  return {
-    ...commentOutputModel,
-    likesInfo,
-  };
+  return { ...comment, likesInfo };
 };

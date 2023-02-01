@@ -1,4 +1,5 @@
 import { LikesInfoOutputModel } from '../../likes/dto/likes-output-models.dto';
+import { AllEntitiesOutputModel } from '../../common/types';
 
 interface CommentatorInfo {
   userId: string;
@@ -15,3 +16,5 @@ export interface CommentOutputModel {
 export interface FullCommentOutputModel extends CommentOutputModel {
   likesInfo: LikesInfoOutputModel;
 }
+
+export type AllCommentsOutputModel = AllEntitiesOutputModel<CommentOutputModel>;

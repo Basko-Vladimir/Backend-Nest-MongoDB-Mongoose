@@ -23,7 +23,10 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { FullPostOutputModel } from '../posts/dto/posts-output-models.dto';
 import { PostsService } from '../posts/posts.service';
-import { getFullPostOutputModel } from '../posts/mappers/posts-mapper';
+import {
+  getFullPostOutputModel,
+  mapDbPostToPostOutputModel,
+} from '../posts/mappers/posts-mapper';
 import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
 
@@ -107,7 +110,7 @@ export class BlogsController {
       ...creatingData,
       blogId,
     });
-
-    return await getFullPostOutputModel(createdPost, this.likesService);
+    const postOutputModel = mapDbPostToPostOutputModel(createdPost);
+    return await getFullPostOutputModel(postOutputModel, this.likesService);
   }
 }

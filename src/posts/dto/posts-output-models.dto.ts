@@ -15,4 +15,4 @@ export interface FullPostOutputModel extends PostOutputModel {
   extendedLikesInfo: ExtendedLikesInfoOutputModel;
 }
 
-export type AllPostOutputModel = AllEntitiesOutputModel<PostOutputModel>;
+export type AllPostsOutputModel = AllEntitiesOutputModel<PostOutputModel>;
