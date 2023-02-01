@@ -6,6 +6,7 @@ import { User, userSchema } from './users/schemas/userSchema';
 import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { Post, postSchema } from './posts/schemas/post.schema';
 import { Like, likeSchema } from './likes/schemas/like.schema';
+import { Comment, commentSchema } from './comments/schemas/comments.schema';
 import { BlogsController } from './blogs/blogs.controller';
 import { PostsController } from './posts/posts.controller';
 import { UsersController } from './users/users.controller';
@@ -17,6 +18,9 @@ import { UsersRepository } from './users/users.repository';
 import { BlogsRepository } from './blogs/blogs.repository';
 import { PostsRepository } from './posts/posts.repository';
 import { LikesRepository } from './likes/likes.repository';
+import { CommentsController } from './comments/comments.controller';
+import { CommentsService } from './comments/comments.service';
+import { CommentsRepository } from './comments/comments.repository';
 
 @Module({
   imports: [
@@ -28,12 +32,14 @@ import { LikesRepository } from './likes/likes.repository';
     MongooseModule.forFeature([{ name: Blog.name, schema: blogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: postSchema }]),
     MongooseModule.forFeature([{ name: Like.name, schema: likeSchema }]),
+    MongooseModule.forFeature([{ name: Comment.name, schema: commentSchema }]),
   ],
   controllers: [
     AppController,
     UsersController,
     BlogsController,
     PostsController,
+    CommentsController,
   ],
   providers: [
     AppService,
@@ -45,6 +51,8 @@ import { LikesRepository } from './likes/likes.repository';
     PostsRepository,
     LikesService,
     LikesRepository,
+    CommentsService,
+    CommentsRepository,
   ],
 })
 export class AppModule {}
