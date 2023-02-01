@@ -33,18 +33,12 @@ export const getFullPostOutputModel = async (
   }
 
   const extendedLikesInfo = await likesService.getExtendedLikesInfo(
-    post.id,
     userId,
+    post.id,
   );
 
   return {
-    id: postOutputModel.id,
-    title: postOutputModel.title,
-    shortDescription: postOutputModel.shortDescription,
-    content: postOutputModel.content,
-    blogId: postOutputModel.blogId,
-    blogName: postOutputModel.blogName,
-    createdAt: postOutputModel.createdAt,
+    ...postOutputModel,
     extendedLikesInfo: extendedLikesInfo,
   };
 };

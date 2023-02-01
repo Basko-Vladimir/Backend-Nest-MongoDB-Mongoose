@@ -6,7 +6,7 @@ import { User, userSchema } from './users/schemas/userSchema';
 import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { Post, postSchema } from './posts/schemas/post.schema';
 import { Like, likeSchema } from './likes/schemas/like.schema';
-import { Comment, commentSchema } from './comments/schemas/comments.schema';
+import { Comment, commentSchema } from './comments/schemas/comment.schema';
 import { BlogsController } from './blogs/blogs.controller';
 import { PostsController } from './posts/posts.controller';
 import { UsersController } from './users/users.controller';
