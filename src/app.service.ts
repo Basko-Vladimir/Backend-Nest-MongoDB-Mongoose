@@ -4,6 +4,7 @@ import { User, UserModelType } from './users/schemas/userSchema';
 import { Blog, BlogModelType } from './blogs/schemas/blog.schema';
 import { Post, PostModelType } from './posts/schemas/post.schema';
 import { Like, LikeModelType } from './likes/schemas/like.schema';
+import { Comment } from './comments/schemas/comment.schema';
 
 @Injectable()
 export class AppService {
@@ -12,6 +13,7 @@ export class AppService {
     @InjectModel(Blog.name) private BlogModel: BlogModelType,
     @InjectModel(Post.name) private PostModel: PostModelType,
     @InjectModel(Like.name) private LikeModel: LikeModelType,
+    @InjectModel(Comment.name) private CommentModel: LikeModelType,
   ) {}
 
   getHello(): string {
@@ -24,6 +26,7 @@ export class AppService {
       this.BlogModel.deleteMany({}),
       this.PostModel.deleteMany({}),
       this.LikeModel.deleteMany({}),
+      this.CommentModel.deleteMany({}),
     ]);
   }
 }
