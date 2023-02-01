@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { User, userSchema } from './users/schemas/userSchema';
 import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { Post, postSchema } from './posts/schemas/post.schema';
@@ -24,10 +25,10 @@ import { CommentsRepository } from './comments/comments.repository';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://Vladimir:BaVlaG_192115@cluster0.nqlqdla.mongodb.net/?retryWrites=true&w=majority',
-      { dbName: 'Backend-Nest' },
-    ),
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGO_URI, {
+      dbName: process.env.DB_NAME,
+    }),
     MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: blogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: postSchema }]),
