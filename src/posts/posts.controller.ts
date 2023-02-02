@@ -42,7 +42,7 @@ export class PostsController {
     const posts = postsOutputModel.items;
     const fullPosts = [];
 
-    for (let i = posts.length - 1; i >= 0; i--) {
+    for (let i = 0; i < posts.length; i++) {
       fullPosts.push(await getFullPostOutputModel(posts[i], this.likesService));
     }
 
@@ -68,7 +68,7 @@ export class PostsController {
     const comments = commentsOutputModel.items;
     const fullComments = [];
 
-    for (let i = comments.length - 1; i >= 0; i--) {
+    for (let i = 0; i < comments.length; i++) {
       fullComments.push(
         await getFullCommentOutputModel(comments[i], this.likesService),
       );
