@@ -57,10 +57,10 @@ export class User {
   })
   password: string;
 
-  @Prop({ default: new Date() })
+  @Prop()
   createdAt: Date;
 
-  @Prop({ default: new Date() })
+  @Prop()
   updatedAt: Date;
 
   static createUserEntity(

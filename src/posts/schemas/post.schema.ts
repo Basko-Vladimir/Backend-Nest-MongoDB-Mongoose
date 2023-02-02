@@ -72,14 +72,10 @@ export class Post {
   })
   blogId: Types.ObjectId;
 
-  @Prop({
-    default: new Date(),
-  })
+  @Prop()
   createdAt: Date;
 
-  @Prop({
-    default: new Date(),
-  })
+  @Prop()
   updatedAt: Date;
 
   updatePost(

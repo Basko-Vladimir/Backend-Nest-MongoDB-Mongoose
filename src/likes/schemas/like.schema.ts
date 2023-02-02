@@ -35,14 +35,10 @@ export class Like {
   })
   status: LikeStatus;
 
-  @Prop({
-    default: new Date(),
-  })
+  @Prop()
   createdAt: Date;
 
-  @Prop({
-    default: new Date(),
-  })
+  @Prop()
   updatedAt: Date;
 }
 
