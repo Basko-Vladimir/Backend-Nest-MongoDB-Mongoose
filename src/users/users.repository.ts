@@ -24,13 +24,15 @@ export class UsersRepository {
     } = queryParams;
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
+    const filter = {
+      $or: [
+        { email: new RegExp(searchEmailTerm, 'i') },
+        { login: new RegExp(searchLoginTerm, 'i') },
+      ],
+    };
 
-    const totalCount = await this.UserModel.countDocuments()
-      .where('email', new RegExp(searchEmailTerm, 'i'))
-      .where('login', new RegExp(searchLoginTerm, 'i'));
-    const users = await this.UserModel.find()
-      .where('email', new RegExp(searchEmailTerm, 'i'))
-      .where('login', new RegExp(searchLoginTerm, 'i'))
+    const totalCount = await this.UserModel.find(filter).countDocuments();
+    const users = await this.UserModel.find(filter)
       .skip(skip)
       .limit(pageSize)
       .sort(sortSetting);
