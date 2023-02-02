@@ -4,7 +4,7 @@ import {
   generateLengthErrorMessage,
   generateRegExpError,
 } from '../../common/error-messages';
-import { HydratedDocument, Model, now } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDto } from '../dto/create-blog.dto';
 import { UpdateBlogDto } from '../dto/update-blog.dto';
 
@@ -62,10 +62,10 @@ export class Blog {
   })
   description: string;
 
-  @Prop({ default: now() })
+  @Prop({ default: new Date() })
   createdAt: Date;
 
-  @Prop({ default: now() })
+  @Prop({ default: new Date() })
   updatedAt: Date;
 
   updateBlog(

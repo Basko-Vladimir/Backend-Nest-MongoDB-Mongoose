@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model, now, Types } from 'mongoose';
+import { HydratedDocument, Model, Types } from 'mongoose';
 import { generateLengthErrorMessage } from '../../common/error-messages';
 import { postsConstants, MIN_STRINGS_LENGTH } from '../../common/constants';
 import { CreatePostDto } from '../dto/create-post.dto';
@@ -73,12 +73,12 @@ export class Post {
   blogId: Types.ObjectId;
 
   @Prop({
-    default: now(),
+    default: new Date(),
   })
   createdAt: Date;
 
   @Prop({
-    default: now(),
+    default: new Date(),
   })
   updatedAt: Date;
 

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, now, Model, Types } from 'mongoose';
+import { HydratedDocument, Model, Types } from 'mongoose';
 import { commentsConstants } from '../../common/constants';
 import { generateLengthErrorMessage } from '../../common/error-messages';
 
@@ -48,12 +48,12 @@ export class Comment {
   userLogin: string;
 
   @Prop({
-    default: now(),
+    default: new Date(),
   })
   createdAt: Date;
 
   @Prop({
-    default: now(),
+    default: new Date(),
   })
   updatedAt: Date;
 }

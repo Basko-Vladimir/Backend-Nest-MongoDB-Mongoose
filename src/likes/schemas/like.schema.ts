@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model, now, Types } from 'mongoose';
+import { HydratedDocument, Model, Types } from 'mongoose';
 import { LikeStatus } from '../../common/enums';
 
 @Schema({ timestamps: true })
@@ -36,12 +36,12 @@ export class Like {
   status: LikeStatus;
 
   @Prop({
-    default: now(),
+    default: new Date(),
   })
   createdAt: Date;
 
   @Prop({
-    default: now(),
+    default: new Date(),
   })
   updatedAt: Date;
 }

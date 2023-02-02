@@ -5,7 +5,7 @@ import {
   generateRegExpError,
 } from '../../common/error-messages';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { HydratedDocument, Model, now } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 
 const {
   MIN_LOGIN_LENGTH,
@@ -57,10 +57,10 @@ export class User {
   })
   password: string;
 
-  @Prop({ default: now() })
+  @Prop({ default: new Date() })
   createdAt: Date;
 
-  @Prop({ default: now() })
+  @Prop({ default: new Date() })
   updatedAt: Date;
 
   static createUserEntity(
