@@ -3,10 +3,16 @@ import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
 import {
   blogs,
+  defaultGetAllResponse,
+  getAllItemsWithPage2Size1,
   INVALID_ID,
   notFoundException,
   updatedBlogData,
 } from './mockData';
+import {
+  AllBlogsOutputModel,
+  IBlogOutputModel,
+} from '../src/blogs/dto/blogs-output-models.dto';
 
 describe('Blogs', () => {
   let app;
@@ -48,11 +54,7 @@ describe('Blogs', () => {
     const response = await getBlogsRequest();
 
     expect(response.status).toBe(200);
-    expect(response.body.pagesCount).toBe(0);
-    expect(response.body.page).toBe(1);
-    expect(response.body.pageSize).toBe(10);
-    expect(response.body.totalCount).toBe(0);
-    expect(response.body.items).toHaveLength(0);
+    expect(response.body).toEqual(defaultGetAllResponse);
   });
 
   it('/POST create 3 blogs', async () => {
@@ -72,17 +74,16 @@ describe('Blogs', () => {
     expect(response4.body.items).toHaveLength(3);
   });
 
-  it('/GET ALL users with query Params', async () => {
+  it('/GET ALL blogs with query Params', async () => {
     const response1 = await getBlogsRequest().query({
       pageNumber: 2,
       pageSize: 1,
     });
-    expect(response1.body.items).toHaveLength(1);
-    expect(response1.body.totalCount).toBe(3);
-    expect(response1.body.pagesCount).toBe(3);
-    expect(response1.body.page).toBe(2);
-    expect(response1.body.pageSize).toBe(1);
-    expect(response1.body.items[0].id).toBe(blog2.id);
+    const expectedResult = getAllItemsWithPage2Size1<
+      IBlogOutputModel,
+      AllBlogsOutputModel
+    >(blog2);
+    expect(response1.body).toEqual(expectedResult);
 
     const response2 = await getBlogsRequest().query({
       searchNameTerm: '2',

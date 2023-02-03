@@ -1,7 +1,17 @@
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
-import { INVALID_ID, notFoundException, users } from './mockData';
+import {
+  defaultGetAllResponse,
+  getAllItemsWithPage2Size1,
+  INVALID_ID,
+  notFoundException,
+  users,
+} from './mockData';
+import {
+  AllUsersOutputModel,
+  IUserOutputModel,
+} from '../src/users/dto/users-output-models.dto';
 
 describe('Users', () => {
   let app;
@@ -37,11 +47,7 @@ describe('Users', () => {
     const response = await getUsersRequest();
 
     expect(response.status).toBe(200);
-    expect(response.body.pagesCount).toBe(0);
-    expect(response.body.page).toBe(1);
-    expect(response.body.pageSize).toBe(10);
-    expect(response.body.totalCount).toBe(0);
-    expect(response.body.items).toHaveLength(0);
+    expect(response.body).toEqual(defaultGetAllResponse);
   });
 
   it('/POST create 3 users', async () => {
@@ -66,12 +72,11 @@ describe('Users', () => {
       pageNumber: 2,
       pageSize: 1,
     });
-    expect(response1.body.items).toHaveLength(1);
-    expect(response1.body.totalCount).toBe(3);
-    expect(response1.body.pagesCount).toBe(3);
-    expect(response1.body.page).toBe(2);
-    expect(response1.body.pageSize).toBe(1);
-    expect(response1.body.items[0].id).toBe(user2.id);
+    const expectedResult = getAllItemsWithPage2Size1<
+      IUserOutputModel,
+      AllUsersOutputModel
+    >(user2);
+    expect(response1.body).toEqual(expectedResult);
 
     const response2 = await getUsersRequest().query({
       searchLoginTerm: '3',

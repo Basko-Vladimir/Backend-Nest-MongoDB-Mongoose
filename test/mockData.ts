@@ -1,8 +1,6 @@
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { CreateBlogDto } from '../src/blogs/dto/create-blog.dto';
 import { UpdateBlogDto } from '../src/blogs/dto/update-blog.dto';
-import { IQueryParams } from '../src/common/types';
-import { SortDirection } from '../src/common/enums';
 
 interface Exception {
   statusCode: number;
@@ -58,9 +56,20 @@ export const notFoundException: Exception = {
   message: 'Not Found',
 };
 
-export const defaultPaginationResult: IQueryParams = {
-  sortDirection: SortDirection.desc,
+export const defaultGetAllResponse = {
+  page: 1,
   pageSize: 10,
-  pageNumber: 1,
-  sortBy: SortDirection.desc,
+  pagesCount: 0,
+  totalCount: 0,
+  items: [],
+};
+
+export const getAllItemsWithPage2Size1 = <I, O>(matchedItem: I): O => {
+  return {
+    page: 2,
+    pageSize: 1,
+    pagesCount: 3,
+    totalCount: 3,
+    items: [matchedItem as I],
+  } as O;
 };
