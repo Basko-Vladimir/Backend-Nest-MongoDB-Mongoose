@@ -1,6 +1,4 @@
 import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import {
   defaultGetAllResponse,
   getAllItemsWithPage2Size1,
@@ -12,19 +10,19 @@ import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from '../src/users/dto/users-output-models.dto';
-import { createUserRequest, deleteUserRequest, getUsersRequest } from './utils';
+import {
+  initTestApp,
+  createUserRequest,
+  deleteUserRequest,
+  getUsersRequest,
+} from './utils';
 
 describe('Users', () => {
   let app;
   let user1, user2, user3;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
+    app = await initTestApp();
   });
 
   it('/DELETE clear all database', async () => {

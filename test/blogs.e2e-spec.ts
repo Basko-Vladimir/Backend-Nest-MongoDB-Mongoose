@@ -1,5 +1,3 @@
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
 import {
   blogs,
@@ -18,6 +16,7 @@ import {
   IBlogOutputModel,
 } from '../src/blogs/dto/blogs-output-models.dto';
 import {
+  initTestApp,
   createBlogsRequest,
   createPostByBlogIdRequest,
   deleteBlogRequest,
@@ -33,12 +32,7 @@ describe('Blogs', () => {
   let post1;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
+    app = await initTestApp();
   });
 
   it('/DELETE ALL clear all database', async () => {

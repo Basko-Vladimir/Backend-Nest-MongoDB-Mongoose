@@ -1,7 +1,5 @@
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import {
   blogs,
   defaultGetAllResponse,
@@ -14,6 +12,7 @@ import {
   updatedPostData,
 } from './mockData';
 import {
+  initTestApp,
   createBlogsRequest,
   createPostRequest,
   deletePostRequest,
@@ -34,12 +33,7 @@ describe('Posts', () => {
   let blog1, blog2;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
+    app = await initTestApp();
   });
 
   it('/DELETE ALL clear all database', async () => {
