@@ -90,9 +90,9 @@ export const getCreatedPostItem = (
   id: expect.any(String),
   blogId: currentBlog.id,
   blogName: currentBlog.name,
-  content: posts[0].content,
-  title: posts[0].title,
-  shortDescription: posts[0].shortDescription,
+  content: createPostDto.content,
+  title: createPostDto.title,
+  shortDescription: createPostDto.shortDescription,
   createdAt: expect.any(String),
   extendedLikesInfo: {
     likesCount: 0,

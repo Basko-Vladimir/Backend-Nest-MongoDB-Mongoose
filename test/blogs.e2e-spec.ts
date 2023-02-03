@@ -19,9 +19,11 @@ import {
 } from '../src/blogs/dto/blogs-output-models.dto';
 import {
   createBlogsRequest,
+  createPostByBlogIdRequest,
   deleteBlogRequest,
   getBlogRequest,
   getBlogsRequest,
+  getPostsByBlogIdRequest,
   updateBlogRequest,
 } from './utils';
 
@@ -38,13 +40,6 @@ describe('Blogs', () => {
     app = moduleRef.createNestApplication();
     await app.init();
   });
-
-  const createPostByBlogIdRequest = (blogId: string) => {
-    return request(app.getHttpServer()).post(`/blogs/${blogId}/posts`);
-  };
-  const getPostsByBlogIdRequest = (blogId: string) => {
-    return request(app.getHttpServer()).get(`/blogs/${blogId}/posts`);
-  };
 
   it('/DELETE ALL clear all database', async () => {
     const response1 = await request(app.getHttpServer()).delete(
@@ -164,13 +159,17 @@ describe('Blogs', () => {
   });
 
   it('CREATE POST create post for blog by invalid blogId', async () => {
-    const response = await createPostByBlogIdRequest(INVALID_ID).send(posts[0]);
+    const response = await createPostByBlogIdRequest(app, INVALID_ID).send(
+      posts[0],
+    );
     expect(response.status).toBe(404);
     expect(response.body).toEqual(notFoundException);
   });
 
   it('CREATE POST create post for blog by valid blogId', async () => {
-    const response = await createPostByBlogIdRequest(blog1.id).send(posts[0]);
+    const response = await createPostByBlogIdRequest(app, blog1.id).send(
+      posts[0],
+    );
     const targetPost = getCreatedPostItem(posts[0], blog1);
     expect(response.status).toBe(201);
     expect(response.body).toEqual(targetPost);
@@ -178,13 +177,13 @@ describe('Blogs', () => {
   });
 
   it('GET POSTS gets posts by invalid blogId', async () => {
-    const response = await getPostsByBlogIdRequest(INVALID_ID);
+    const response = await getPostsByBlogIdRequest(app, INVALID_ID);
     expect(response.status).toBe(404);
     expect(response.body).toEqual(notFoundException);
   });
 
   it('GET POSTS gets posts by valid blogId', async () => {
-    const response = await getPostsByBlogIdRequest(blog1.id);
+    const response = await getPostsByBlogIdRequest(app, blog1.id);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       page: 1,

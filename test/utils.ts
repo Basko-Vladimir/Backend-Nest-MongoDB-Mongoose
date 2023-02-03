@@ -23,21 +23,33 @@ export const deleteBlogRequest = (app: INestApplication, id: string): Test =>
   request(app.getHttpServer()).delete(`/blogs/${id}`);
 export const updateBlogRequest = (app: INestApplication, id: string): Test =>
   request(app.getHttpServer()).put(`/blogs/${id}`);
+export const createPostByBlogIdRequest = (
+  app: INestApplication,
+  blogId: string,
+): Test => {
+  return request(app.getHttpServer()).post(`/blogs/${blogId}/posts`);
+};
+export const getPostsByBlogIdRequest = (
+  app: INestApplication,
+  blogId: string,
+): Test => {
+  return request(app.getHttpServer()).get(`/blogs/${blogId}/posts`);
+};
 
 //Posts requests
 export const getPostsRequest = (app: INestApplication): Test =>
   request(app.getHttpServer()).get('/posts');
 export const getPostRequest = (app: INestApplication, id: string): Test =>
-  request(app.getHttpServer()).get(`$/post/${id}`);
+  request(app.getHttpServer()).get(`/posts/${id}`);
 export const createPostRequest = (app: INestApplication): Test =>
   request(app.getHttpServer()).post('/posts');
 export const deletePostRequest = (app: INestApplication, id: string): Test =>
-  request(app.getHttpServer()).delete(`$/post/${id}`);
+  request(app.getHttpServer()).delete(`/posts/${id}`);
 export const updatePostRequest = (app: INestApplication, id: string): Test =>
-  request(app.getHttpServer()).put(`$/post/${id}`);
+  request(app.getHttpServer()).put(`/posts/${id}`);
 
 //Comments requests
 export const getCommentsByPostIdRequest = (
   app: INestApplication,
   postId: string,
-): Test => request(app.getHttpServer()).get(`$/post/${postId}/comments`);
+): Test => request(app.getHttpServer()).get(`/post/${postId}/comments`);
