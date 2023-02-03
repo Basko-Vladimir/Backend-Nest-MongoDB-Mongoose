@@ -1,6 +1,10 @@
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { CreateBlogDto } from '../src/blogs/dto/create-blog.dto';
 import { UpdateBlogDto } from '../src/blogs/dto/update-blog.dto';
+import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
+import { LikeStatus } from '../src/common/enums';
+import { CreatePostDto } from '../src/posts/dto/create-post.dto';
+import { IBlogOutputModel } from '../src/blogs/dto/blogs-output-models.dto';
 
 interface Exception {
   statusCode: number;
@@ -50,6 +54,43 @@ export const updatedBlogData: UpdateBlogDto = {
   description: 'New description for blog Blog2',
   websiteUrl: 'https://new-site.io',
 };
+
+export const posts = [
+  {
+    title: 'Post1',
+    shortDescription: 'short description of Post1',
+    content: 'Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1',
+  },
+  {
+    title: 'Post2',
+    shortDescription: 'short description of Post2',
+    content: 'Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2',
+  },
+  {
+    title: 'Post3',
+    shortDescription: 'short description of Post3',
+    content: 'Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3',
+  },
+];
+
+export const getCreatedPostItem = (
+  createPostDto: Omit<CreatePostDto, 'blogId'>,
+  currentBlog: IBlogOutputModel,
+): IFullPostOutputModel => ({
+  id: expect.any(String),
+  blogId: currentBlog.id,
+  blogName: currentBlog.name,
+  content: posts[0].content,
+  title: posts[0].title,
+  shortDescription: posts[0].shortDescription,
+  createdAt: expect.any(String),
+  extendedLikesInfo: {
+    likesCount: 0,
+    dislikesCount: 0,
+    myStatus: LikeStatus.NONE,
+    newestLikes: [],
+  },
+});
 
 export const notFoundException: Exception = {
   statusCode: 404,

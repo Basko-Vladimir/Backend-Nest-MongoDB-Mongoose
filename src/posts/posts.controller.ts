@@ -14,7 +14,7 @@ import { PostsService } from './posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { FullPostOutputModel } from './dto/posts-output-models.dto';
+import { IFullPostOutputModel } from './dto/posts-output-models.dto';
 import {
   getFullPostOutputModel,
   mapDbPostToPostOutputModel,
@@ -83,14 +83,14 @@ export class PostsController {
   @Get(':id')
   async findPostById(
     @Param('id') postId: string,
-  ): Promise<FullPostOutputModel> {
+  ): Promise<IFullPostOutputModel> {
     const targetPost = await this.postsService.findPostById(postId);
     const postOutputModel = mapDbPostToPostOutputModel(targetPost);
     return getFullPostOutputModel(postOutputModel, this.likesService);
   }
 
   @Post()
-  async createPost(@Body() body: CreatePostDto): Promise<FullPostOutputModel> {
+  async createPost(@Body() body: CreatePostDto): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost(body);
     const postOutputModel = mapDbPostToPostOutputModel(createdPost);
     return getFullPostOutputModel(postOutputModel, this.likesService);

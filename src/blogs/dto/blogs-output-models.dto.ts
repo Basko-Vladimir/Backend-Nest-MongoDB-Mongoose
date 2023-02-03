@@ -1,5 +1,5 @@
 import { AllEntitiesOutputModel } from '../../common/types';
-import { PostOutputModel } from '../../posts/dto/posts-output-models.dto';
+import { IPostOutputModel } from '../../posts/dto/posts-output-models.dto';
 
 export interface IBlogOutputModel {
   id: string;
@@ -11,4 +11,4 @@ export interface IBlogOutputModel {
 
 export type AllBlogsOutputModel = AllEntitiesOutputModel<IBlogOutputModel>;
 export type BlogAllFullPostsOutputModel =
-  AllEntitiesOutputModel<PostOutputModel>;
+  AllEntitiesOutputModel<IPostOutputModel>;

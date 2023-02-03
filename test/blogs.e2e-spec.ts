@@ -5,18 +5,22 @@ import {
   blogs,
   defaultGetAllResponse,
   getAllItemsWithPage2Size1,
+  getCreatedPostItem,
   INVALID_ID,
   notFoundException,
+  posts,
   updatedBlogData,
 } from './mockData';
 import {
   AllBlogsOutputModel,
+  BlogAllFullPostsOutputModel,
   IBlogOutputModel,
 } from '../src/blogs/dto/blogs-output-models.dto';
 
 describe('Blogs', () => {
   let app;
   let blog1, blog2, blog3;
+  let post1;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -37,6 +41,13 @@ describe('Blogs', () => {
   };
   const deleteBlogRequest = (id: string) => {
     return request(app.getHttpServer()).delete(`/blogs/${id}`);
+  };
+
+  const createPostByBlogId = (blogId: string) => {
+    return request(app.getHttpServer()).post(`/blogs/${blogId}/posts`);
+  };
+  const getPostsByBlogId = (blogId: string) => {
+    return request(app.getHttpServer()).get(`/blogs/${blogId}/posts`);
   };
 
   it('/DELETE ALL clear all database', async () => {
@@ -152,6 +163,38 @@ describe('Blogs', () => {
     const response3 = await getBlogsRequest();
     expect(response3.body.items).toHaveLength(2);
     expect(response3.body.items).not.toContainEqual(blog3);
+  });
+
+  it('CREATE POST create post for blog by invalid blogId', async () => {
+    const response = await createPostByBlogId(INVALID_ID).send(posts[0]);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(notFoundException);
+  });
+
+  it('CREATE POST create post for blog by valid blogId', async () => {
+    const response = await createPostByBlogId(blog1.id).send(posts[0]);
+    const targetPost = getCreatedPostItem(posts[0], blog1);
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(targetPost);
+    post1 = response.body;
+  });
+
+  it('GET POSTS gets posts by invalid blogId', async () => {
+    const response = await getPostsByBlogId(INVALID_ID);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(notFoundException);
+  });
+
+  it('GET POSTS gets posts by valid blogId', async () => {
+    const response = await getPostsByBlogId(blog1.id);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      page: 1,
+      pageSize: 10,
+      pagesCount: 1,
+      totalCount: 1,
+      items: [post1],
+    } as BlogAllFullPostsOutputModel);
   });
 
   afterAll(async () => {
