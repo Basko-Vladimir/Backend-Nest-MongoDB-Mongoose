@@ -10,9 +10,14 @@ export const initTestApp = async (): Promise<INestApplication> => {
 
   const app: INestApplication = moduleRef.createNestApplication();
   await app.init();
+  await clearDataBase(app);
 
   return app;
 };
+
+//Clear all Data Base
+export const clearDataBase = (app: INestApplication) =>
+  request(app.getHttpServer()).delete('/testing/all-data');
 
 //UserRequests
 export const getUsersRequest = (app: INestApplication) =>

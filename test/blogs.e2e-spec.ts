@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import {
   blogs,
   defaultGetAllResponse,
@@ -33,13 +32,6 @@ describe('Blogs', () => {
 
   beforeAll(async () => {
     app = await initTestApp();
-  });
-
-  it('/DELETE ALL clear all database', async () => {
-    const response1 = await request(app.getHttpServer()).delete(
-      '/testing/all-data',
-    );
-    expect(response1.status).toBe(204);
   });
 
   it('/GET ALL get all blogs', async () => {

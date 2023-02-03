@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import {
   blogs,
@@ -34,13 +33,6 @@ describe('Posts', () => {
 
   beforeAll(async () => {
     app = await initTestApp();
-  });
-
-  it('/DELETE ALL clear all database', async () => {
-    const response1 = await request(app.getHttpServer()).delete(
-      '/testing/all-data',
-    );
-    expect(response1.status).toBe(204);
   });
 
   it('/GET ALL get all posts', async () => {

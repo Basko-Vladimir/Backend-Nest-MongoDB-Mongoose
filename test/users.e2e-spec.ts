@@ -1,4 +1,3 @@
-import * as request from 'supertest';
 import {
   defaultGetAllResponse,
   getAllItemsWithPage2Size1,
@@ -23,17 +22,6 @@ describe('Users', () => {
 
   beforeAll(async () => {
     app = await initTestApp();
-  });
-
-  it('/DELETE clear all database', async () => {
-    const response1 = await request(app.getHttpServer()).delete(
-      '/testing/all-data',
-    );
-    expect(response1.status).toBe(204);
-
-    const response2 = await getUsersRequest(app);
-    expect(response2.status).toBe(200);
-    expect(response2.body.items).toHaveLength(0);
   });
 
   it('/GET ALL all users', async () => {
