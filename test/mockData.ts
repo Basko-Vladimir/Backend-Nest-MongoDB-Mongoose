@@ -46,8 +46,8 @@ export const blogs: CreateBlogDto[] = [
 ];
 
 export const updatedBlogData: UpdateBlogDto = {
-  name: 'Updated Blog',
-  description: 'New description',
+  name: 'Updated Blog2',
+  description: 'New description for blog Blog2',
   websiteUrl: 'https://new-site.io',
 };
 
