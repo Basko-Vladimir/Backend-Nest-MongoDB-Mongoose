@@ -49,13 +49,23 @@ export const blogs: CreateBlogDto[] = [
   },
 ];
 
+export const getCreatedBlogItem = (
+  createBlogDto: CreateBlogDto,
+): IBlogOutputModel => ({
+  id: expect.any(String),
+  name: createBlogDto.name,
+  description: createBlogDto.description,
+  websiteUrl: createBlogDto.websiteUrl,
+  createdAt: expect.any(String),
+});
+
 export const updatedBlogData: UpdateBlogDto = {
   name: 'Updated Blog2',
   description: 'New description for blog Blog2',
   websiteUrl: 'https://new-site.io',
 };
 
-export const posts = [
+export const posts: Omit<CreatePostDto, 'blogId'>[] = [
   {
     title: 'Post1',
     shortDescription: 'short description of Post1',
