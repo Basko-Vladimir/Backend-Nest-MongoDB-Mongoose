@@ -5,6 +5,7 @@ import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/dto/create-post.dto';
 import { IBlogOutputModel } from '../src/blogs/dto/blogs-output-models.dto';
+import { UpdatePostDto } from '../src/posts/dto/update-post.dto';
 
 interface Exception {
   statusCode: number;
@@ -60,8 +61,8 @@ export const getCreatedBlogItem = (
 });
 
 export const updatedBlogData: UpdateBlogDto = {
-  name: 'Updated Blog2',
-  description: 'New description for blog Blog2',
+  name: 'Updated Blog',
+  description: 'New description for blog Blog',
   websiteUrl: 'https://new-site.io',
 };
 
@@ -101,6 +102,12 @@ export const getCreatedPostItem = (
     newestLikes: [],
   },
 });
+
+export const updatedPostData: Omit<UpdatePostDto, 'blogId'> = {
+  title: 'Post is UPDATED',
+  content: 'New UPDATED content for blog Post',
+  shortDescription: 'UPDATED short description',
+};
 
 export const notFoundException: Exception = {
   statusCode: 404,

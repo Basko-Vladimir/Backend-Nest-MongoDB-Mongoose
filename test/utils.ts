@@ -52,4 +52,4 @@ export const updatePostRequest = (app: INestApplication, id: string): Test =>
 export const getCommentsByPostIdRequest = (
   app: INestApplication,
   postId: string,
-): Test => request(app.getHttpServer()).get(`/post/${postId}/comments`);
+): Test => request(app.getHttpServer()).get(`/posts/${postId}/comments`);

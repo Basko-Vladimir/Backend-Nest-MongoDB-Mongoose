@@ -111,8 +111,7 @@ describe('Blogs', () => {
   it('/GET ONE get one blog by id', async () => {
     const response = await getBlogRequest(app, blog2.id);
     expect(response.status).toBe(200);
-    expect(response.body.id).toBe(blog2.id);
-    expect(response.body.name).toBe(blog2.name);
+    expect(response.body).toEqual(blog2);
   });
 
   it('/UPDATE ONE update blog by invalid id', async () => {

@@ -11,13 +11,17 @@ import {
   INVALID_ID,
   notFoundException,
   posts,
+  updatedPostData,
 } from './mockData';
 import {
   createBlogsRequest,
   createPostRequest,
+  deletePostRequest,
   getBlogsRequest,
+  getCommentsByPostIdRequest,
   getPostRequest,
   getPostsRequest,
+  updatePostRequest,
 } from './utils';
 import {
   AllPostsOutputModel,
@@ -28,7 +32,6 @@ describe('Posts', () => {
   let app: INestApplication;
   let post1, post2, post3;
   let blog1, blog2;
-  let comment1;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -113,6 +116,55 @@ describe('Posts', () => {
     const response = await getPostRequest(app, post2.id);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(post2);
+  });
+
+  it('/UPDATE ONE update post by invalid id', async () => {
+    const response = await updatePostRequest(app, INVALID_ID).send(
+      updatedPostData,
+    );
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(notFoundException);
+  });
+
+  it('/UPDATE ONE update post by valid id', async () => {
+    const response1 = await updatePostRequest(app, post2.id).send({
+      ...updatedPostData,
+      blogId: blog1.id,
+    });
+    expect(response1.status).toBe(204);
+
+    const response2 = await getPostRequest(app, post2.id);
+    expect(response2.body).toEqual({
+      ...post2,
+      ...updatedPostData,
+    });
+  });
+
+  it('/DELETE ONE delete post by invalid id', async () => {
+    const response = await deletePostRequest(app, INVALID_ID);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(notFoundException);
+  });
+
+  it('/DELETE ONE delete post by valid id', async () => {
+    const response = await deletePostRequest(app, post1.id);
+    expect(response.status).toBe(204);
+
+    const response2 = await deletePostRequest(app, post1.id);
+    expect(response2.status).toBe(404);
+    expect(response2.body).toEqual(notFoundException);
+  });
+
+  it('GET ALL get comments for post by invalid postId', async () => {
+    const response = await getCommentsByPostIdRequest(app, INVALID_ID);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(notFoundException);
+  });
+
+  it('GET All get comments for post by valid postId', async () => {
+    const response = await getCommentsByPostIdRequest(app, post2.id);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(defaultGetAllResponse);
   });
 
   afterAll(async () => {
