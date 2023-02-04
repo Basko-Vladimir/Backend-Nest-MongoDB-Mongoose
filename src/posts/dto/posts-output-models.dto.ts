@@ -1,7 +1,7 @@
 import { AllEntitiesOutputModel } from '../../common/types';
 import { ExtendedLikesInfoOutputModel } from '../../likes/dto/likes-output-models.dto';
 
-export interface PostOutputModel {
+export interface IPostOutputModel {
   id: string;
   title: string;
   shortDescription: string;
@@ -11,8 +11,8 @@ export interface PostOutputModel {
   createdAt: string;
 }
 
-export interface FullPostOutputModel extends PostOutputModel {
+export interface IFullPostOutputModel extends IPostOutputModel {
   extendedLikesInfo: ExtendedLikesInfoOutputModel;
 }
 
-export type AllPostsOutputModel = AllEntitiesOutputModel<PostOutputModel>;
+export type AllPostsOutputModel = AllEntitiesOutputModel<IPostOutputModel>;

@@ -21,7 +21,7 @@ import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
-import { FullPostOutputModel } from '../posts/dto/posts-output-models.dto';
+import { IFullPostOutputModel } from '../posts/dto/posts-output-models.dto';
 import { PostsService } from '../posts/posts.service';
 import {
   getFullPostOutputModel,
@@ -105,7 +105,7 @@ export class BlogsController {
   async createPostForBlog(
     @Param('id') blogId: string,
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
-  ): Promise<FullPostOutputModel> {
+  ): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost({
       ...creatingData,
       blogId,

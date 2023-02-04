@@ -1,8 +1,11 @@
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { CreateBlogDto } from '../src/blogs/dto/create-blog.dto';
 import { UpdateBlogDto } from '../src/blogs/dto/update-blog.dto';
-import { IQueryParams } from '../src/common/types';
-import { SortDirection } from '../src/common/enums';
+import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
+import { LikeStatus } from '../src/common/enums';
+import { CreatePostDto } from '../src/posts/dto/create-post.dto';
+import { IBlogOutputModel } from '../src/blogs/dto/blogs-output-models.dto';
+import { UpdatePostDto } from '../src/posts/dto/update-post.dto';
 
 interface Exception {
   statusCode: number;
@@ -47,10 +50,63 @@ export const blogs: CreateBlogDto[] = [
   },
 ];
 
+export const getCreatedBlogItem = (
+  createBlogDto: CreateBlogDto,
+): IBlogOutputModel => ({
+  id: expect.any(String),
+  name: createBlogDto.name,
+  description: createBlogDto.description,
+  websiteUrl: createBlogDto.websiteUrl,
+  createdAt: expect.any(String),
+});
+
 export const updatedBlogData: UpdateBlogDto = {
   name: 'Updated Blog',
-  description: 'New description',
+  description: 'New description for blog Blog',
   websiteUrl: 'https://new-site.io',
+};
+
+export const posts: Omit<CreatePostDto, 'blogId'>[] = [
+  {
+    title: 'Post1',
+    shortDescription: 'short description of Post1',
+    content: 'Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1',
+  },
+  {
+    title: 'Post2',
+    shortDescription: 'short description of Post2',
+    content: 'Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2',
+  },
+  {
+    title: 'Post3',
+    shortDescription: 'short description of Post3',
+    content: 'Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3',
+  },
+];
+
+export const getCreatedPostItem = (
+  createPostDto: Omit<CreatePostDto, 'blogId'>,
+  currentBlog: IBlogOutputModel,
+): IFullPostOutputModel => ({
+  id: expect.any(String),
+  blogId: currentBlog.id,
+  blogName: currentBlog.name,
+  content: createPostDto.content,
+  title: createPostDto.title,
+  shortDescription: createPostDto.shortDescription,
+  createdAt: expect.any(String),
+  extendedLikesInfo: {
+    likesCount: 0,
+    dislikesCount: 0,
+    myStatus: LikeStatus.NONE,
+    newestLikes: [],
+  },
+});
+
+export const updatedPostData: Omit<UpdatePostDto, 'blogId'> = {
+  title: 'Post is UPDATED',
+  content: 'New UPDATED content for blog Post',
+  shortDescription: 'UPDATED short description',
 };
 
 export const notFoundException: Exception = {
@@ -58,9 +114,20 @@ export const notFoundException: Exception = {
   message: 'Not Found',
 };
 
-export const defaultPaginationResult: IQueryParams = {
-  sortDirection: SortDirection.desc,
+export const defaultGetAllResponse = {
+  page: 1,
   pageSize: 10,
-  pageNumber: 1,
-  sortBy: SortDirection.desc,
+  pagesCount: 0,
+  totalCount: 0,
+  items: [],
+};
+
+export const getAllItemsWithPage2Size1 = <I, O>(matchedItem: I): O => {
+  return {
+    page: 2,
+    pageSize: 1,
+    pagesCount: 3,
+    totalCount: 3,
+    items: [matchedItem as I],
+  } as O;
 };
