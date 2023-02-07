@@ -4,7 +4,7 @@ export interface IUserOutputModel {
   id: string;
   login: string;
   email: string;
-  createdAt?: string;
+  createdAt: string;
 }
 
 export type AllUsersOutputModel = AllEntitiesOutputModel<IUserOutputModel>;

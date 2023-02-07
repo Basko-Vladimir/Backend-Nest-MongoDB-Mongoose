@@ -16,6 +16,7 @@ import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from './dto/users-output-models.dto';
+import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -39,7 +40,9 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteUser(@Param('id') userId: string): Promise<void> {
+  async deleteUser(
+    @Param('id', ParseObjectIdPipe) userId: string,
+  ): Promise<void> {
     await this.usersService.deleteUser(userId);
   }
 }
