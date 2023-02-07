@@ -14,8 +14,7 @@ export interface AllEntitiesOutputModel<T> {
   items: T[];
 }
 
-export interface IQueryParams {
-  sortBy: string;
+export interface ICommonQueryParams {
   sortDirection: SortDirection;
   pageNumber: number;
   pageSize: number;

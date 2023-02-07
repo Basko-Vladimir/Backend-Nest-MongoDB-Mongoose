@@ -1,7 +1,7 @@
 import { SortDirection, UserSortByField } from '../../common/enums';
-import { IQueryParams } from '../../common/types';
+import { ICommonQueryParams } from '../../common/types';
 
-export class UsersQueryParamsDto implements IQueryParams {
+export class UsersQueryParamsDto implements ICommonQueryParams {
   sortBy: UserSortByField;
   sortDirection: SortDirection;
   pageNumber: number;
