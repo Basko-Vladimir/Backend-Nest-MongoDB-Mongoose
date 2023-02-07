@@ -25,6 +25,7 @@ import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dto';
 import { AllCommentsOutputModel } from '../comments/dto/comments-output-models.dto';
 import { getFullCommentOutputModel } from '../comments/mappers/comments-mapper';
+import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 
 @Controller('posts')
 export class PostsController {
@@ -54,7 +55,7 @@ export class PostsController {
 
   @Get(':id/comments')
   async getCommentsForPost(
-    @Param('id') postId: string,
+    @Param('id', ParseObjectIdPipe) postId: string,
     @Query() queryParams: CommentsQueryParamsDto,
   ): Promise<AllCommentsOutputModel> {
     const targetPost = await this.postsService.findPostById(postId);
@@ -82,7 +83,7 @@ export class PostsController {
 
   @Get(':id')
   async findPostById(
-    @Param('id') postId: string,
+    @Param('id', ParseObjectIdPipe) postId: string,
   ): Promise<IFullPostOutputModel> {
     const targetPost = await this.postsService.findPostById(postId);
     const postOutputModel = mapDbPostToPostOutputModel(targetPost);
@@ -98,14 +99,16 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deletePost(@Param('id') postId: string): Promise<void> {
+  async deletePost(
+    @Param('id', ParseObjectIdPipe) postId: string,
+  ): Promise<void> {
     return this.postsService.deletePost(postId);
   }
 
   @Put(':id')
   @HttpCode(204)
   async updatePost(
-    @Param('id') postId: string,
+    @Param('id', ParseObjectIdPipe) postId: string,
     @Body() body: UpdatePostDto,
   ): Promise<void> {
     return this.postsService.updatePost(postId, body);

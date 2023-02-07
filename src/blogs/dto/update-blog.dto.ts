@@ -16,7 +16,6 @@ const {
 
 export class UpdateBlogDto {
   @IsString()
-  @IsNotEmpty()
   @Length(MIN_STRINGS_LENGTH, MAX_NAME_LENGTH)
   readonly name: string;
 
@@ -28,7 +27,6 @@ export class UpdateBlogDto {
   readonly websiteUrl: string;
 
   @IsString()
-  @IsNotEmpty()
   @Length(MIN_STRINGS_LENGTH, MAX_DESCRIPTION_LENGTH)
   readonly description: string;
 }
