@@ -7,6 +7,7 @@ import {
   Get,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,12 +18,14 @@ import {
   IUserOutputModel,
 } from './dto/users-output-models.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(protected usersService: UsersService) {}
 
   @Get()
+  @UseGuards(AuthGuard)
   async findAllUsers(
     @Query() query: UsersQueryParamsDto,
   ): Promise<AllUsersOutputModel> {
@@ -30,6 +33,7 @@ export class UsersController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<IUserOutputModel> {
@@ -40,6 +44,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async deleteUser(
     @Param('id', ParseObjectIdPipe) userId: string,
   ): Promise<void> {

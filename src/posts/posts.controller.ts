@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
@@ -26,6 +27,7 @@ import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dt
 import { AllCommentsOutputModel } from '../comments/dto/comments-output-models.dto';
 import { getFullCommentOutputModel } from '../comments/mappers/comments-mapper';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -91,6 +93,7 @@ export class PostsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async createPost(@Body() body: CreatePostDto): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost(body);
     const postOutputModel = mapDbPostToPostOutputModel(createdPost);
@@ -99,6 +102,7 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async deletePost(
     @Param('id', ParseObjectIdPipe) postId: string,
   ): Promise<void> {
@@ -107,6 +111,7 @@ export class PostsController {
 
   @Put(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async updatePost(
     @Param('id', ParseObjectIdPipe) postId: string,
     @Body() body: UpdatePostDto,

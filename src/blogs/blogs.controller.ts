@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
@@ -30,6 +31,7 @@ import {
 import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -55,6 +57,7 @@ export class BlogsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async createBlog(
     @Body() creatingData: CreateBlogDto,
   ): Promise<IBlogOutputModel> {
@@ -65,6 +68,7 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async deleteBlog(
     @Param('id', ParseObjectIdPipe) blogId: string,
   ): Promise<void> {
@@ -73,6 +77,7 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async updateBlog(
     @Param('id', ParseObjectIdPipe) blogId: string,
     @Body() updatingData: UpdateBlogDto,
@@ -107,6 +112,7 @@ export class BlogsController {
   }
 
   @Post(':id/posts')
+  @UseGuards(AuthGuard)
   async createPostForBlog(
     @Param('id', ParseObjectIdPipe) blogId: string,
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
