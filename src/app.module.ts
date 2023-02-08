@@ -22,6 +22,7 @@ import { LikesRepository } from './likes/likes.repository';
 import { CommentsController } from './comments/comments.controller';
 import { CommentsService } from './comments/comments.service';
 import { CommentsRepository } from './comments/comments.repository';
+import { JwtService } from './auth/jwt.service';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { CommentsRepository } from './comments/comments.repository';
     LikesRepository,
     CommentsService,
     CommentsRepository,
+    JwtService,
   ],
 })
 export class AppModule {}

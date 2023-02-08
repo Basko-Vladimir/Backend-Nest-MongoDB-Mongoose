@@ -19,6 +19,10 @@ export class UsersService {
     return this.usersRepository.findAllUsers(queryParams);
   }
 
+  async findUserById(userId: string): Promise<UserDocument> {
+    return this.usersRepository.findUserById(userId);
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
     const createdUser = this.UserModel.createUserEntity(
       createUserDto,

@@ -49,6 +49,14 @@ export class UsersRepository {
     };
   }
 
+  async findUserById(userId: string): Promise<UserDocument> {
+    const targetUser = await this.UserModel.findById(userId);
+
+    if (!targetUser) throw new NotFoundException();
+
+    return targetUser;
+  }
+
   async saveUser(user: UserDocument): Promise<UserDocument> {
     return user.save();
   }
