@@ -19,3 +19,8 @@ export interface ICommonQueryParams {
   pageNumber: number;
   pageSize: number;
 }
+
+export interface IErrorOutputModel {
+  message: string;
+  field: string;
+}

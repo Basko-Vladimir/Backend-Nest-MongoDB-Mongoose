@@ -1,18 +1,14 @@
 import {
   IsNotEmpty,
   IsString,
+  IsUrl,
   Length,
-  Matches,
   MaxLength,
 } from 'class-validator';
 import { blogsConstants, MIN_STRINGS_LENGTH } from '../../common/constants';
 
-const {
-  MAX_NAME_LENGTH,
-  MAX_WEBSITE_URL_LENGTH,
-  MAX_DESCRIPTION_LENGTH,
-  WEBSITE_URL_REG_EXP,
-} = blogsConstants;
+const { MAX_NAME_LENGTH, MAX_WEBSITE_URL_LENGTH, MAX_DESCRIPTION_LENGTH } =
+  blogsConstants;
 
 export class CreateBlogDto {
   @IsString()
@@ -21,8 +17,7 @@ export class CreateBlogDto {
 
   @IsString()
   @IsNotEmpty()
-  // @IsUrl() // We also can use it instead @Matches
-  @Matches(WEBSITE_URL_REG_EXP)
+  @IsUrl()
   @MaxLength(MAX_WEBSITE_URL_LENGTH)
   readonly websiteUrl: string;
 
