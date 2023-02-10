@@ -11,6 +11,8 @@ export const authErrorsMessages = {
   INVALID_TOKEN: 'Invalid token!',
 };
 
+export const INTERNAL_SERVER_ERROR = 'Something went wrong...';
+
 const makeCapitalizeString = (value: string): string => {
   return value[0].toUpperCase() + value.slice(1);
 };
