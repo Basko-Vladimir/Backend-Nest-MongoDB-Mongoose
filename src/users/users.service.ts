@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from './schemas/userSchema';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { AllUsersOutputModel } from './dto/users-output-models.dto';
+import { validateOrRejectInputDto } from '../common/utils';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
+    await validateOrRejectInputDto(createUserDto, CreateUserDto);
     const createdUser = this.UserModel.createUserEntity(
       createUserDto,
       this.UserModel,
