@@ -13,7 +13,7 @@ export class CreateUserDto {
   @IsString()
   @Length(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH)
   @Matches(LOGIN_REG_EXP)
-  readonly login: string;
+  readonly login: number;
 
   @IsString()
   @Length(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)

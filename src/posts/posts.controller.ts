@@ -36,7 +36,7 @@ import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { AuthGuard } from '../guards/auth.guard';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../decorators/user.decorator';
-import { UserDocument } from '../users/schemas/userSchema';
+import { UserDocument } from '../users/schemas/user.schema';
 
 @Controller('posts')
 export class PostsController {

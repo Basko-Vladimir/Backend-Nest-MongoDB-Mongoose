@@ -24,3 +24,10 @@ export interface IErrorOutputModel {
   message: string;
   field: string;
 }
+
+export interface EmailInfoModel {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}

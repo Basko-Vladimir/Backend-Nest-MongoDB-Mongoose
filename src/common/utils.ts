@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { DbSortDirection, SortDirection } from './enums';
 import { SortSetting } from './types';
 import { validateOrReject } from 'class-validator';
+import { BadRequestException } from '@nestjs/common';
 
 export const getFilterByDbId = (id: string): { _id: Types.ObjectId } => ({
   _id: new Types.ObjectId(id),
@@ -39,4 +40,22 @@ export const validateOrRejectInputDto = async (
   } catch (error) {
     throw new Error(error);
   }
+};
+
+export const makeCapitalizeString = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const generateExistingFieldError = (
+  entity: string,
+  field: string,
+): never => {
+  throw new BadRequestException([
+    {
+      message: `${makeCapitalizeString(
+        entity,
+      )} with such ${field} already exists`,
+      field,
+    },
+  ]);
 };
