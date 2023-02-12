@@ -1,10 +1,10 @@
+import { Request } from 'express';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { AuthType } from '../common/enums';
 import { JwtService } from '../auth/jwt.service';
 import { UsersService } from '../users/users.service';
@@ -48,6 +48,8 @@ export class AuthGuard implements CanActivate {
       if (!targetUser) {
         throw new UnauthorizedException();
       }
+
+      request.context = { user: targetUser };
     }
 
     return true;

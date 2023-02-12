@@ -53,4 +53,8 @@ export class CommentsRepository {
 
     return targetComment;
   }
+
+  async saveComment(comment: CommentDocument): Promise<CommentDocument> {
+    return comment.save();
+  }
 }

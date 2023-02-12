@@ -26,6 +26,7 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
     await validateOrRejectInputDto(createUserDto, CreateUserDto);
+
     const createdUser = this.UserModel.createUserEntity(
       createUserDto,
       this.UserModel,

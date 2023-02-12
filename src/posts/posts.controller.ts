@@ -24,10 +24,19 @@ import { LikesService } from '../likes/likes.service';
 import { BlogAllFullPostsOutputModel } from '../blogs/dto/blogs-output-models.dto';
 import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dto';
-import { AllCommentsOutputModel } from '../comments/dto/comments-output-models.dto';
-import { getFullCommentOutputModel } from '../comments/mappers/comments-mapper';
+import {
+  AllCommentsOutputModel,
+  FullCommentOutputModel,
+} from '../comments/dto/comments-output-models.dto';
+import {
+  getFullCommentOutputModel,
+  mapDbCommentToCommentOutputModel,
+} from '../comments/mappers/comments-mapper';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { AuthGuard } from '../guards/auth.guard';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { User } from '../decorators/user.decorator';
+import { UserDocument } from '../users/schemas/userSchema';
 
 @Controller('posts')
 export class PostsController {
@@ -55,9 +64,9 @@ export class PostsController {
     };
   }
 
-  @Get(':id/comments')
+  @Get(':postId/comments')
   async getCommentsForPost(
-    @Param('id', ParseObjectIdPipe) postId: string,
+    @Param('postId', ParseObjectIdPipe) postId: string,
     @Query() queryParams: CommentsQueryParamsDto,
   ): Promise<AllCommentsOutputModel> {
     const targetPost = await this.postsService.findPostById(postId);
@@ -117,5 +126,23 @@ export class PostsController {
     @Body() body: UpdatePostDto,
   ): Promise<void> {
     return this.postsService.updatePost(postId, body);
+  }
+
+  @Post(':postId/comments')
+  @UseGuards(AuthGuard)
+  async createCommentForPost(
+    @Param('postId', ParseObjectIdPipe) postId: string,
+    @Body() body: Pick<CreateCommentDto, 'content'>,
+    @User() user: UserDocument,
+  ): Promise<FullCommentOutputModel> {
+    const createdComment = await this.commentsService.createComment({
+      postId,
+      content: body.content,
+      userId: user.id,
+      userLogin: user.login,
+    });
+    const commentOutputModel = mapDbCommentToCommentOutputModel(createdComment);
+
+    return getFullCommentOutputModel(commentOutputModel, this.likesService);
   }
 }

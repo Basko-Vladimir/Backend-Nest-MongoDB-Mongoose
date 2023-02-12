@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { commentsConstants } from '../../common/constants';
 import { generateLengthErrorMessage } from '../../common/error-messages';
+import { CreateCommentDto } from '../dto/create-comment.dto';
 
 @Schema({ timestamps: true })
 export class Comment {
@@ -52,10 +53,26 @@ export class Comment {
 
   @Prop()
   updatedAt: Date;
+
+  static createCommentEntity(
+    createCommentDto: CreateCommentDto,
+    CommentModel: CommentModelType,
+  ): CommentDocument {
+    return new CommentModel(createCommentDto);
+  }
 }
 
 export type CommentDocument = HydratedDocument<Comment>;
 
-export type CommentModelType = Model<Comment>;
+export interface ICommentStaticMethods {
+  createCommentEntity(
+    createCommentDto: CreateCommentDto,
+    CommentModel: CommentModelType,
+  ): CommentDocument;
+}
+
+export type CommentModelType = Model<Comment> & ICommentStaticMethods;
 
 export const commentSchema = SchemaFactory.createForClass(Comment);
+
+commentSchema.static('createCommentEntity', Comment.createCommentEntity);
