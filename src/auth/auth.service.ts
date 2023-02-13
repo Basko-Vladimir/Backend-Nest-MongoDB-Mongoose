@@ -31,7 +31,7 @@ export class AuthService {
     await validateOrRejectInputDto(createUserDto, CreateUserDto);
 
     const { password } = createUserDto;
-    const passwordHash = await this.generatePasswordHash(password);
+    const passwordHash = await AuthService.generatePasswordHash(password);
     const createdUser = await this.UserModel.createUserEntity(
       createUserDto,
       passwordHash,
@@ -113,7 +113,7 @@ export class AuthService {
     return isMatchedUser ? String(user._id) : null;
   }
 
-  private async generatePasswordHash(password: string): Promise<string> {
+  static async generatePasswordHash(password: string): Promise<string> {
     const passwordSalt = await bcrypt.genSalt(10);
 
     return bcrypt.hash(password, passwordSalt);
