@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelType } from './schemas/userSchema';
+import { User, UserDocument, UserModelType } from './schemas/user.schema';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
 import { AllUsersOutputModel } from './dto/users-output-models.dto';
 import { SortDirection, UserSortByField } from '../common/enums';
+import { UpdateOrFilterModel } from '../common/types';
 
 @Injectable()
 export class UsersRepository {
@@ -47,6 +48,24 @@ export class UsersRepository {
       totalCount,
       items: users.map(mapDbUserToUserOutputModel),
     };
+  }
+
+  async findUserById(userId: string): Promise<UserDocument> {
+    const targetUser = await this.UserModel.findById(userId);
+
+    if (!targetUser) throw new NotFoundException();
+
+    return targetUser;
+  }
+
+  async findUserByFilter(
+    userFilter: UpdateOrFilterModel,
+  ): Promise<UserDocument | null> {
+    const filter = Object.keys(userFilter).map((field) => ({
+      [field]: userFilter[field as keyof UserDocument],
+    }));
+
+    return this.UserModel.findOne({ $or: filter });
   }
 
   async saveUser(user: UserDocument): Promise<UserDocument> {

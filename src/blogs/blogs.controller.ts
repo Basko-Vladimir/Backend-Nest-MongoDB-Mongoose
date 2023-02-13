@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
@@ -29,6 +30,8 @@ import {
 } from '../posts/mappers/posts-mapper';
 import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
+import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -46,12 +49,15 @@ export class BlogsController {
   }
 
   @Get(':id')
-  async findBlogById(@Param('id') blogId: string): Promise<IBlogOutputModel> {
+  async findBlogById(
+    @Param('id', ParseObjectIdPipe) blogId: string,
+  ): Promise<IBlogOutputModel> {
     const targetBlog = await this.blogsService.findBlogById(blogId);
     return mapDbBlogToBlogOutputModel(targetBlog);
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async createBlog(
     @Body() creatingData: CreateBlogDto,
   ): Promise<IBlogOutputModel> {
@@ -62,14 +68,18 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteBlog(@Param('id') blogId: string): Promise<void> {
+  @UseGuards(AuthGuard)
+  async deleteBlog(
+    @Param('id', ParseObjectIdPipe) blogId: string,
+  ): Promise<void> {
     return this.blogsService.deleteBlog(blogId);
   }
 
   @Put(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async updateBlog(
-    @Param('id') blogId: string,
+    @Param('id', ParseObjectIdPipe) blogId: string,
     @Body() updatingData: UpdateBlogDto,
   ): Promise<void> {
     return this.blogsService.updateBlog(blogId, updatingData);
@@ -78,7 +88,7 @@ export class BlogsController {
   @Get(':id/posts')
   async findAllPostsByBlogId(
     @Query() queryParams: PostsQueryParamsDto,
-    @Param('id') blogId: string,
+    @Param('id', ParseObjectIdPipe) blogId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     const targetBlog = await this.findBlogById(blogId);
 
@@ -102,8 +112,9 @@ export class BlogsController {
   }
 
   @Post(':id/posts')
+  @UseGuards(AuthGuard)
   async createPostForBlog(
-    @Param('id') blogId: string,
+    @Param('id', ParseObjectIdPipe) blogId: string,
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
   ): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost({

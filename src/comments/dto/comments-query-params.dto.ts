@@ -1,9 +1,9 @@
-import { BlogSortByField, SortDirection } from '../../common/enums';
-import { IQueryParams } from '../../common/types';
+import { CommentSortByField } from '../../common/enums';
+import { CommonQueryParamsDto } from '../../common/common.dto';
+import { IsEnum, IsOptional } from 'class-validator';
 
-export class CommentsQueryParamsDto implements IQueryParams {
-  sortBy: BlogSortByField;
-  sortDirection: SortDirection;
-  pageNumber: number;
-  pageSize: number;
+export class CommentsQueryParamsDto extends CommonQueryParamsDto {
+  @IsEnum(CommentSortByField)
+  @IsOptional()
+  readonly sortBy: CommentSortByField = CommentSortByField.createdAt;
 }

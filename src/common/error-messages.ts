@@ -5,9 +5,18 @@ export const confirmationCodeErrorMessages = {
   INVALID_CONFIRMATION_CODE: 'Confirmation code is not valid!',
   EXISTED_CONFIRMATION_CODE: 'Confirmation code is confirmed already!',
 };
+
+export const authErrorsMessages = {
+  INCORRECT_LOGIN_OR_PASSWORD: 'Incorrect Login or Password!',
+  INVALID_TOKEN: 'Invalid token!',
+};
+
+export const INTERNAL_SERVER_ERROR = 'Something went wrong...';
+
 const makeCapitalizeString = (value: string): string => {
   return value[0].toUpperCase() + value.slice(1);
 };
+
 export const generateLengthErrorMessage = (
   fieldName: string,
   value: number,
@@ -28,6 +37,7 @@ export const generateLengthErrorMessage = (
       );
   }
 };
+
 export const generateLengthRangeErrorMessage = (
   fieldName: string,
   minValue: number,
@@ -37,6 +47,7 @@ export const generateLengthRangeErrorMessage = (
     fieldName,
   )} should be from ${minValue} to ${maxValue} chars`;
 };
+
 export const generateRegExpError = (
   fieldName: string,
   regExp: RegExp,
@@ -45,6 +56,7 @@ export const generateRegExpError = (
     fieldName,
   )} doesn't match to pattern ${regExp}`;
 };
+
 export const generateMissedPropError = (fieldName: string): string => {
   return `You didn't provide '${fieldName.toLowerCase()}' field`;
 };

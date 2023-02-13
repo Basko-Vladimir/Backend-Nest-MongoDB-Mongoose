@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AllBlogsOutputModel } from './dto/blogs-output-models.dto';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { validateOrRejectInputDto } from '../common/utils';
 
 @Injectable()
 export class BlogsService {
@@ -23,6 +24,8 @@ export class BlogsService {
   }
 
   async createBlog(createBlogDto: CreateBlogDto): Promise<BlogDocument> {
+    await validateOrRejectInputDto(createBlogDto, CreateBlogDto);
+
     const createdBlog = await this.BlogModel.createBlogEntity(
       createBlogDto,
       this.BlogModel,
@@ -42,6 +45,8 @@ export class BlogsService {
     const targetBlog = await this.findBlogById(blogId);
 
     if (!targetBlog) throw new NotFoundException();
+
+    await validateOrRejectInputDto(updateBlogDto, UpdateBlogDto);
 
     const updatedBlog = targetBlog.updateBlog(updateBlogDto, targetBlog);
     await this.blogsRepository.saveBlog(updatedBlog);

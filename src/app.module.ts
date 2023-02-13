@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User, userSchema } from './users/schemas/userSchema';
+import { User, userSchema } from './users/schemas/user.schema';
 import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { Post, postSchema } from './posts/schemas/post.schema';
 import { Like, likeSchema } from './likes/schemas/like.schema';
@@ -22,6 +22,11 @@ import { LikesRepository } from './likes/likes.repository';
 import { CommentsController } from './comments/comments.controller';
 import { CommentsService } from './comments/comments.service';
 import { CommentsRepository } from './comments/comments.repository';
+import { JwtService } from './auth/jwt.service';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
+import { EmailManager } from './managers/email.manager';
+import { EmailAdapter } from './adapters/email.adapter';
 
 @Module({
   imports: [
@@ -41,6 +46,7 @@ import { CommentsRepository } from './comments/comments.repository';
     BlogsController,
     PostsController,
     CommentsController,
+    AuthController,
   ],
   providers: [
     AppService,
@@ -54,6 +60,10 @@ import { CommentsRepository } from './comments/comments.repository';
     LikesRepository,
     CommentsService,
     CommentsRepository,
+    AuthService,
+    JwtService,
+    EmailManager,
+    EmailAdapter,
   ],
 })
 export class AppModule {}

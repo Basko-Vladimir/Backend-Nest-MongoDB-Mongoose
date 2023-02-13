@@ -2,6 +2,10 @@ export const DEFAULT_PAGE_NUMBER = 1;
 export const DEFAULT_PAGE_SIZE = 10;
 export const EMPTY_SEARCH_VALUE = '';
 export const MIN_STRINGS_LENGTH = 1;
+
+export const ACCESS_TOKEN_LIFE_TIME = '10m';
+export const REFRESH_TOKEN_LIFE_TIME = '1h';
+
 export const blogsConstants = {
   MAX_NAME_LENGTH: 15,
   MAX_DESCRIPTION_LENGTH: 500,
@@ -10,11 +14,13 @@ export const blogsConstants = {
   ),
   MAX_WEBSITE_URL_LENGTH: 100,
 };
+
 export const postsConstants = {
   MAX_TITLE_LENGTH: 30,
   MAX_SHORT_DESCRIPTION_LENGTH: 100,
   MAX_CONTENT_LENGTH: 1000,
 };
+
 export const usersConstants = {
   MIN_LOGIN_LENGTH: 3,
   MAX_LOGIN_LENGTH: 10,
@@ -23,6 +29,7 @@ export const usersConstants = {
   MAX_PASSWORD_LENGTH: 20,
   EMAIL_REG_EXP: new RegExp('^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$'),
 };
+
 export const commentsConstants = {
   MIN_CONTENT_LENGTH: 20,
   MAX_CONTENT_LENGTH: 300,

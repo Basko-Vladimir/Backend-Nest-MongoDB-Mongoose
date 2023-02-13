@@ -14,9 +14,25 @@ export interface AllEntitiesOutputModel<T> {
   items: T[];
 }
 
-export interface IQueryParams {
-  sortBy: string;
+export interface ICommonQueryParams {
   sortDirection: SortDirection;
   pageNumber: number;
   pageSize: number;
+}
+
+export interface IErrorOutputModel {
+  message: string;
+  field: string;
+}
+
+export interface EmailInfoModel {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+export interface TokensPair {
+  accessToken: string;
+  refreshToken: string;
 }

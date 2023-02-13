@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from './users/schemas/userSchema';
+import { User, UserModelType } from './users/schemas/user.schema';
 import { Blog, BlogModelType } from './blogs/schemas/blog.schema';
 import { Post, PostModelType } from './posts/schemas/post.schema';
 import { Like, LikeModelType } from './likes/schemas/like.schema';

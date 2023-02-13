@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
@@ -23,8 +24,19 @@ import { LikesService } from '../likes/likes.service';
 import { BlogAllFullPostsOutputModel } from '../blogs/dto/blogs-output-models.dto';
 import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dto';
-import { AllCommentsOutputModel } from '../comments/dto/comments-output-models.dto';
-import { getFullCommentOutputModel } from '../comments/mappers/comments-mapper';
+import {
+  AllCommentsOutputModel,
+  FullCommentOutputModel,
+} from '../comments/dto/comments-output-models.dto';
+import {
+  getFullCommentOutputModel,
+  mapDbCommentToCommentOutputModel,
+} from '../comments/mappers/comments-mapper';
+import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { AuthGuard } from '../guards/auth.guard';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { User } from '../decorators/user.decorator';
+import { UserDocument } from '../users/schemas/user.schema';
 
 @Controller('posts')
 export class PostsController {
@@ -52,9 +64,9 @@ export class PostsController {
     };
   }
 
-  @Get(':id/comments')
+  @Get(':postId/comments')
   async getCommentsForPost(
-    @Param('id') postId: string,
+    @Param('postId', ParseObjectIdPipe) postId: string,
     @Query() queryParams: CommentsQueryParamsDto,
   ): Promise<AllCommentsOutputModel> {
     const targetPost = await this.postsService.findPostById(postId);
@@ -82,7 +94,7 @@ export class PostsController {
 
   @Get(':id')
   async findPostById(
-    @Param('id') postId: string,
+    @Param('id', ParseObjectIdPipe) postId: string,
   ): Promise<IFullPostOutputModel> {
     const targetPost = await this.postsService.findPostById(postId);
     const postOutputModel = mapDbPostToPostOutputModel(targetPost);
@@ -90,6 +102,7 @@ export class PostsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async createPost(@Body() body: CreatePostDto): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost(body);
     const postOutputModel = mapDbPostToPostOutputModel(createdPost);
@@ -98,16 +111,38 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deletePost(@Param('id') postId: string): Promise<void> {
+  @UseGuards(AuthGuard)
+  async deletePost(
+    @Param('id', ParseObjectIdPipe) postId: string,
+  ): Promise<void> {
     return this.postsService.deletePost(postId);
   }
 
   @Put(':id')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   async updatePost(
-    @Param('id') postId: string,
+    @Param('id', ParseObjectIdPipe) postId: string,
     @Body() body: UpdatePostDto,
   ): Promise<void> {
     return this.postsService.updatePost(postId, body);
+  }
+
+  @Post(':postId/comments')
+  @UseGuards(AuthGuard)
+  async createCommentForPost(
+    @Param('postId', ParseObjectIdPipe) postId: string,
+    @Body() body: Pick<CreateCommentDto, 'content'>,
+    @User() user: UserDocument,
+  ): Promise<FullCommentOutputModel> {
+    const createdComment = await this.commentsService.createComment({
+      postId,
+      content: body.content,
+      userId: user.id,
+      userLogin: user.login,
+    });
+    const commentOutputModel = mapDbCommentToCommentOutputModel(createdComment);
+
+    return getFullCommentOutputModel(commentOutputModel, this.likesService);
   }
 }

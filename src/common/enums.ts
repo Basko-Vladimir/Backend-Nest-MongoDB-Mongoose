@@ -45,3 +45,8 @@ export enum LikeStatus {
   LIKE = 'Like',
   DISLIKE = 'Dislike',
 }
+
+export enum AuthType {
+  BASIC = 'basic',
+  BEARER = 'bearer',
+}

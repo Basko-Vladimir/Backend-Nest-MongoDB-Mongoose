@@ -5,12 +5,12 @@ import {
   CommentModelType,
 } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
 import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
 import { countSkipValue, setSortValue } from '../common/utils';
 import { CommentSortByField, SortDirection } from '../common/enums';
 import { mapDbCommentToCommentOutputModel } from './mappers/comments-mapper';
 import { Types } from 'mongoose';
+import { CommentsQueryParamsDto } from './dto/comments-query-params.dto';
 
 @Injectable()
 export class CommentsRepository {
@@ -19,7 +19,7 @@ export class CommentsRepository {
   ) {}
 
   async findComments(
-    queryParams: PostsQueryParamsDto,
+    queryParams: CommentsQueryParamsDto,
     postId?: string,
   ): Promise<AllCommentsOutputModel> {
     const {
@@ -52,5 +52,9 @@ export class CommentsRepository {
     if (!targetComment) throw new NotFoundException();
 
     return targetComment;
+  }
+
+  async saveComment(comment: CommentDocument): Promise<CommentDocument> {
+    return comment.save();
   }
 }

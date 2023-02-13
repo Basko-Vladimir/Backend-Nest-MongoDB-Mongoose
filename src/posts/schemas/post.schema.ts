@@ -103,7 +103,7 @@ export class Post {
 
 export type PostDocument = HydratedDocument<Post>;
 
-export interface IPostsStaticMethods {
+export interface IPostStaticMethods {
   createPostEntity(
     postData: CreatePostDto,
     blogName: string,
@@ -111,7 +111,7 @@ export interface IPostsStaticMethods {
   ): PostDocument;
 }
 
-export type PostModelType = Model<Post> & IPostsStaticMethods;
+export type PostModelType = Model<Post> & IPostStaticMethods;
 
 export const postSchema = SchemaFactory.createForClass(Post);
 

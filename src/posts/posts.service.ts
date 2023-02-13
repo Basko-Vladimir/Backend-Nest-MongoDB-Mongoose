@@ -7,6 +7,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AllPostsOutputModel } from './dto/posts-output-models.dto';
 import { BlogsRepository } from '../blogs/blogs.repository';
+import { validateOrRejectInputDto } from '../common/utils';
 
 @Injectable()
 export class PostsService {
@@ -28,6 +29,8 @@ export class PostsService {
   }
 
   async createPost(createPostDto: CreatePostDto): Promise<PostDocument> {
+    await validateOrRejectInputDto(createPostDto, CreatePostDto);
+
     const targetBlog = await this.blogsRepository.findBlogById(
       createPostDto.blogId,
     );
@@ -50,6 +53,8 @@ export class PostsService {
     const targetPost = await this.findPostById(id);
 
     if (!targetPost) throw new NotFoundException();
+
+    await validateOrRejectInputDto(updatePostDto, UpdatePostDto);
 
     const updatedPost = targetPost.updatePost(updatePostDto, targetPost);
     await this.postsRepository.savePost(updatedPost);
