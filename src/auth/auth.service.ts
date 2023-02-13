@@ -19,6 +19,7 @@ import {
 } from '../common/constants';
 import { ITokensPair } from '../common/types';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
+import { ResendEmailRegistrationDto } from './dto/resend-email-registration.dto';
 
 @Injectable()
 export class AuthService {
@@ -66,6 +67,21 @@ export class AuthService {
 
     const confirmedUser = user.confirmUserRegistration(user);
     await this.usersRepository.saveUser(confirmedUser);
+  }
+
+  async resendRegistrationEmail(
+    resendEmailRegistrationDto: ResendEmailRegistrationDto,
+    user: UserDocument,
+  ): Promise<void> {
+    await validateOrRejectInputDto(
+      resendEmailRegistrationDto,
+      ResendEmailRegistrationDto,
+    );
+
+    const changedUser = user.updateConfirmationCode(user);
+    const savedUser = await this.usersRepository.saveUser(changedUser);
+
+    await this.emailManager.sendRegistrationEmail(savedUser);
   }
 
   async login(loginUserDto: LoginUserDto): Promise<ITokensPair> {

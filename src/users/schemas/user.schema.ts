@@ -73,6 +73,13 @@ export class User {
     return user;
   }
 
+  updateConfirmationCode(user: UserDocument): UserDocument {
+    user.emailConfirmation.confirmationCode = uuidv4();
+    user.emailConfirmation.expirationDate = add(new Date(), { hours: 1 });
+
+    return user;
+  }
+
   static async createUserEntity(
     createUserDto: CreateUserDto,
     passwordHash: string,
@@ -122,4 +129,8 @@ userSchema.static('createUserEntity', User.createUserEntity);
 userSchema.method(
   'confirmUserRegistration',
   User.prototype.confirmUserRegistration,
+);
+userSchema.method(
+  'updateConfirmationCode',
+  User.prototype.updateConfirmationCode,
 );

@@ -1,13 +1,8 @@
-import {
-  BadRequestException,
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { UsersRepository } from '../users/users.repository';
 import { Request } from 'express';
 import { confirmationCodeErrorMessages } from '../common/error-messages';
-import { IErrorOutputModel } from '../common/types';
+import { generateCustomBadRequestException } from '../common/utils';
 
 @Injectable()
 export class RegistrationConfirmationGuard implements CanActivate {
@@ -16,28 +11,21 @@ export class RegistrationConfirmationGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const code = request.body.code;
-    const error: IErrorOutputModel = { message: '', field: 'code' };
+    const { INVALID_CONFIRMATION_CODE, EXISTED_CONFIRMATION_CODE } =
+      confirmationCodeErrorMessages;
 
     const user = await this.userRepository.findUserByFilter({
       ['emailConfirmation.confirmationCode']: code,
     });
-    const { INVALID_CONFIRMATION_CODE, EXISTED_CONFIRMATION_CODE } =
-      confirmationCodeErrorMessages;
 
-    if (user) {
-      if (user.emailConfirmation.isConfirmed) {
-        error.message = EXISTED_CONFIRMATION_CODE;
-        throw new BadRequestException([error]);
-      } else if (user.emailConfirmation.confirmationCode !== code) {
-        error.message = INVALID_CONFIRMATION_CODE;
-        throw new BadRequestException([error]);
-      }
-
-      request.context = { user };
-      return true;
-    } else {
-      error.message = INVALID_CONFIRMATION_CODE;
-      throw new BadRequestException([error]);
+    if (!user || user.emailConfirmation.confirmationCode !== code) {
+      generateCustomBadRequestException(INVALID_CONFIRMATION_CODE, 'code');
     }
+    if (user.emailConfirmation.isConfirmed) {
+      generateCustomBadRequestException(EXISTED_CONFIRMATION_CODE, 'code');
+    }
+
+    request.context = { user };
+    return true;
   }
 }

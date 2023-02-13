@@ -46,16 +46,19 @@ export const makeCapitalizeString = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+export const generateCustomBadRequestException = (
+  message: string,
+  field: string,
+): never => {
+  throw new BadRequestException([{ message, field }]);
+};
+
 export const generateExistingFieldError = (
   entity: string,
   field: string,
-): never => {
-  throw new BadRequestException([
-    {
-      message: `${makeCapitalizeString(
-        entity,
-      )} with such ${field} already exists`,
-      field,
-    },
-  ]);
+): void => {
+  const message = `${makeCapitalizeString(entity)}
+   with such ${field} already exists.`;
+
+  generateCustomBadRequestException(message, field);
 };
