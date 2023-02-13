@@ -31,3 +31,8 @@ export interface EmailInfoModel {
   subject: string;
   html: string;
 }
+
+export interface TokensPair {
+  accessToken: string;
+  refreshToken: string;
+}

@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
 
 //TODO investigate need this declaration or not
@@ -12,13 +12,13 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class JwtService {
-  async createJWT(payload: JwtPayload, expiresIn: string): Promise<string> {
+  async createJWT(payload: jwt.JwtPayload, expiresIn: string): Promise<string> {
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
   }
 
-  async getTokenPayload(token: string): Promise<JwtPayload | null> {
+  async getTokenPayload(token: string): Promise<jwt.JwtPayload | null> {
     try {
-      const result: JwtPayload = <JwtPayload>(
+      const result: jwt.JwtPayload = <jwt.JwtPayload>(
         jwt.verify(token, process.env.JWT_SECRET)
       );
       return result;

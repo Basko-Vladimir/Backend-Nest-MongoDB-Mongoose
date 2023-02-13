@@ -6,6 +6,7 @@ import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
 import { AllUsersOutputModel } from './dto/users-output-models.dto';
 import { SortDirection, UserSortByField } from '../common/enums';
+import { UpdateOrFilterModel } from '../common/types';
 
 @Injectable()
 export class UsersRepository {
@@ -55,6 +56,16 @@ export class UsersRepository {
     if (!targetUser) throw new NotFoundException();
 
     return targetUser;
+  }
+
+  async findUserByFilter(
+    userFilter: UpdateOrFilterModel,
+  ): Promise<UserDocument | null> {
+    const filter = Object.keys(userFilter).map((field) => ({
+      [field]: userFilter[field as keyof UserDocument],
+    }));
+
+    return this.UserModel.findOne({ $or: filter });
   }
 
   async saveUser(user: UserDocument): Promise<UserDocument> {
