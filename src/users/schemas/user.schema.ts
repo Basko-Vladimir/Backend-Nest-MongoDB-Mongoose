@@ -68,6 +68,11 @@ export class User {
   @Prop()
   updatedAt: Date;
 
+  confirmUserRegistration(user: UserDocument): UserDocument {
+    user.emailConfirmation.isConfirmed = true;
+    return user;
+  }
+
   static async createUserEntity(
     createUserDto: CreateUserDto,
     passwordHash: string,
@@ -114,3 +119,7 @@ export type UserModelType = Model<User> & IUsersStaticMethods;
 export const userSchema = SchemaFactory.createForClass(User);
 
 userSchema.static('createUserEntity', User.createUserEntity);
+userSchema.method(
+  'confirmUserRegistration',
+  User.prototype.confirmUserRegistration,
+);

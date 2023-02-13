@@ -2,7 +2,11 @@ import * as bcrypt from 'bcrypt';
 import { JwtPayload } from 'jsonwebtoken';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from '../users/schemas/user.schema';
+import {
+  User,
+  UserDocument,
+  UserModelType,
+} from '../users/schemas/user.schema';
 import { UsersRepository } from '../users/users.repository';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailManager } from '../managers/email.manager';
@@ -13,7 +17,8 @@ import {
   ACCESS_TOKEN_LIFE_TIME,
   REFRESH_TOKEN_LIFE_TIME,
 } from '../common/constants';
-import { TokensPair } from '../common/types';
+import { ITokensPair } from '../common/types';
+import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +55,20 @@ export class AuthService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<TokensPair> {
+  async confirmRegistration(
+    confirmRegistrationDto: ConfirmRegistrationDto,
+    user: UserDocument,
+  ): Promise<void> {
+    await validateOrRejectInputDto(
+      confirmRegistrationDto,
+      ConfirmRegistrationDto,
+    );
+
+    const confirmedUser = user.confirmUserRegistration(user);
+    await this.usersRepository.saveUser(confirmedUser);
+  }
+
+  async login(loginUserDto: LoginUserDto): Promise<ITokensPair> {
     await validateOrRejectInputDto(loginUserDto, LoginUserDto);
 
     const { loginOrEmail, password } = loginUserDto;

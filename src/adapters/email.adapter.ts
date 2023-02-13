@@ -1,10 +1,10 @@
 import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
-import { EmailInfoModel } from '../common/types';
+import { IEmailInfoModel } from '../common/types';
 
 @Injectable()
 export class EmailAdapter {
-  async sendEmail(messageInfo: EmailInfoModel): Promise<void> {
+  async sendEmail(messageInfo: IEmailInfoModel): Promise<void> {
     const transport = nodemailer.createTransport({
       service: 'gmail',
       auth: {
