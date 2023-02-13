@@ -1,6 +1,11 @@
 export const DATE_ERROR_MESSAGE = 'Can not create an entity with a past Date';
-export const EMAIL_SERVICE_ERROR_MESSAGE =
-  'Some error with email service, try later!';
+
+export const emailErrorMessages = {
+  MISSING_USER_WITH_EMAIL_ERROR: `User with such email hasn't been found!`,
+  EMAIL_SERVICE_ERROR_MESSAGE: 'Some error with email service, try later!',
+  CONFIRMED_EMAIL_ERROR: '`Provided email was confirmed already!`',
+};
+
 export const confirmationCodeErrorMessages = {
   INVALID_CONFIRMATION_CODE: 'Confirmation code is not valid!',
   EXISTED_CONFIRMATION_CODE: 'Confirmation code is confirmed already!',
@@ -32,7 +37,7 @@ export const generateLengthErrorMessage = (
       return `${fieldName} length can't be more than ${value} symbol!`;
     }
     default:
-      throw Error(
+      throw new Error(
         'Incorrect input parameters for generateLengthErrorMessage function',
       );
   }

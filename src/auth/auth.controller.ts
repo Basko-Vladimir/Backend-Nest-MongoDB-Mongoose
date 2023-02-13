@@ -1,18 +1,55 @@
 import { Response } from 'express';
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginOutputModel } from './dto/login-output-model.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
+import { RegistrationConfirmationGuard } from '../guards/registration-confirmation.guard';
+import { User } from '../decorators/user.decorator';
+import { UserDocument } from '../users/schemas/user.schema';
+import { ResendEmailRegistrationDto } from './dto/resend-email-registration.dto';
+import { ResendingRegistrationEmailGuard } from '../guards/resending-registration-email.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(protected authService: AuthService) {}
 
   @Post('registration')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() createUserDto: CreateUserDto): Promise<void> {
     await this.authService.registerUser(createUserDto);
+  }
+
+  @Post('registration-confirmation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(RegistrationConfirmationGuard)
+  async confirmRegistration(
+    @Body() confirmRegistrationDto: ConfirmRegistrationDto,
+    @User() user: UserDocument,
+  ): Promise<void> {
+    await this.authService.confirmRegistration(confirmRegistrationDto, user);
+  }
+
+  @Post('registration-email-resending')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(ResendingRegistrationEmailGuard)
+  async resendRegistrationEmail(
+    @Body() resendEmailRegistrationDto: ResendEmailRegistrationDto,
+    @User() user: UserDocument,
+  ): Promise<void> {
+    return this.authService.resendRegistrationEmail(
+      resendEmailRegistrationDto,
+      user,
+    );
   }
 
   @Post('login')

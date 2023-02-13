@@ -25,14 +25,14 @@ export interface IErrorOutputModel {
   field: string;
 }
 
-export interface EmailInfoModel {
+export interface IEmailInfoModel {
   from: string;
   to: string;
   subject: string;
   html: string;
 }
 
-export interface TokensPair {
+export interface ITokensPair {
   accessToken: string;
   refreshToken: string;
 }

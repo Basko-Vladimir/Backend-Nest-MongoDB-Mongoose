@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EmailAdapter } from '../adapters/email.adapter';
-import { EmailInfoModel } from '../common/types';
+import { IEmailInfoModel } from '../common/types';
 import { UserDocument } from '../users/schemas/user.schema';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class EmailManager {
   constructor(protected emailAdapter: EmailAdapter) {}
 
   async sendRegistrationEmail(userData: UserDocument): Promise<void> {
-    const messageInfo: EmailInfoModel = {
+    const messageInfo: IEmailInfoModel = {
       from: 'Test Backend Server <dev.test.vladimir@gmail.com>',
       to: userData.email,
       subject: 'Test Backend Server Registration',
@@ -24,7 +24,7 @@ export class EmailManager {
   }
 
   async recoverPassword(email: string, recoveryCode: string): Promise<void> {
-    const messageInfo: EmailInfoModel = {
+    const messageInfo: IEmailInfoModel = {
       from: 'Test Backend Server <dev.test.vladimir@gmail.com>',
       to: email,
       subject: 'Test Backend Server Registration',
