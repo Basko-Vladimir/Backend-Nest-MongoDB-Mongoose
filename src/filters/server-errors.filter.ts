@@ -14,12 +14,12 @@ export class ServerErrorsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     let result: any = INTERNAL_SERVER_ERROR;
 
-    if (process.env.NODE_ENV !== 'production') {
-      result = {
-        error: exception.toString(),
-        stack: exception.stack,
-      };
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    result = {
+      error: exception.toString(),
+      stack: exception.stack,
+    };
+    // }
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result);
   }
