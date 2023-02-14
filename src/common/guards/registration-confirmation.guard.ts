@@ -13,12 +13,17 @@ export class RegistrationConfirmationGuard implements CanActivate {
     const code = request.body.code;
     const { INVALID_CONFIRMATION_CODE, EXISTED_CONFIRMATION_CODE } =
       confirmationCodeErrorMessages;
+    let user;
 
-    const user = await this.userRepository.findUserByFilter({
-      ['emailConfirmation.confirmationCode']: code,
-    });
+    try {
+      user = await this.userRepository.findUserByFilter({
+        ['emailConfirmation.confirmationCode']: code,
+      });
+    } catch {
+      generateCustomBadRequestException(INVALID_CONFIRMATION_CODE, 'code');
+    }
 
-    if (!user || user.emailConfirmation.confirmationCode !== code) {
+    if (!user.emailConfirmation.confirmationCode !== code) {
       generateCustomBadRequestException(INVALID_CONFIRMATION_CODE, 'code');
     }
     if (user.emailConfirmation.isConfirmed) {

@@ -34,18 +34,17 @@ export class AuthGuard implements CanActivate {
       if (authValue !== BASIC_AUTH_CREDENTIALS_BASE64) {
         throw new UnauthorizedException();
       }
-    } else {
+    } else if (authType.toLowerCase() === AuthType.BEARER) {
       const tokenPayload = await this.jwtService.getTokenPayload(authValue);
 
       if (!tokenPayload) {
         throw new UnauthorizedException(INVALID_TOKEN);
       }
 
-      const targetUser = await this.userService.findUserById(
-        tokenPayload.userId,
-      );
-
-      if (!targetUser) {
+      let targetUser;
+      try {
+        targetUser = await this.userService.findUserById(tokenPayload.userId);
+      } catch {
         throw new UnauthorizedException();
       }
 
