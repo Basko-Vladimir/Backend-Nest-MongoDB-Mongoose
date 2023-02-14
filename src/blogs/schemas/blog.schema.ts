@@ -62,6 +62,12 @@ export class Blog {
   })
   description: string;
 
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  isMembership: boolean;
+
   @Prop()
   createdAt: Date;
 

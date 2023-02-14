@@ -9,6 +9,7 @@ export const mapDbBlogToBlogOutputModel = (
     name: blog.name,
     websiteUrl: blog.websiteUrl,
     description: blog.description,
+    isMembership: blog.isMembership,
     createdAt: blog.createdAt.toISOString(),
   };
 };

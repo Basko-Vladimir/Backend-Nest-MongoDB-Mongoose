@@ -24,7 +24,7 @@ export class BlogsService {
   }
 
   async createBlog(createBlogDto: CreateBlogDto): Promise<BlogDocument> {
-    await validateOrRejectInputDto(createBlogDto, CreateBlogDto);
+    // await validateOrRejectInputDto(createBlogDto, CreateBlogDto);
 
     const createdBlog = await this.BlogModel.createBlogEntity(
       createBlogDto,
@@ -46,7 +46,7 @@ export class BlogsService {
 
     if (!targetBlog) throw new NotFoundException();
 
-    await validateOrRejectInputDto(updateBlogDto, UpdateBlogDto);
+    // await validateOrRejectInputDto(updateBlogDto, UpdateBlogDto);
 
     const updatedBlog = targetBlog.updateBlog(updateBlogDto, targetBlog);
     await this.blogsRepository.saveBlog(updatedBlog);

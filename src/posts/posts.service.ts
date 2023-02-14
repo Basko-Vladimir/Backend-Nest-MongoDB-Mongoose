@@ -33,7 +33,7 @@ export class PostsService {
   }
 
   async createPost(createPostDto: CreatePostDto): Promise<PostDocument> {
-    await validateOrRejectInputDto(createPostDto, CreatePostDto);
+    // await validateOrRejectInputDto(createPostDto, CreatePostDto);
 
     const targetBlog = await this.blogsRepository.findBlogById(
       createPostDto.blogId,
@@ -58,7 +58,7 @@ export class PostsService {
 
     if (!targetPost) throw new NotFoundException();
 
-    await validateOrRejectInputDto(updatePostDto, UpdatePostDto);
+    // await validateOrRejectInputDto(updatePostDto, UpdatePostDto);
 
     const updatedPost = targetPost.updatePost(updatePostDto, targetPost);
     await this.postsRepository.savePost(updatedPost);

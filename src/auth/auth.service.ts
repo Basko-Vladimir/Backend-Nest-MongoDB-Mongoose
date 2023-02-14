@@ -34,7 +34,7 @@ export class AuthService {
     createUserDto: CreateUserDto,
     isConfirmedByDefault?: boolean,
   ): Promise<string> {
-    await validateOrRejectInputDto(createUserDto, CreateUserDto);
+    // await validateOrRejectInputDto(createUserDto, CreateUserDto);
 
     const { password } = createUserDto;
     const passwordHash = await AuthService.generatePasswordHash(password);
@@ -60,10 +60,10 @@ export class AuthService {
     confirmRegistrationDto: ConfirmRegistrationDto,
     user: UserDocument,
   ): Promise<void> {
-    await validateOrRejectInputDto(
-      confirmRegistrationDto,
-      ConfirmRegistrationDto,
-    );
+    // await validateOrRejectInputDto(
+    //   confirmRegistrationDto,
+    //   ConfirmRegistrationDto,
+    // );
 
     const confirmedUser = user.confirmUserRegistration(user);
     await this.usersRepository.saveUser(confirmedUser);
@@ -73,10 +73,10 @@ export class AuthService {
     resendEmailRegistrationDto: ResendEmailRegistrationDto,
     user: UserDocument,
   ): Promise<void> {
-    await validateOrRejectInputDto(
-      resendEmailRegistrationDto,
-      ResendEmailRegistrationDto,
-    );
+    // await validateOrRejectInputDto(
+    //   resendEmailRegistrationDto,
+    //   ResendEmailRegistrationDto,
+    // );
 
     const changedUser = user.updateConfirmationCode(user);
     const savedUser = await this.usersRepository.saveUser(changedUser);
@@ -85,7 +85,7 @@ export class AuthService {
   }
 
   async login(loginUserDto: LoginUserDto): Promise<ITokensPair> {
-    await validateOrRejectInputDto(loginUserDto, LoginUserDto);
+    // await validateOrRejectInputDto(loginUserDto, LoginUserDto);
 
     const { loginOrEmail, password } = loginUserDto;
     const userId = await this.checkCredentials(loginOrEmail, password);

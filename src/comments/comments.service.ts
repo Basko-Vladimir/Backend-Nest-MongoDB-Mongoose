@@ -9,6 +9,7 @@ import {
 import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
 import { CommentsQueryParamsDto } from './dto/comments-query-params.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { validateOrRejectInputDto } from '../common/utils';
 import { PostsRepository } from '../posts/posts.repository';
 import { UserDocument } from '../users/schemas/user.schema';
 import { LikeStatus } from '../common/enums';
@@ -38,6 +39,8 @@ export class CommentsService {
   async createComment(
     createCommentDto: CreateCommentDto,
   ): Promise<CommentDocument> {
+    // await validateOrRejectInputDto(createCommentDto, CreateCommentDto);
+
     const targetPost = await this.postsRepository.findPostById(
       createCommentDto.postId,
     );
