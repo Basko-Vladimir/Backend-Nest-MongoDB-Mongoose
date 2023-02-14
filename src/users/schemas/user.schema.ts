@@ -118,7 +118,7 @@ export interface IUsersStaticMethods {
     hash: string,
     isConfirmed: boolean,
     UserModel: UserModelType,
-  ): UserDocument;
+  ): Promise<UserDocument>;
 }
 
 export type UserModelType = Model<User> & IUsersStaticMethods;
