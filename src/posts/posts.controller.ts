@@ -37,6 +37,7 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
+import { LikeStatusDto } from '../likes/dto/like-status.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -144,5 +145,17 @@ export class PostsController {
     const commentOutputModel = mapDbCommentToCommentOutputModel(createdComment);
 
     return getFullCommentOutputModel(commentOutputModel, this.likesService);
+  }
+
+  @Put(':postId/like-status')
+  @HttpCode(204)
+  @UseGuards(AuthGuard)
+  async updatePostLikeStatus(
+    @Param('postId', ParseObjectIdPipe) postId: string,
+    @Body() likeStatusDto: LikeStatusDto,
+    @User() user: UserDocument,
+  ): Promise<void> {
+    const { likeStatus } = likeStatusDto;
+    await this.postsService.updatePostLikeStatus(user, postId, likeStatus);
   }
 }

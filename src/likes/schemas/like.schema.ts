@@ -40,10 +40,41 @@ export class Like {
 
   @Prop()
   updatedAt: Date;
+
+  static createLikeEntity(
+    userId: string,
+    userLogin: string,
+    postId: string,
+    status: LikeStatus,
+    LikeModel: LikeModelType,
+    commentId?: string,
+  ): LikeDocument {
+    return new LikeModel({ userId, userLogin, postId, status, commentId });
+  }
+
+  updateLikeStatus(status: LikeStatus, like: LikeDocument): LikeDocument {
+    like.status = status;
+
+    return like;
+  }
 }
 
 export type LikeDocument = HydratedDocument<Like>;
 
-export type LikeModelType = Model<Like>;
+export interface ILikeStaticMethods {
+  createLikeEntity(
+    userId: string,
+    userLogin: string,
+    postId: string,
+    status: LikeStatus,
+    LikeModel: LikeModelType,
+    commentId?: string,
+  ): LikeDocument;
+}
+
+export type LikeModelType = Model<Like> & ILikeStaticMethods;
 
 export const likeSchema = SchemaFactory.createForClass(Like);
+
+likeSchema.method('updateLikeStatus', Like.prototype.updateLikeStatus);
+likeSchema.static('createLikeEntity', Like.createLikeEntity);

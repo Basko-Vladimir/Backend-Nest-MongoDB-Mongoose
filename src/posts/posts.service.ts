@@ -8,12 +8,16 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { AllPostsOutputModel } from './dto/posts-output-models.dto';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { validateOrRejectInputDto } from '../common/utils';
+import { LikesService } from '../likes/likes.service';
+import { UserDocument } from '../users/schemas/user.schema';
+import { LikeStatus } from '../common/enums';
 
 @Injectable()
 export class PostsService {
   constructor(
     protected postsRepository: PostsRepository,
     protected blogsRepository: BlogsRepository,
+    protected likesService: LikesService,
     @InjectModel(Post.name) protected PostModel: PostModelType,
   ) {}
 
@@ -58,5 +62,23 @@ export class PostsService {
 
     const updatedPost = targetPost.updatePost(updatePostDto, targetPost);
     await this.postsRepository.savePost(updatedPost);
+  }
+
+  async updatePostLikeStatus(
+    user: UserDocument,
+    postId: string,
+    newStatus: LikeStatus,
+  ): Promise<void> {
+    const existingLike = await this.likesService.getLikeByFilter({
+      userId: String(user._id),
+      postId,
+      commentId: null,
+    });
+
+    if (existingLike) {
+      return this.likesService.updateLike(existingLike, newStatus);
+    } else {
+      await this.likesService.createLike(user, postId, newStatus);
+    }
   }
 }

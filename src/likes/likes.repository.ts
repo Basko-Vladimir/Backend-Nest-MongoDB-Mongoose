@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UpdateOrFilterModel } from '../common/types';
 import { Like, LikeDocument, LikeModelType } from './schemas/like.schema';
@@ -13,12 +13,10 @@ import { mapDbLikeToLikeInfoOutputModel } from './mappers/likes-mapper';
 export class LikesRepository {
   constructor(@InjectModel(Like.name) protected LikeModel: LikeModelType) {}
 
-  async getLikeByFilter(filter: UpdateOrFilterModel): Promise<LikeDocument> {
-    const targetLike = await this.LikeModel.findOne(filter);
-
-    if (!targetLike) throw new NotFoundException();
-
-    return targetLike;
+  async getLikeByFilter(
+    filter: UpdateOrFilterModel,
+  ): Promise<LikeDocument | null> {
+    return this.LikeModel.findOne(filter);
   }
 
   async getLikesInfo(
@@ -85,5 +83,9 @@ export class LikesRepository {
       myStatus,
       newestLikes: newestLikes.map(mapDbLikeToLikeInfoOutputModel),
     };
+  }
+
+  async saveLike(like: LikeDocument): Promise<LikeDocument> {
+    return like.save();
   }
 }
