@@ -9,14 +9,17 @@ import {
 import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
 import { CommentsQueryParamsDto } from './dto/comments-query-params.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { validateOrRejectInputDto } from '../common/utils';
 import { PostsRepository } from '../posts/posts.repository';
+import { UserDocument } from '../users/schemas/user.schema';
+import { LikeStatus } from '../common/enums';
+import { LikesService } from '../likes/likes.service';
 
 @Injectable()
 export class CommentsService {
   constructor(
     protected commentsRepository: CommentsRepository,
     protected postsRepository: PostsRepository,
+    protected likeService: LikesService,
     @InjectModel(Comment.name) protected CommentModel: CommentModelType,
   ) {}
 
@@ -34,8 +37,6 @@ export class CommentsService {
   async createComment(
     createCommentDto: CreateCommentDto,
   ): Promise<CommentDocument> {
-    await validateOrRejectInputDto(createCommentDto, CreateCommentDto);
-
     const targetPost = await this.postsRepository.findPostById(
       createCommentDto.postId,
     );
@@ -48,5 +49,30 @@ export class CommentsService {
     );
 
     return this.commentsRepository.saveComment(createdComment);
+  }
+
+  async updateCommentLikeStatus(
+    user: UserDocument,
+    commentId: string,
+    newStatus: LikeStatus,
+  ): Promise<void> {
+    const existingLike = await this.likeService.getLikeByFilter({
+      userId: String(user._id),
+      commentId,
+    });
+
+    if (existingLike) {
+      return this.likeService.updateLike(existingLike, newStatus);
+    } else {
+      const targetComment = await this.commentsRepository.findCommentById(
+        commentId,
+      );
+      await this.likeService.createLike(
+        user,
+        String(targetComment.postId),
+        newStatus,
+        commentId,
+      );
+    }
   }
 }
