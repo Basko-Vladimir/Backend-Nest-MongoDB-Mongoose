@@ -51,6 +51,10 @@ export class CommentsService {
     return this.commentsRepository.saveComment(createdComment);
   }
 
+  async deleteComment(commentId: string) {
+    return this.commentsRepository.deleteComment(commentId);
+  }
+
   async updateCommentLikeStatus(
     user: UserDocument,
     commentId: string,

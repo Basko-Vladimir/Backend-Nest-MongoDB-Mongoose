@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   Put,
   UseGuards,
@@ -19,6 +21,7 @@ import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { LikeStatusDto } from '../likes/dto/like-status.dto';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
+import { DeleteCommentGuard } from '../common/guards/delete-comment.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -36,8 +39,17 @@ export class CommentsController {
     return getFullCommentOutputModel(commentOutputModel, this.likesService);
   }
 
+  @Delete(':commentId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard, DeleteCommentGuard)
+  async deleteComment(
+    @Param('commentId', ParseObjectIdPipe) commentId: string,
+  ): Promise<void> {
+    return await this.commentsService.deleteComment(commentId);
+  }
+
   @Put(':commentId/like-status')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateCommentLikeStatus(
     @Param('commentId', ParseObjectIdPipe) commentId: string,

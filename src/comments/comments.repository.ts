@@ -6,7 +6,7 @@ import {
 } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
-import { countSkipValue, setSortValue } from '../common/utils';
+import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
 import { CommentSortByField, SortDirection } from '../common/enums';
 import { mapDbCommentToCommentOutputModel } from './mappers/comments-mapper';
 import { Types } from 'mongoose';
@@ -52,6 +52,14 @@ export class CommentsRepository {
     if (!targetComment) throw new NotFoundException();
 
     return targetComment;
+  }
+
+  async deleteComment(id: string): Promise<void> {
+    const { deletedCount } = await this.CommentModel.deleteOne(
+      getFilterByDbId(id),
+    );
+
+    if (!deletedCount) throw new NotFoundException();
   }
 
   async saveComment(comment: CommentDocument): Promise<CommentDocument> {
