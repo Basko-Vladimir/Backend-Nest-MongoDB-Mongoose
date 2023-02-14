@@ -5,10 +5,10 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthType } from '../common/enums';
-import { JwtService } from '../auth/jwt.service';
-import { UsersService } from '../users/users.service';
-import { authErrorsMessages } from '../common/error-messages';
+import { AuthType } from '../enums';
+import { JwtService } from '../../auth/jwt.service';
+import { UsersService } from '../../users/users.service';
+import { authErrorsMessages } from '../error-messages';
 
 const { INCORRECT_LOGIN_OR_PASSWORD, INVALID_TOKEN } = authErrorsMessages;
 const BASIC_AUTH_CREDENTIALS_BASE64 = 'YWRtaW46cXdlcnR5';

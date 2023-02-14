@@ -25,8 +25,8 @@ import { CommentsRepository } from './comments/comments.repository';
 import { JwtService } from './auth/jwt.service';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
-import { EmailManager } from './managers/email.manager';
-import { EmailAdapter } from './adapters/email.adapter';
+import { EmailManager } from './common/managers/email.manager';
+import { EmailAdapter } from './common/adapters/email.adapter';
 
 @Module({
   imports: [

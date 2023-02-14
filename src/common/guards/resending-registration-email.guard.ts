@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { UsersRepository } from '../users/users.repository';
-import { emailErrorMessages } from '../common/error-messages';
-import { generateCustomBadRequestException } from '../common/utils';
+import { UsersRepository } from '../../users/users.repository';
+import { emailErrorMessages } from '../error-messages';
+import { generateCustomBadRequestException } from '../utils';
 
 @Injectable()
 export class ResendingRegistrationEmailGuard implements CanActivate {

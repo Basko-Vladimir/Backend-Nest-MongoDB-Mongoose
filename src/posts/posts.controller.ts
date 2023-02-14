@@ -32,10 +32,10 @@ import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,
 } from '../comments/mappers/comments-mapper';
-import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
-import { AuthGuard } from '../guards/auth.guard';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { AuthGuard } from '../common/guards/auth.guard';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
-import { User } from '../decorators/user.decorator';
+import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 
 @Controller('posts')

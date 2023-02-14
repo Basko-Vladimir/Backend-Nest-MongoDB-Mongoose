@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EmailAdapter } from '../adapters/email.adapter';
-import { IEmailInfoModel } from '../common/types';
-import { UserDocument } from '../users/schemas/user.schema';
+import { IEmailInfoModel } from '../types';
+import { UserDocument } from '../../users/schemas/user.schema';
 
 @Injectable()
 export class EmailManager {

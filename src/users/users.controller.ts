@@ -17,8 +17,8 @@ import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from './dto/users-output-models.dto';
-import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
-import { AuthGuard } from '../guards/auth.guard';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { AuthGuard } from '../common/guards/auth.guard';
 
 @Controller('users')
 export class UsersController {

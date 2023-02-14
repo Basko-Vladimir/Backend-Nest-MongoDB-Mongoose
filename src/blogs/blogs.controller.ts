@@ -30,8 +30,8 @@ import {
 } from '../posts/mappers/posts-mapper';
 import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
-import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
-import { AuthGuard } from '../guards/auth.guard';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { AuthGuard } from '../common/guards/auth.guard';
 
 @Controller('blogs')
 export class BlogsController {

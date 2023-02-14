@@ -1,5 +1,5 @@
 import { BadRequestException, ValidationError } from '@nestjs/common';
-import { IErrorOutputModel } from '../common/types';
+import { IErrorOutputModel } from '../types';
 
 export const exceptionFactory = (errors: ValidationError[]): never => {
   const errorsMessages: IErrorOutputModel[] = errors

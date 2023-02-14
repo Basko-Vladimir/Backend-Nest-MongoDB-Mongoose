@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
-import { IEmailInfoModel } from '../common/types';
+import { IEmailInfoModel } from '../types';
 
 @Injectable()
 export class EmailAdapter {

@@ -9,7 +9,7 @@ import {
 } from '../users/schemas/user.schema';
 import { UsersRepository } from '../users/users.repository';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { EmailManager } from '../managers/email.manager';
+import { EmailManager } from '../common/managers/email.manager';
 import { LoginUserDto } from './dto/login-user.dto';
 import { validateOrRejectInputDto } from '../common/utils';
 import { JwtService } from './jwt.service';

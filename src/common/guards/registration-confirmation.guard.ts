@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { UsersRepository } from '../users/users.repository';
+import { UsersRepository } from '../../users/users.repository';
 import { Request } from 'express';
-import { confirmationCodeErrorMessages } from '../common/error-messages';
-import { generateCustomBadRequestException } from '../common/utils';
+import { confirmationCodeErrorMessages } from '../error-messages';
+import { generateCustomBadRequestException } from '../utils';
 
 @Injectable()
 export class RegistrationConfirmationGuard implements CanActivate {

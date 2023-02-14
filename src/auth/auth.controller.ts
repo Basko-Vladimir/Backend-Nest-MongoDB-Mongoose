@@ -13,11 +13,11 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginOutputModel } from './dto/login-output-model.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
-import { RegistrationConfirmationGuard } from '../guards/registration-confirmation.guard';
-import { User } from '../decorators/user.decorator';
+import { RegistrationConfirmationGuard } from '../common/guards/registration-confirmation.guard';
+import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { ResendEmailRegistrationDto } from './dto/resend-email-registration.dto';
-import { ResendingRegistrationEmailGuard } from '../guards/resending-registration-email.guard';
+import { ResendingRegistrationEmailGuard } from '../common/guards/resending-registration-email.guard';
 
 @Controller('auth')
 export class AuthController {
