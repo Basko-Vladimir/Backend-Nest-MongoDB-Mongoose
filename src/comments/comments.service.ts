@@ -13,6 +13,7 @@ import { PostsRepository } from '../posts/posts.repository';
 import { UserDocument } from '../users/schemas/user.schema';
 import { LikeStatus } from '../common/enums';
 import { LikesService } from '../likes/likes.service';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -53,6 +54,21 @@ export class CommentsService {
 
   async deleteComment(commentId: string) {
     return this.commentsRepository.deleteComment(commentId);
+  }
+
+  async updateComment(
+    commentId: string,
+    updateCommentDto: UpdateCommentDto,
+  ): Promise<void> {
+    const targetComment = await this.commentsRepository.findCommentById(
+      commentId,
+    );
+    const updatedComment = await targetComment.updateComment(
+      updateCommentDto.content,
+      targetComment,
+    );
+
+    await this.commentsRepository.saveComment(updatedComment);
   }
 
   async updateCommentLikeStatus(

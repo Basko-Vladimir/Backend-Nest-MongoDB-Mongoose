@@ -22,6 +22,7 @@ import { LikeStatusDto } from '../likes/dto/like-status.dto';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { DeleteCommentGuard } from '../common/guards/delete-comment.guard';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Controller('comments')
 export class CommentsController {
@@ -46,6 +47,16 @@ export class CommentsController {
     @Param('commentId', ParseObjectIdPipe) commentId: string,
   ): Promise<void> {
     return await this.commentsService.deleteComment(commentId);
+  }
+
+  @Put(':commentId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard, DeleteCommentGuard)
+  async updateComment(
+    @Param('commentId') commentId: string,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ): Promise<void> {
+    await this.commentsService.updateComment(commentId, updateCommentDto);
   }
 
   @Put(':commentId/like-status')

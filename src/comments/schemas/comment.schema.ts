@@ -54,6 +54,12 @@ export class Comment {
   @Prop()
   updatedAt: Date;
 
+  updateComment(content: string, comment: CommentDocument): CommentDocument {
+    comment.content = content;
+
+    return comment;
+  }
+
   static createCommentEntity(
     createCommentDto: CreateCommentDto,
     CommentModel: CommentModelType,
@@ -76,3 +82,4 @@ export type CommentModelType = Model<Comment> & ICommentStaticMethods;
 export const commentSchema = SchemaFactory.createForClass(Comment);
 
 commentSchema.static('createCommentEntity', Comment.createCommentEntity);
+commentSchema.method('updateComment', Comment.prototype.updateComment);
