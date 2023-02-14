@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      throw new UnauthorizedException(INCORRECT_LOGIN_OR_PASSWORD);
+      throw new UnauthorizedException();
     }
 
     const [authType = '', authValue = ''] = authHeader.split(' ');
