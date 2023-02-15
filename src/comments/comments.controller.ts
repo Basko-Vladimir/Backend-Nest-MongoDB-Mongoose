@@ -46,6 +46,7 @@ export class CommentsController {
   async deleteComment(
     @Param('commentId', ParseObjectIdPipe) commentId: string,
   ): Promise<void> {
+    await this.commentsService.findCommentById(commentId);
     return await this.commentsService.deleteComment(commentId);
   }
 
@@ -56,6 +57,7 @@ export class CommentsController {
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ): Promise<void> {
+    await this.commentsService.findCommentById(commentId);
     await this.commentsService.updateComment(commentId, updateCommentDto);
   }
 
@@ -67,6 +69,7 @@ export class CommentsController {
     @Body() likeStatusDto: LikeStatusDto,
     @User() user: UserDocument,
   ): Promise<void> {
+    await this.commentsService.findCommentById(commentId);
     await this.commentsService.updateCommentLikeStatus(
       user,
       commentId,

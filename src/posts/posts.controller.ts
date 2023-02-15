@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -70,9 +69,7 @@ export class PostsController {
     @Param('postId', ParseObjectIdPipe) postId: string,
     @Query() queryParams: CommentsQueryParamsDto,
   ): Promise<AllCommentsOutputModel> {
-    const targetPost = await this.postsService.findPostById(postId);
-
-    if (!targetPost) throw new NotFoundException();
+    await this.postsService.findPostById(postId);
 
     const commentsOutputModel = await this.commentsService.findComments(
       queryParams,
@@ -116,6 +113,7 @@ export class PostsController {
   async deletePost(
     @Param('id', ParseObjectIdPipe) postId: string,
   ): Promise<void> {
+    await this.postsService.findPostById(postId);
     return this.postsService.deletePost(postId);
   }
 
@@ -126,6 +124,7 @@ export class PostsController {
     @Param('id', ParseObjectIdPipe) postId: string,
     @Body() body: UpdatePostDto,
   ): Promise<void> {
+    await this.postsService.findPostById(postId);
     return this.postsService.updatePost(postId, body);
   }
 
@@ -136,6 +135,7 @@ export class PostsController {
     @Body() body: Pick<CreateCommentDto, 'content'>,
     @User() user: UserDocument,
   ): Promise<FullCommentOutputModel> {
+    await this.postsService.findPostById(postId);
     const createdComment = await this.commentsService.createComment({
       postId,
       content: body.content,
@@ -156,6 +156,7 @@ export class PostsController {
     @User() user: UserDocument,
   ): Promise<void> {
     const { likeStatus } = likeStatusDto;
+    await this.postsService.findPostById(postId);
     await this.postsService.updatePostLikeStatus(user, postId, likeStatus);
   }
 }
