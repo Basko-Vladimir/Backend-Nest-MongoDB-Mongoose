@@ -9,7 +9,6 @@ import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
 import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
 import { CommentSortByField, SortDirection } from '../common/enums';
 import { mapDbCommentToCommentOutputModel } from './mappers/comments-mapper';
-import { Types } from 'mongoose';
 import { CommentsQueryParamsDto } from './dto/comments-query-params.dto';
 
 @Injectable()
@@ -28,7 +27,7 @@ export class CommentsRepository {
       pageNumber = 1,
       pageSize = 10,
     } = queryParams;
-    const filter = postId ? { postId: new Types.ObjectId(postId) } : {};
+    const filter = postId ? { postId } : {};
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
     const totalCount = await this.CommentModel.find(filter).countDocuments();
