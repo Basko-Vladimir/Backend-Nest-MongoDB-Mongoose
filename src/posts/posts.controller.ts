@@ -33,11 +33,11 @@ import {
 } from '../comments/mappers/comments-mapper';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { AuthGuard } from '../common/guards/auth.guard';
-import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { LikeStatusDto } from '../likes/dto/like-status.dto';
 import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
+import { CreateCommentForPostDto } from './dto/create-comment-for-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -146,13 +146,13 @@ export class PostsController {
   @UseGuards(AuthGuard)
   async createCommentForPost(
     @Param('postId', ParseObjectIdPipe) postId: string,
-    @Body() body: Pick<CreateCommentDto, 'content'>,
+    @Body() createCommentForPostDto: CreateCommentForPostDto,
     @User() user: UserDocument,
   ): Promise<FullCommentOutputModel> {
     await this.postsService.findPostById(postId);
     const createdComment = await this.commentsService.createComment({
       postId,
-      content: body.content,
+      content: createCommentForPostDto.content,
       userId: user.id,
       userLogin: user.login,
     });
