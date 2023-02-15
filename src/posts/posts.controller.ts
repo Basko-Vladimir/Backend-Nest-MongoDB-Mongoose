@@ -37,6 +37,7 @@ import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { LikeStatusDto } from '../likes/dto/like-status.dto';
+import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -47,15 +48,20 @@ export class PostsController {
   ) {}
 
   @Get()
+  @UseGuards(AddUserToRequestGuard)
   async findPosts(
     @Query() queryParams: PostsQueryParamsDto,
+    @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
+    userId = userId ? String(userId) : null;
     const postsOutputModel = await this.postsService.findPosts(queryParams);
     const posts = postsOutputModel.items;
     const fullPosts = [];
 
     for (let i = 0; i < posts.length; i++) {
-      fullPosts.push(await getFullPostOutputModel(posts[i], this.likesService));
+      fullPosts.push(
+        await getFullPostOutputModel(posts[i], this.likesService, userId),
+      );
     }
 
     return {
@@ -65,12 +71,14 @@ export class PostsController {
   }
 
   @Get(':postId/comments')
+  @UseGuards(AddUserToRequestGuard)
   async getCommentsForPost(
     @Param('postId', ParseObjectIdPipe) postId: string,
     @Query() queryParams: CommentsQueryParamsDto,
+    @User('_id') userId: string,
   ): Promise<AllCommentsOutputModel> {
     await this.postsService.findPostById(postId);
-
+    userId = userId ? String(userId) : null;
     const commentsOutputModel = await this.commentsService.findComments(
       queryParams,
       postId,
@@ -80,7 +88,7 @@ export class PostsController {
 
     for (let i = 0; i < comments.length; i++) {
       fullComments.push(
-        await getFullCommentOutputModel(comments[i], this.likesService),
+        await getFullCommentOutputModel(comments[i], this.likesService, userId),
       );
     }
 
@@ -91,20 +99,26 @@ export class PostsController {
   }
 
   @Get(':id')
+  @UseGuards(AddUserToRequestGuard)
   async findPostById(
     @Param('id', ParseObjectIdPipe) postId: string,
+    @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
+    userId = userId ? String(userId) : null;
     const targetPost = await this.postsService.findPostById(postId);
     const postOutputModel = mapDbPostToPostOutputModel(targetPost);
-    return getFullPostOutputModel(postOutputModel, this.likesService);
+    return getFullPostOutputModel(postOutputModel, this.likesService, userId);
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  async createPost(@Body() body: CreatePostDto): Promise<IFullPostOutputModel> {
+  async createPost(
+    @Body() body: CreatePostDto,
+    @User('_id') userId: string,
+  ): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost(body);
     const postOutputModel = mapDbPostToPostOutputModel(createdPost);
-    return getFullPostOutputModel(postOutputModel, this.likesService);
+    return getFullPostOutputModel(postOutputModel, this.likesService, userId);
   }
 
   @Delete(':id')
@@ -144,7 +158,11 @@ export class PostsController {
     });
     const commentOutputModel = mapDbCommentToCommentOutputModel(createdComment);
 
-    return getFullCommentOutputModel(commentOutputModel, this.likesService);
+    return getFullCommentOutputModel(
+      commentOutputModel,
+      this.likesService,
+      String(user._id),
+    );
   }
 
   @Put(':postId/like-status')

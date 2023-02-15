@@ -23,6 +23,7 @@ import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { DeleteCommentGuard } from '../common/guards/delete-comment.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -32,12 +33,19 @@ export class CommentsController {
   ) {}
 
   @Get(':id')
+  @UseGuards(AddUserToRequestGuard)
   async findCommentById(
     @Param('id') commentId: string,
+    @User('_id') userId: string,
   ): Promise<FullCommentOutputModel> {
+    userId = userId ? String(userId) : null;
     const targetComment = await this.commentsService.findCommentById(commentId);
     const commentOutputModel = mapDbCommentToCommentOutputModel(targetComment);
-    return getFullCommentOutputModel(commentOutputModel, this.likesService);
+    return getFullCommentOutputModel(
+      commentOutputModel,
+      this.likesService,
+      userId,
+    );
   }
 
   @Delete(':commentId')
