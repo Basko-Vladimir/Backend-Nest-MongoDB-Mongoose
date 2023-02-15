@@ -21,7 +21,6 @@ import {
 import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { IFullPostOutputModel } from '../posts/dto/posts-output-models.dto';
 import { PostsService } from '../posts/posts.service';
 import {
@@ -34,6 +33,7 @@ import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
 import { User } from '../common/decorators/user.decorator';
+import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -122,12 +122,12 @@ export class BlogsController {
   @UseGuards(AuthGuard)
   async createPostForBlog(
     @Param('blogId', ParseObjectIdPipe) blogId: string,
-    @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
+    @Body() createPostForBlogDto: CreatePostForBlogDto,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
     await this.blogsService.findBlogById(blogId);
     const createdPost = await this.postsService.createPost({
-      ...creatingData,
+      ...createPostForBlogDto,
       blogId,
     });
     const postOutputModel = mapDbPostToPostOutputModel(createdPost);
