@@ -87,11 +87,11 @@ export class BlogsController {
     return this.blogsService.updateBlog(blogId, updatingData);
   }
 
-  @Get(':id/posts')
+  @Get(':blogId/posts')
   @UseGuards(AddUserToRequestGuard)
   async findAllPostsByBlogId(
     @Query() queryParams: PostsQueryParamsDto,
-    @Param('id', ParseObjectIdPipe) blogId: string,
+    @Param('blogId', ParseObjectIdPipe) blogId: string,
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
@@ -118,10 +118,10 @@ export class BlogsController {
     };
   }
 
-  @Post(':id/posts')
+  @Post(':blogId/posts')
   @UseGuards(AuthGuard)
   async createPostForBlog(
-    @Param('id', ParseObjectIdPipe) blogId: string,
+    @Param('blogId', ParseObjectIdPipe) blogId: string,
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
