@@ -32,6 +32,8 @@ import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { AuthGuard } from '../common/guards/auth.guard';
+import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
+import { User } from '../common/decorators/user.decorator';
 
 @Controller('blogs')
 export class BlogsController {
@@ -86,10 +88,13 @@ export class BlogsController {
   }
 
   @Get(':id/posts')
+  @UseGuards(AddUserToRequestGuard)
   async findAllPostsByBlogId(
     @Query() queryParams: PostsQueryParamsDto,
     @Param('id', ParseObjectIdPipe) blogId: string,
+    @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
+    userId = userId ? String(userId) : null;
     const targetBlog = await this.findBlogById(blogId);
 
     if (!targetBlog) throw new NotFoundException();
@@ -102,7 +107,9 @@ export class BlogsController {
     const fullPosts = [];
 
     for (let i = 0; i < posts.length; i++) {
-      fullPosts.push(await getFullPostOutputModel(posts[i], this.likesService));
+      fullPosts.push(
+        await getFullPostOutputModel(posts[i], this.likesService, userId),
+      );
     }
 
     return {
@@ -116,12 +123,17 @@ export class BlogsController {
   async createPostForBlog(
     @Param('id', ParseObjectIdPipe) blogId: string,
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
+    @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
     const createdPost = await this.postsService.createPost({
       ...creatingData,
       blogId,
     });
     const postOutputModel = mapDbPostToPostOutputModel(createdPost);
-    return await getFullPostOutputModel(postOutputModel, this.likesService);
+    return await getFullPostOutputModel(
+      postOutputModel,
+      this.likesService,
+      userId,
+    );
   }
 }
