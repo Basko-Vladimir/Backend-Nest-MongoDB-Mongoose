@@ -95,7 +95,7 @@ export class BlogsController {
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
-    const targetBlog = await this.findBlogById(blogId);
+    const targetBlog = await this.blogsService.findBlogById(blogId);
 
     if (!targetBlog) throw new NotFoundException();
 
@@ -125,6 +125,7 @@ export class BlogsController {
     @Body() creatingData: Omit<CreatePostDto, 'blogId'>,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
+    await this.blogsService.findBlogById(blogId);
     const createdPost = await this.postsService.createPost({
       ...creatingData,
       blogId,
