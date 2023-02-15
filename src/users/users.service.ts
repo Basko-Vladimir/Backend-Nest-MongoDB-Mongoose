@@ -22,7 +22,7 @@ export class UsersService {
     return this.usersRepository.findAllUsers(queryParams);
   }
 
-  async findUserById(userId: string): Promise<UserDocument> {
+  async findUserById(userId: string): Promise<UserDocument | null> {
     return this.usersRepository.findUserById(userId);
   }
 

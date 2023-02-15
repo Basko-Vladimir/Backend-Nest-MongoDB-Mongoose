@@ -50,12 +50,8 @@ export class UsersRepository {
     };
   }
 
-  async findUserById(userId: string): Promise<UserDocument> {
-    const targetUser = await this.UserModel.findById(userId);
-
-    if (!targetUser) throw new NotFoundException();
-
-    return targetUser;
+  async findUserById(userId: string): Promise<UserDocument | null> {
+    return this.UserModel.findById(userId);
   }
 
   async findUserByFilter(
