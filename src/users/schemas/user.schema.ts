@@ -12,7 +12,7 @@ import {
   EmailConfirmation,
   EmailConfirmationSchema,
 } from './email-confirmation.schema';
-import { generateExistingFieldError } from '../../common/utils';
+import { generateExistingFieldError } from '../../common/error-messages';
 
 const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP, EMAIL_REG_EXP } =
   usersConstants;

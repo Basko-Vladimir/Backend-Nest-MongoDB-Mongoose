@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -30,7 +29,7 @@ import {
 } from '../posts/mappers/posts-mapper';
 import { LikesService } from '../likes/likes.service';
 import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
-import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
 import { User } from '../common/decorators/user.decorator';
@@ -53,7 +52,7 @@ export class BlogsController {
 
   @Get(':id')
   async findBlogById(
-    @Param('id', ParseObjectIdPipe) blogId: string,
+    @Param('id', checkParamIdPipe) blogId: string,
   ): Promise<IBlogOutputModel> {
     const targetBlog = await this.blogsService.findBlogById(blogId);
     return mapDbBlogToBlogOutputModel(targetBlog);
@@ -73,7 +72,7 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async deleteBlog(
-    @Param('id', ParseObjectIdPipe) blogId: string,
+    @Param('id', checkParamIdPipe) blogId: string,
   ): Promise<void> {
     return this.blogsService.deleteBlog(blogId);
   }
@@ -82,7 +81,7 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateBlog(
-    @Param('id', ParseObjectIdPipe) blogId: string,
+    @Param('id', checkParamIdPipe) blogId: string,
     @Body() updatingData: UpdateBlogDto,
   ): Promise<void> {
     return this.blogsService.updateBlog(blogId, updatingData);
@@ -92,14 +91,10 @@ export class BlogsController {
   @UseGuards(AddUserToRequestGuard)
   async findAllPostsByBlogId(
     @Query() queryParams: PostsQueryParamsDto,
-    @Param('blogId', ParseObjectIdPipe) blogId: string,
+    @Param('blogId', checkParamIdPipe) blogId: string,
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
-    const targetBlog = await this.blogsService.findBlogById(blogId);
-
-    if (!targetBlog) throw new NotFoundException();
-
     const postsOutputModel = await this.postsService.findPosts(
       queryParams,
       blogId,
@@ -122,11 +117,10 @@ export class BlogsController {
   @Post(':blogId/posts')
   @UseGuards(AuthGuard)
   async createPostForBlog(
-    @Param('blogId', ParseObjectIdPipe) blogId: string,
+    @Param('blogId', checkParamIdPipe) blogId: string,
     @Body() createPostForBlogDto: CreatePostForBlogDto,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
-    await this.blogsService.findBlogById(blogId);
     const createdPost = await this.postsService.createPost({
       ...createPostForBlogDto,
       blogId,

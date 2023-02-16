@@ -32,7 +32,7 @@ import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,
 } from '../comments/mappers/comments-mapper';
-import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
@@ -74,11 +74,10 @@ export class PostsController {
   @Get(':postId/comments')
   @UseGuards(AddUserToRequestGuard)
   async getCommentsForPost(
-    @Param('postId', ParseObjectIdPipe) postId: string,
+    @Param('postId', checkParamIdPipe) postId: string,
     @Query() queryParams: CommentsQueryParamsDto,
     @User('_id') userId: string,
   ): Promise<AllCommentsOutputModel> {
-    await this.postsService.findPostById(postId);
     userId = userId ? String(userId) : null;
     const commentsOutputModel = await this.commentsService.findComments(
       queryParams,
@@ -102,7 +101,7 @@ export class PostsController {
   @Get(':id')
   @UseGuards(AddUserToRequestGuard)
   async findPostById(
-    @Param('id', ParseObjectIdPipe) postId: string,
+    @Param('id', checkParamIdPipe) postId: string,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
     userId = userId ? String(userId) : null;
@@ -126,9 +125,8 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async deletePost(
-    @Param('id', ParseObjectIdPipe) postId: string,
+    @Param('id', checkParamIdPipe) postId: string,
   ): Promise<void> {
-    await this.postsService.findPostById(postId);
     return this.postsService.deletePost(postId);
   }
 
@@ -136,21 +134,19 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updatePost(
-    @Param('id', ParseObjectIdPipe) postId: string,
+    @Param('id', checkParamIdPipe) postId: string,
     @Body() body: UpdatePostDto,
   ): Promise<void> {
-    await this.postsService.findPostById(postId);
     return this.postsService.updatePost(postId, body);
   }
 
   @Post(':postId/comments')
   @UseGuards(AuthGuard)
   async createCommentForPost(
-    @Param('postId', ParseObjectIdPipe) postId: string,
+    @Param('postId', checkParamIdPipe) postId: string,
     @Body() createCommentForPostDto: CreateCommentForPostDto,
     @User() user: UserDocument,
   ): Promise<FullCommentOutputModel> {
-    await this.postsService.findPostById(postId);
     const createdComment = await this.commentsService.createComment({
       postId,
       content: createCommentForPostDto.content,
@@ -170,12 +166,11 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updatePostLikeStatus(
-    @Param('postId', ParseObjectIdPipe) postId: string,
+    @Param('postId', checkParamIdPipe) postId: string,
     @Body() likeStatusDto: LikeStatusDto,
     @User() user: UserDocument,
   ): Promise<void> {
     const { likeStatus } = likeStatusDto;
-    await this.postsService.findPostById(postId);
     await this.postsService.updatePostLikeStatus(user, postId, likeStatus);
   }
 }

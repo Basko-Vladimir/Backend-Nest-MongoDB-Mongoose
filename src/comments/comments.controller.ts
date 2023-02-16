@@ -17,7 +17,7 @@ import {
 } from './mappers/comments-mapper';
 import { LikesService } from '../likes/likes.service';
 import { AuthGuard } from '../common/guards/auth.guard';
-import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
 import { LikeStatusDto } from '../likes/dto/like-status.dto';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
@@ -41,6 +41,7 @@ export class CommentsController {
     userId = userId ? String(userId) : null;
     const targetComment = await this.commentsService.findCommentById(commentId);
     const commentOutputModel = mapDbCommentToCommentOutputModel(targetComment);
+
     return getFullCommentOutputModel(
       commentOutputModel,
       this.likesService,
@@ -52,9 +53,8 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard, DeleteCommentGuard)
   async deleteComment(
-    @Param('commentId', ParseObjectIdPipe) commentId: string,
+    @Param('commentId', checkParamIdPipe) commentId: string,
   ): Promise<void> {
-    await this.commentsService.findCommentById(commentId);
     return await this.commentsService.deleteComment(commentId);
   }
 
@@ -65,7 +65,6 @@ export class CommentsController {
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ): Promise<void> {
-    await this.commentsService.findCommentById(commentId);
     await this.commentsService.updateComment(commentId, updateCommentDto);
   }
 
@@ -73,11 +72,10 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateCommentLikeStatus(
-    @Param('commentId', ParseObjectIdPipe) commentId: string,
+    @Param('commentId', checkParamIdPipe) commentId: string,
     @Body() likeStatusDto: LikeStatusDto,
     @User() user: UserDocument,
   ): Promise<void> {
-    await this.commentsService.findCommentById(commentId);
     await this.commentsService.updateCommentLikeStatus(
       user,
       commentId,

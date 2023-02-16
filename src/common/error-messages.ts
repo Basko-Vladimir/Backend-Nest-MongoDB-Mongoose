@@ -1,3 +1,8 @@
+import {
+  generateCustomBadRequestException,
+  makeCapitalizeString,
+} from './utils';
+
 export const DATE_ERROR_MESSAGE = 'Can not create an entity with a past Date';
 
 export const emailErrorMessages = {
@@ -17,10 +22,6 @@ export const authErrorsMessages = {
 };
 
 export const INTERNAL_SERVER_ERROR = 'Something went wrong...';
-
-const makeCapitalizeString = (value: string): string => {
-  return value[0].toUpperCase() + value.slice(1);
-};
 
 export const generateLengthErrorMessage = (
   fieldName: string,
@@ -60,6 +61,16 @@ export const generateRegExpError = (
   return `${makeCapitalizeString(
     fieldName,
   )} doesn't match to pattern ${regExp}`;
+};
+
+export const generateExistingFieldError = (
+  entity: string,
+  field: string,
+): void => {
+  const message = `${makeCapitalizeString(entity)}
+   with such ${field} already exists.`;
+
+  generateCustomBadRequestException(message, field);
 };
 
 export const generateMissedPropError = (fieldName: string): string => {

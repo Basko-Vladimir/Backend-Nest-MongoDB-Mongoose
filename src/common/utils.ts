@@ -52,13 +52,3 @@ export const generateCustomBadRequestException = (
 ): never => {
   throw new BadRequestException([{ message, field }]);
 };
-
-export const generateExistingFieldError = (
-  entity: string,
-  field: string,
-): void => {
-  const message = `${makeCapitalizeString(entity)}
-   with such ${field} already exists.`;
-
-  generateCustomBadRequestException(message, field);
-};

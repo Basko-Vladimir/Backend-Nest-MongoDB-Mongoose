@@ -18,7 +18,7 @@ import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from './dto/users-output-models.dto';
-import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../common/guards/auth.guard';
 
 @Controller('users')
@@ -47,7 +47,7 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async deleteUser(
-    @Param('id', ParseObjectIdPipe) userId: string,
+    @Param('id', checkParamIdPipe) userId: string,
   ): Promise<void> {
     await this.usersService.deleteUser(userId);
   }

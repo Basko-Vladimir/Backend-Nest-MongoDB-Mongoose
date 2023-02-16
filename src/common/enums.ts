@@ -50,3 +50,10 @@ export enum AuthType {
   BASIC = 'basic',
   BEARER = 'bearer',
 }
+
+export enum IdTypes {
+  BLOG_ID = 'blogId',
+  POST_ID = 'postId',
+  USER_ID = 'userId',
+  COMMENT_ID = 'commentId',
+}
