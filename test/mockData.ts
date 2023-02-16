@@ -57,6 +57,7 @@ export const getCreatedBlogItem = (
   name: createBlogDto.name,
   description: createBlogDto.description,
   websiteUrl: createBlogDto.websiteUrl,
+  isMembership: false,
   createdAt: expect.any(String),
 });
 

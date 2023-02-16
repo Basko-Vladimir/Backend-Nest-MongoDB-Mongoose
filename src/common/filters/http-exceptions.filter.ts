@@ -4,6 +4,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 @Catch(HttpException)
@@ -14,7 +15,7 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const errorStatus = exception.getStatus();
     const errorResponseBody: any = exception.getResponse();
 
-    if (errorStatus === 400) {
+    if (errorStatus === HttpStatus.BAD_REQUEST) {
       const result = { errorsMessages: errorResponseBody.message };
       response.status(errorStatus).send(result);
       return;

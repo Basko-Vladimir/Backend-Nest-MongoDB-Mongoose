@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -122,7 +123,7 @@ export class PostsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async deletePost(
     @Param('id', ParseObjectIdPipe) postId: string,
@@ -132,7 +133,7 @@ export class PostsController {
   }
 
   @Put(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updatePost(
     @Param('id', ParseObjectIdPipe) postId: string,
@@ -166,7 +167,7 @@ export class PostsController {
   }
 
   @Put(':postId/like-status')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updatePostLikeStatus(
     @Param('postId', ParseObjectIdPipe) postId: string,

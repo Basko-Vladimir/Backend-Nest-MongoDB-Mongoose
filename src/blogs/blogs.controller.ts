@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -69,7 +70,7 @@ export class BlogsController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async deleteBlog(
     @Param('id', ParseObjectIdPipe) blogId: string,
@@ -78,7 +79,7 @@ export class BlogsController {
   }
 
   @Put(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateBlog(
     @Param('id', ParseObjectIdPipe) blogId: string,
