@@ -14,9 +14,13 @@ export class IsExistEntityValidator implements ValidatorConstraintInterface {
   constructor(protected blogsRepository: BlogsRepository) {}
 
   async validate(id: string): Promise<boolean> {
-    const entity = await this.blogsRepository.findBlogById(id);
-
-    return Boolean(entity);
+    let result;
+    try {
+      result = await this.blogsRepository.findBlogById(id);
+      return Boolean(result);
+    } catch {
+      return false;
+    }
   }
 
   defaultMessage(args: ValidationArguments) {
