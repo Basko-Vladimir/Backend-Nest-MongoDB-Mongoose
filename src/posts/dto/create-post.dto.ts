@@ -10,7 +10,7 @@ export class CreatePostDto {
   @IsString()
   @IsNotEmptyString()
   @Length(MIN_STRINGS_LENGTH, MAX_TITLE_LENGTH)
-  title: string;
+  readonly title: string;
 
   @IsString()
   @IsNotEmptyString()

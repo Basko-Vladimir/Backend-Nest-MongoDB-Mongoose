@@ -15,21 +15,21 @@ export class CreateCommentDto {
   @IsString()
   @IsNotEmptyString()
   @Length(MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH)
-  content: string;
+  readonly content: string;
 
   @IsNotEmpty()
   @IsNotEmptyString()
   @IsMongoId()
-  postId: string;
+  readonly postId: string;
 
   @IsNotEmpty()
   @IsNotEmptyString()
   @IsMongoId()
-  userId: string;
+  readonly userId: string;
 
   @IsString()
   @Length(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH)
   @IsNotEmptyString()
   @Matches(LOGIN_REG_EXP)
-  userLogin: string;
+  readonly userLogin: string;
 }

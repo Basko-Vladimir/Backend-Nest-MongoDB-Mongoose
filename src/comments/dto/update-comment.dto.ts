@@ -8,5 +8,5 @@ export class UpdateCommentDto {
   @IsString()
   @IsNotEmptyString()
   @Length(MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH)
-  content: string;
+  readonly content: string;
 }

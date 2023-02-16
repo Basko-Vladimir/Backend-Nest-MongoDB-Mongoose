@@ -10,21 +10,21 @@ export class UpdatePostDto {
   @IsString()
   @IsNotEmptyString()
   @Length(MIN_STRINGS_LENGTH, MAX_TITLE_LENGTH)
-  title: string;
+  readonly title: string;
 
   @IsString()
   @IsNotEmptyString()
   @Length(MIN_STRINGS_LENGTH, MAX_SHORT_DESCRIPTION_LENGTH)
-  shortDescription: string;
+  readonly shortDescription: string;
 
   @IsString()
   @IsNotEmptyString()
   @Length(MIN_STRINGS_LENGTH, MAX_CONTENT_LENGTH)
-  content: string;
+  readonly content: string;
 
   @IsNotEmpty()
   @IsNotEmptyString()
   @IsMongoId()
   @IsExistEntity()
-  blogId: string;
+  readonly blogId: string;
 }
