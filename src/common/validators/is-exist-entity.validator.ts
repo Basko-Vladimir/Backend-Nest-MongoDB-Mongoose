@@ -18,7 +18,7 @@ enum IdTypes {
   COMMENT_ID = 'commentId',
 }
 
-@ValidatorConstraint({ name: 'IsNotEmptyString', async: true })
+@ValidatorConstraint({ name: 'IsExistEntity', async: true })
 @Injectable()
 export class IsExistEntityValidator implements ValidatorConstraintInterface {
   constructor(
@@ -28,11 +28,11 @@ export class IsExistEntityValidator implements ValidatorConstraintInterface {
     protected commentsRepository: CommentsRepository,
   ) {}
 
-  async validate(id: IdTypes): Promise<boolean> {
+  async validate(id: IdTypes, args: ValidationArguments): Promise<boolean> {
     let result;
 
     try {
-      switch (id) {
+      switch (args.property) {
         case IdTypes.BLOG_ID: {
           result = await this.blogsRepository.findBlogById(id);
           break;
