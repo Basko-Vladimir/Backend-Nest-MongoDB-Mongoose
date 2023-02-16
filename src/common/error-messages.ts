@@ -8,7 +8,7 @@ export const DATE_ERROR_MESSAGE = 'Can not create an entity with a past Date';
 export const emailErrorMessages = {
   MISSING_USER_WITH_EMAIL_ERROR: `User with such email hasn't been found!`,
   EMAIL_SERVICE_ERROR_MESSAGE: 'Some error with email service, try later!',
-  CONFIRMED_EMAIL_ERROR: '`Provided email was confirmed already!`',
+  CONFIRMED_EMAIL_ERROR: 'Provided email was confirmed already!`',
 };
 
 export const confirmationCodeErrorMessages = {

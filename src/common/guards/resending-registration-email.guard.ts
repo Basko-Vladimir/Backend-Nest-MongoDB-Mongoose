@@ -13,11 +13,10 @@ export class ResendingRegistrationEmailGuard implements CanActivate {
     const email = request.body.email;
     const { MISSING_USER_WITH_EMAIL_ERROR, CONFIRMED_EMAIL_ERROR } =
       emailErrorMessages;
-    let user;
 
-    try {
-      user = await this.userRepository.findUserByFilter({ email });
-    } catch {
+    const user = await this.userRepository.findUserByFilter({ email });
+
+    if (!user) {
       generateCustomBadRequestException(MISSING_USER_WITH_EMAIL_ERROR, 'email');
     }
 
