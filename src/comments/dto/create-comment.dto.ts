@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { commentsConstants, usersConstants } from '../../common/constants';
 import { IsNotEmptyString } from '../../common/validators/is-not-empty-string.validator';
+import { IsExistEntity } from '../../common/validators/is-exist-entity.validator';
 
 const { MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH } = commentsConstants;
 const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP } = usersConstants;
@@ -19,6 +20,7 @@ export class CreateCommentDto {
 
   @IsNotEmpty()
   @IsNotEmptyString()
+  @IsExistEntity()
   @IsMongoId()
   readonly postId: string;
 
