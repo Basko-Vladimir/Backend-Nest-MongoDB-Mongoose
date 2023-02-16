@@ -27,6 +27,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { EmailManager } from './common/managers/email.manager';
 import { EmailAdapter } from './common/adapters/email.adapter';
+import { IsExistEntityValidator } from './common/validators/is-exist-entity.validator';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { EmailAdapter } from './common/adapters/email.adapter';
     JwtService,
     EmailManager,
     EmailAdapter,
+    IsExistEntityValidator,
   ],
 })
 export class AppModule {}
