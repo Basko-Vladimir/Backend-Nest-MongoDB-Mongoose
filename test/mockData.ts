@@ -14,6 +14,13 @@ interface Exception {
 
 export const INVALID_ID = '63d6f799999997d58f77bc1f';
 
+export const auth = {
+  incorrectBasicCredentials: { Authorization: 'Basic YWRtaW46cXdlcnR1' },
+  correctBasicCredentials: { Authorization: 'Basic YWRtaW46cXdlcnR5' },
+  incorrectAccessToken:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2VlNTE2MmMwZTNmM2IyNzYyYzQ1OTkiLCJpYXQiOjE2NzY1NjI3OTI0ODAsImV4cCI6MTY3NjU2Mjc5MzA4MH0.llZ9JpK1c6IyHHw49lArN27g1wk6wE_qPGrbTIcz8SA',
+};
+
 export const users: CreateUserDto[] = [
   {
     login: 'User1',
@@ -32,39 +39,63 @@ export const users: CreateUserDto[] = [
   },
 ];
 
-export const blogs: CreateBlogDto[] = [
-  {
-    name: 'Blog1',
-    description: 'Lorem ipsum dolor sit amet #1.',
-    websiteUrl: 'https://blog-test1.com',
+export const blogs = {
+  correctCreateBlogsDtos: [
+    {
+      name: 'Blog1',
+      description: 'Lorem ipsum dolor sit amet #1.',
+      websiteUrl: 'https://blog-test1.com',
+    },
+    {
+      name: 'Blog2',
+      description: 'Lorem ipsum dolor sit amet #2.',
+      websiteUrl: 'https://blog-test2.com',
+    },
+    {
+      name: 'Blog3',
+      description: 'Lorem ipsum dolor sit amet #3.',
+      websiteUrl: 'https://blog-test3.com',
+    },
+  ],
+  correctUpdateBlogDto: {
+    name: 'Updated Blog',
+    description: 'New description for blog Blog',
+    websiteUrl: 'https://new-site.io',
   },
-  {
-    name: 'Blog2',
-    description: 'Lorem ipsum dolor sit amet #2.',
-    websiteUrl: 'https://blog-test2.com',
+  incorrectBlogsDtos: [
+    {},
+    {
+      name: '',
+      websiteUrl: '',
+      description: '',
+    },
+    {
+      name: '   ',
+      websiteUrl: '   ',
+      description: '   ',
+    },
+    {
+      name: 'name length 16 test test',
+      websiteUrl: 'blog.com',
+      description:
+        '500+_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0',
+    },
+  ],
+  getCreatedBlogItem: (createBlogDto: CreateBlogDto): IBlogOutputModel => ({
+    id: expect.any(String),
+    name: createBlogDto.name,
+    description: createBlogDto.description,
+    websiteUrl: createBlogDto.websiteUrl,
+    isMembership: false,
+    createdAt: expect.any(String),
+  }),
+  blogsBadQueryResponse: {
+    errorsMessages: [
+      { message: expect.any(String), field: 'name' },
+      { message: expect.any(String), field: 'websiteUrl' },
+      { message: expect.any(String), field: 'description' },
+    ],
   },
-  {
-    name: 'Blog3',
-    description: 'Lorem ipsum dolor sit amet #3.',
-    websiteUrl: 'https://blog-test3.com',
-  },
-];
-
-export const getCreatedBlogItem = (
-  createBlogDto: CreateBlogDto,
-): IBlogOutputModel => ({
-  id: expect.any(String),
-  name: createBlogDto.name,
-  description: createBlogDto.description,
-  websiteUrl: createBlogDto.websiteUrl,
-  isMembership: false,
-  createdAt: expect.any(String),
-});
-
-export const updatedBlogData: UpdateBlogDto = {
-  name: 'Updated Blog',
-  description: 'New description for blog Blog',
-  websiteUrl: 'https://new-site.io',
 };
 
 export const posts: Omit<CreatePostDto, 'blogId'>[] = [
@@ -110,25 +141,28 @@ export const updatedPostData: Omit<UpdatePostDto, 'blogId'> = {
   shortDescription: 'UPDATED short description',
 };
 
-export const notFoundException: Exception = {
-  statusCode: 404,
-  message: 'Not Found',
+export const errors = {
+  notFoundException: {
+    statusCode: 404,
+    message: 'Not Found',
+  },
 };
 
-export const defaultGetAllResponse = {
-  page: 1,
-  pageSize: 10,
-  pagesCount: 0,
-  totalCount: 0,
-  items: [],
-};
-
-export const getAllItemsWithPage2Size1 = <I, O>(matchedItem: I): O => {
-  return {
-    page: 2,
-    pageSize: 1,
-    pagesCount: 3,
-    totalCount: 3,
-    items: [matchedItem as I],
-  } as O;
+export const defaultResponses = {
+  defaultGetAllResponse: {
+    page: 1,
+    pageSize: 10,
+    pagesCount: 0,
+    totalCount: 0,
+    items: [],
+  },
+  getAllItemsWithPage2Size1: <I, O>(matchedItem: I): O => {
+    return {
+      page: 2,
+      pageSize: 1,
+      pagesCount: 3,
+      totalCount: 3,
+      items: [matchedItem as I],
+    } as O;
+  },
 };

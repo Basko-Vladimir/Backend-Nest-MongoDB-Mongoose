@@ -1,6 +1,6 @@
 import { IsEmail, IsString, Length, Matches } from 'class-validator';
 import { usersConstants } from '../../common/constants';
-import { IsNotEmptyString } from '../../common/validators/is-not-empty-string.validator';
+import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
 
 const {
   MIN_LOGIN_LENGTH,
@@ -13,17 +13,17 @@ const {
 export class CreateUserDto {
   @IsString()
   @Length(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH)
-  @IsNotEmptyString()
+  @IsNotEmptyContent()
   @Matches(LOGIN_REG_EXP)
   readonly login: string;
 
   @IsString()
-  @IsNotEmptyString()
+  @IsNotEmptyContent()
   @Length(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)
   readonly password: string;
 
   @IsString()
-  @IsNotEmptyString()
+  @IsNotEmptyContent()
   @IsEmail()
   readonly email: string;
 }
