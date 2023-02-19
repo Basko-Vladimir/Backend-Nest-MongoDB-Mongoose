@@ -1,11 +1,9 @@
 import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { CreateBlogDto } from '../src/blogs/dto/create-blog.dto';
-import { UpdateBlogDto } from '../src/blogs/dto/update-blog.dto';
 import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/dto/create-post.dto';
 import { IBlogOutputModel } from '../src/blogs/dto/blogs-output-models.dto';
-import { UpdatePostDto } from '../src/posts/dto/update-post.dto';
 
 interface Exception {
   statusCode: number;
@@ -40,7 +38,7 @@ export const users: CreateUserDto[] = [
 ];
 
 export const blogs = {
-  correctCreateBlogsDtos: [
+  correctCreateBlogDtos: [
     {
       name: 'Blog1',
       description: 'Lorem ipsum dolor sit amet #1.',
@@ -98,50 +96,77 @@ export const blogs = {
   },
 };
 
-export const posts: Omit<CreatePostDto, 'blogId'>[] = [
-  {
-    title: 'Post1',
-    shortDescription: 'short description of Post1',
-    content: 'Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1',
+export const posts = {
+  correctCreatePostDtos: [
+    {
+      title: 'Post1',
+      shortDescription: 'short description of Post1',
+      content: 'Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1 Post1',
+    },
+    {
+      title: 'Post2',
+      shortDescription: 'short description of Post2',
+      content: 'Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2',
+    },
+    {
+      title: 'Post3',
+      shortDescription: 'short description of Post3',
+      content: 'Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3',
+    },
+  ],
+  correctUpdatePostDto: {
+    title: 'Post is UPDATED',
+    content: 'New UPDATED content for blog Post',
+    shortDescription: 'UPDATED short description',
   },
-  {
-    title: 'Post2',
-    shortDescription: 'short description of Post2',
-    content: 'Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2 Post2',
+  incorrectPostsDtos: [
+    {},
+    {
+      title: '',
+      shortDescription: '',
+      content: '',
+    },
+    {
+      title: '    ',
+      shortDescription: '    ',
+      content: '    ',
+    },
+    {
+      title: '30+_length_oqWPBjPIDCZsSmJTRi360TZWxXgTY0Y',
+      shortDescription:
+        '100+_length_TPiCDkcFTUlci5EixvHxj4fOT8KfKrGqZM3jjuvhPMEC2h1hanimil9ScG7XIvxVbYQIGUkAIKGz5lflHDZdo6rfqax6ZWZ1ZAJ5O',
+      content:
+        '1000+_length_SgqITcVIF19oeUkBqeHjwyCAayeJMIYFqPRyUaWXi2cRZqFQww3L6k3WnHpsqDYmMTEYEcyEKnEHwdwRmih2ijgycdocxRckEgq0hmoSxZOWSEjaivxLNpZUTmToVRpzc52xzPs33744NDdPiZBPuLN36NzGvMZowAmfhDeAjkNCAw6OLSRBab4T4mX1T6t4ctsSEQSNChOF3zyaCUUZkrG9R89nWOGpWYT4cDVxZFwBplv9w3PZpuML0u1Rt1M3fCVxBwBOyK4D78DNY8iOizf9ifyLm77VCKUQMqrxpuuGE8hpEDp1z6bYOkphJ2S8yxwurb4vhu4JqNtnQDJBJGTYqwC6MHwkJby9dYAKiTXFaMXWZoKyvkTudEGcOc5XZrhgKZUnIeNQbMwHTsggOf0cYejIIsdeIMd7uIoOEHxmMUSvNeHnQfnJUELNb5Y5gSMTqdt3x2l0OnIDvlbjivh8H5ngaLEsuzbHlN4jaIqd50Mz1JWjsgqZYn3A2s5LtG6N7hmrXhZiwM7Ay1fvIZv9u5fvjAFSTBtdwMTw6wyAc4OlSNppC56OtqmuOgW60vQF0ByTRUOkIIpDtsOzB4OYiJI2zoAP2oML3WUzodxvyb0KmRByBcu2Uo3ImxckdKdssa4DXoEvNnBpVBm9N0ts475rUx2GhkPq7DjdMVaUw87ilCCwhHbcd09i51nkGTeYQH2z30W0C1BcB1EP4KugrGKu5o5LfCDuorKRo6FTFKJSOCXgIWo9i6LntCYeS2UNSXdD3HRprUhuNeC6sZ2yRF1aKpGr4gczF14yTlMiy7rDMovbPvlNaZWZ8Rj8Dk6bEL3H3Y9DTXiOBgdo8GjTDYgmBoHHfGhQnA2rBaX8VeboZm8Ut5Ipgt966czLAMFemNlSf3FAmNLaqW4QIlodUALO8L1jzvIBaa2KbY88RH8Er9ruzGEjkwvZHFl7oAjoTK9DOmvYQlxW1qX040Ng4tFA2Stam2udqPb1\n',
+    },
+  ],
+  postsBadQueryResponse: {
+    errorsMessages: [
+      { message: expect.any(String), field: 'title' },
+      { message: expect.any(String), field: 'shortDescription' },
+      { message: expect.any(String), field: 'content' },
+    ],
   },
-  {
-    title: 'Post3',
-    shortDescription: 'short description of Post3',
-    content: 'Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3 Post3',
-  },
-];
-
-export const getCreatedPostItem = (
-  createPostDto: Omit<CreatePostDto, 'blogId'>,
-  currentBlog: IBlogOutputModel,
-): IFullPostOutputModel => ({
-  id: expect.any(String),
-  blogId: currentBlog.id,
-  blogName: currentBlog.name,
-  content: createPostDto.content,
-  title: createPostDto.title,
-  shortDescription: createPostDto.shortDescription,
-  createdAt: expect.any(String),
-  extendedLikesInfo: {
-    likesCount: 0,
-    dislikesCount: 0,
-    myStatus: LikeStatus.NONE,
-    newestLikes: [],
-  },
-});
-
-export const updatedPostData: Omit<UpdatePostDto, 'blogId'> = {
-  title: 'Post is UPDATED',
-  content: 'New UPDATED content for blog Post',
-  shortDescription: 'UPDATED short description',
+  getCreatedPostItem: (
+    createPostDto: Omit<CreatePostDto, 'blogId'>,
+    currentBlog: IBlogOutputModel,
+  ): IFullPostOutputModel => ({
+    id: expect.any(String),
+    blogId: currentBlog.id,
+    blogName: currentBlog.name,
+    content: createPostDto.content,
+    title: createPostDto.title,
+    shortDescription: createPostDto.shortDescription,
+    createdAt: expect.any(String),
+    extendedLikesInfo: {
+      likesCount: 0,
+      dislikesCount: 0,
+      myStatus: LikeStatus.NONE,
+      newestLikes: [],
+    },
+  }),
 };
 
-export const errors = {
+export const errors: { [key: string]: Exception } = {
   notFoundException: {
     statusCode: 404,
     message: 'Not Found',
