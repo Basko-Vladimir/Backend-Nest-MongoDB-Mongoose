@@ -11,19 +11,19 @@ const {
 } = usersConstants;
 
 export class CreateUserDto {
-  @IsString()
   @Length(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH)
-  @IsNotEmptyContent()
   @Matches(LOGIN_REG_EXP)
+  @IsNotEmptyContent()
+  @IsString()
   readonly login: string;
 
-  @IsString()
-  @IsNotEmptyContent()
   @Length(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)
+  @IsNotEmptyContent()
+  @IsString()
   readonly password: string;
 
-  @IsString()
-  @IsNotEmptyContent()
   @IsEmail()
+  @IsNotEmptyContent()
+  @IsString()
   readonly email: string;
 }

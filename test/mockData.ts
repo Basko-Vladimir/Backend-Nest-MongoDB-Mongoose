@@ -1,4 +1,3 @@
-import { CreateUserDto } from '../src/users/dto/create-user.dto';
 import { CreateBlogDto } from '../src/blogs/dto/create-blog.dto';
 import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
@@ -19,23 +18,50 @@ export const auth = {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2VlNTE2MmMwZTNmM2IyNzYyYzQ1OTkiLCJpYXQiOjE2NzY1NjI3OTI0ODAsImV4cCI6MTY3NjU2Mjc5MzA4MH0.llZ9JpK1c6IyHHw49lArN27g1wk6wE_qPGrbTIcz8SA',
 };
 
-export const users: CreateUserDto[] = [
-  {
-    login: 'User1',
-    password: '111111',
-    email: 'user1@gmail.com',
+export const users = {
+  correctCreateUserDtos: [
+    {
+      login: 'User1',
+      password: '111111',
+      email: 'user1@gmail.com',
+    },
+    {
+      login: 'User2',
+      password: '222222',
+      email: 'user2@gmail.com',
+    },
+    {
+      login: 'User3',
+      password: '333333',
+      email: 'user3@gmail.com',
+    },
+  ],
+  incorrectUsersDtos: [
+    {},
+    {
+      login: '',
+      password: '',
+      email: '',
+    },
+    {
+      login: '   ',
+      password: '   ',
+      email: '   ',
+    },
+    {
+      login: 'aaa;kdl/',
+      password: '123',
+      email: 'aaaa@sdsds',
+    },
+  ],
+  usersBadQueryResponse: {
+    errorsMessages: [
+      { message: expect.any(String), field: 'login' },
+      { message: expect.any(String), field: 'password' },
+      { message: expect.any(String), field: 'email' },
+    ],
   },
-  {
-    login: 'User2',
-    password: '222222',
-    email: 'user2@gmail.com',
-  },
-  {
-    login: 'User3',
-    password: '333333',
-    email: 'user3@gmail.com',
-  },
-];
+};
 
 export const blogs = {
   correctCreateBlogDtos: [
