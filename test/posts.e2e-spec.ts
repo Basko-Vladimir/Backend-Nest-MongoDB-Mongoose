@@ -17,11 +17,18 @@ import {
   getPostRequest,
   getPostsRequest,
   updatePostRequest,
+  getPostsByBlogIdRequest,
+  clearDataBase,
+  getBlogRequest,
 } from './utils';
 import {
   AllPostsOutputModel,
   IPostOutputModel,
 } from '../src/posts/dto/posts-output-models.dto';
+import {
+  AllBlogsOutputModel,
+  IBlogOutputModel,
+} from '../src/blogs/dto/blogs-output-models.dto';
 
 describe('Posts', () => {
   const { correctCreateBlogDtos } = blogs;
@@ -36,7 +43,7 @@ describe('Posts', () => {
     incorrectBasicCredentials,
     incorrectAccessToken,
   } = auth;
-  const {} = errors;
+  const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
   let app: INestApplication;
   let post1, post2, post3;
   let blog1, blog2;
@@ -74,80 +81,92 @@ describe('Posts', () => {
       }
     });
 
-    // it('correct auth credentials and correct input data', async () => {
-    //   const response1 = await createBlogsRequest(app)
-    //     .set(correctBasicCredentials)
-    //     .send(correctCreateBlogDtos[0]);
-    //   expect(response1.status).toBe(201);
-    //   blog1 = response1.body;
-    //   const blogId = blog1.id;
-    //
-    //   const response2 = await createPostRequest(app)
-    //     .set(correctBasicCredentials)
-    //     .send({ ...correctCreatePostDtos[0], blogId });
-    //   expect(response2.status).toBe(201);
-    //   expect(response2.body).toEqual(
-    //     getCreatedPostItem(correctCreatePostDtos[0], blogId),
-    //   );
-    //   post1 = response2.body;
-    //
-    //   const response3 = await createPostRequest(app)
-    //     .set(correctBasicCredentials)
-    //     .send({ ...correctCreatePostDtos[1], blogId });
-    //   expect(response3.status).toBe(201);
-    //   expect(response3.body).toEqual(
-    //     getCreatedPostItem(correctCreatePostDtos[1], blogId),
-    //   );
-    //   post2 = response3.body;
-    //
-    //   const response4 = await createPostRequest(app)
-    //     .set(correctBasicCredentials)
-    //     .send({ ...correctCreatePostDtos[2], blogId });
-    //   expect(response4.status).toBe(201);
-    //   expect(response4.body).toEqual(
-    //     getCreatedPostItem(correctCreatePostDtos[2], blogId),
-    //   );
-    //   post3 = response4.body;
-    //
-    //   const response5 = await getPostsRequest(app);
-    //   expect(response5.body.items).toHaveLength(3);
-    // });
+    it('correct auth credentials and correct input data', async () => {
+      const response1 = await createBlogsRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateBlogDtos[0]);
+      expect(response1.status).toBe(201);
+      blog1 = response1.body;
+      const blogId = blog1.id;
+      const savedPosts = [post1, post2, post3];
+
+      for (let i = 0; i < correctCreatePostDtos.length; i++) {
+        const result = await createPostRequest(app)
+          .set(correctBasicCredentials)
+          .send({ ...correctCreatePostDtos[i], blogId });
+        expect(result.status).toBe(201);
+        expect(result.body).toEqual(
+          getCreatedPostItem(correctCreatePostDtos[i], blog1),
+        );
+        savedPosts[i] = result.body;
+      }
+      [post1, post2, post3] = savedPosts;
+
+      const response2 = await getPostsRequest(app);
+      expect(response2.body.items).toHaveLength(3);
+    });
+  });
+
+  describe('/(GET All) get all posts', () => {
+    it('with query Params', async () => {
+      const response1 = await getPostsRequest(app).query({
+        pageNumber: 2,
+        pageSize: 1,
+      });
+      const expectedResult = getAllItemsWithPage2Size1<
+        IPostOutputModel,
+        AllPostsOutputModel
+      >(post2);
+      expect(response1.body).toEqual(expectedResult);
+
+      const response2 = await getPostsByBlogIdRequest(app, blog1.id).query({
+        sortBy: 'content',
+        sortDirection: 'asc',
+      });
+      expect(response2.body.items[0].id).toBe(post1.id);
+      expect(response2.body.items[response2.body.items.length - 1].id).toBe(
+        post3.id,
+      );
+    });
+
+    it('by default without created posts', async () => {
+      await clearDataBase(app);
+
+      const response = await getPostsRequest(app);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(defaultGetAllResponse);
+    });
+  });
+
+  describe('/(GET ONE) get one post', () => {
+    it('by invalid id', async () => {
+      const response1 = await createBlogsRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateBlogDtos[0]);
+      expect(response1.status).toBe(201);
+      blog1 = response1.body;
+
+      const response2 = await createPostRequest(app)
+        .set(correctBasicCredentials)
+        .send({ ...correctCreatePostDtos[0], blogId: blog1.id });
+      expect(response2.status).toBe(201);
+      post1 = response2.body;
+
+      const response3 = await getPostRequest(app, INVALID_ID);
+      expect(response3.status).toBe(404);
+    });
+
+    it('by valid id', async () => {
+      const response = await getPostRequest(app, post1.id);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(post1);
+    });
   });
 
   // it('/GET ALL get all posts', async () => {
   //   const response = await getPostsRequest(app);
   //   expect(response.status).toBe(200);
   //   expect(response.body).toEqual(defaultGetAllResponse);
-  // });
-  //
-  // it('/POST create 3 posts', async () => {
-  //   const savedBlogs = [blog1, blog2];
-  //   for (let i = 0; i < savedBlogs.length; i++) {
-  //     const res = await createBlogsRequest(app).send(blogs[i]);
-  //     expect(res.status).toBe(201);
-  //     expect(res.body).toEqual(getCreatedBlogItem(blogs[i]));
-  //     savedBlogs[i] = res.body;
-  //   }
-  //   [blog1, blog2] = savedBlogs;
-  //
-  //   const response1 = await getBlogsRequest(app);
-  //   expect(response1.body.items).toHaveLength(2);
-  //
-  //   const savedPosts = [post1, post2, post3];
-  //   for (let i = 0; i < savedPosts.length; i++) {
-  //     const currentBlog = i < 2 ? blog1 : blog2;
-  //     const res = await createPostRequest(app).send({
-  //       ...posts[i],
-  //       blogId: currentBlog.id,
-  //     });
-  //     expect(res.status).toBe(201);
-  //     expect(res.body).toEqual(getCreatedPostItem(posts[i], currentBlog));
-  //     savedPosts[i] = res.body;
-  //   }
-  //   [post1, post2, post3] = savedPosts;
-  //
-  //   const response = await getPostsRequest(app);
-  //   expect(response.body.items).toHaveLength(3);
   // });
   //
   // it('/GET ALL posts with query Params', async () => {
