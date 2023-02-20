@@ -23,8 +23,8 @@ export class CreatePostDto {
   content: string;
 
   @IsExistEntity()
+  @IsMongoId()
   @IsNotEmptyContent()
   @IsNotEmpty()
-  @IsMongoId()
   blogId: string;
 }
