@@ -6,15 +6,16 @@ interface CommentatorInfo {
   userLogin: string;
 }
 
-export interface CommentOutputModel {
+export interface ICommentOutputModel {
   id: string;
   content: string;
   commentatorInfo: CommentatorInfo;
   createdAt: string;
 }
 
-export interface FullCommentOutputModel extends CommentOutputModel {
+export interface FullCommentOutputModel extends ICommentOutputModel {
   likesInfo: LikesInfoOutputModel;
 }
 
-export type AllCommentsOutputModel = AllEntitiesOutputModel<CommentOutputModel>;
+export type AllCommentsOutputModel =
+  AllEntitiesOutputModel<ICommentOutputModel>;

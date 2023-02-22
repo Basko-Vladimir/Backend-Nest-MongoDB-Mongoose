@@ -3,6 +3,9 @@ import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/dto/create-post.dto';
 import { IBlogOutputModel } from '../src/blogs/dto/blogs-output-models.dto';
+import { FullCommentOutputModel } from '../src/comments/dto/comments-output-models.dto';
+import { IUserOutputModel } from '../src/users/dto/users-output-models.dto';
+import { CreateCommentDto } from '../src/comments/dto/create-comment.dto';
 
 interface Exception {
   statusCode: number;
@@ -15,7 +18,7 @@ export const auth = {
   incorrectBasicCredentials: { Authorization: 'Basic YWRtaW46cXdlcnR1' },
   correctBasicCredentials: { Authorization: 'Basic YWRtaW46cXdlcnR5' },
   incorrectAccessToken:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2VlNTE2MmMwZTNmM2IyNzYyYzQ1OTkiLCJpYXQiOjE2NzY1NjI3OTI0ODAsImV4cCI6MTY3NjU2Mjc5MzA4MH0.llZ9JpK1c6IyHHw49lArN27g1wk6wE_qPGrbTIcz8SA',
+    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2VlNTE2MmMwZTNmM2IyNzYyYzQ1OTkiLCJpYXQiOjE2NzY1NjI3OTI0ODAsImV4cCI6MTY3NjU2Mjc5MzA4MH0.llZ9JpK1c6IyHHw49lArN27g1wk6wE_qPGrbTIcz8SA',
 };
 
 export const users = {
@@ -193,10 +196,52 @@ export const posts = {
   }),
 };
 
+export const comments = {
+  correctCreateCommentDtos: [
+    { content: 'Comment 1 content 111111111111111111111' },
+    { content: 'Comment 2 content 222222222222222222222' },
+    { content: 'Comment 3 content 333333333333333333333' },
+  ],
+  incorrectCommentsDtos: [
+    {},
+    { content: '' },
+    { content: '       ' },
+    { content: 'short content' },
+    {
+      content:
+        '300+_length_eFoDB9ejBSUWfoUrrx6CPhAHOBFTuCh0TSZTBbG8r4dFacjCnqafE8iwp76MUtzbDhL2OKbCbh4jWziALBrN0jzHarFMYF9EEDfqYkFHMVOzUyuK7rUrzYy2gC0I3EBlh5VMvsJGNojmUWGO6RRGcZ3YR8AstidHPZvwGBsd0kztom7qPmAndoxLCoA1ESK2oMt6CgydQVvDakFCaxW9DAXUi7XbDHankglDrNvSjqHBs7m1FGedGg1ND8hMvmn3K0BbWQSeoA4AeOmk7f3BsISpsWxlRkGCUcZiLTReWP4z\n',
+    },
+  ],
+  commentsBadQueryResponse: {
+    errorsMessages: [{ message: expect.any(String), field: 'content' }],
+  },
+  getCreatedCommentItem: (
+    content: string,
+    userLogin: string,
+  ): FullCommentOutputModel => ({
+    id: expect.any(String),
+    content,
+    commentatorInfo: {
+      userId: expect.any(String),
+      userLogin,
+    },
+    createdAt: expect.any(String),
+    likesInfo: {
+      likesCount: 0,
+      dislikesCount: 0,
+      myStatus: LikeStatus.NONE,
+    },
+  }),
+};
+
 export const errors: { [key: string]: Exception } = {
   notFoundException: {
     statusCode: 404,
     message: 'Not Found',
+  },
+  unauthorisedException: {
+    statusCode: 401,
+    message: 'Unauthorized',
   },
 };
 

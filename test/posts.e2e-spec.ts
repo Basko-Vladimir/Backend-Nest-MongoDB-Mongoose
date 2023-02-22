@@ -6,35 +6,37 @@ import {
   auth,
   defaultResponses,
   errors,
+  users,
+  comments,
 } from './mockData';
 import {
   initTestApp,
   createBlogsRequest,
   createPostRequest,
   deletePostRequest,
-  getBlogsRequest,
-  getCommentsByPostIdRequest,
   getPostRequest,
   getPostsRequest,
   updatePostRequest,
   getPostsByBlogIdRequest,
   clearDataBase,
-  getBlogRequest,
-  updateBlogRequest,
   deleteBlogRequest,
+  registrationRequest,
+  loginRequest,
+  createCommentByPostIdRequest,
+  getCommentsByPostIdRequest,
 } from './utils';
 import {
   AllPostsOutputModel,
   IPostOutputModel,
 } from '../src/posts/dto/posts-output-models.dto';
 import {
-  AllBlogsOutputModel,
-  IBlogOutputModel,
-} from '../src/blogs/dto/blogs-output-models.dto';
+  AllCommentsOutputModel,
+  FullCommentOutputModel,
+} from '../src/comments/dto/comments-output-models.dto';
 
 describe('Posts', () => {
   const { correctCreateBlogDtos, incorrectBlogsIds } = blogs;
-  const { notFoundException } = errors;
+  const { notFoundException, unauthorisedException } = errors;
   const {
     correctCreatePostDtos,
     incorrectPostsDtos,
@@ -47,14 +49,22 @@ describe('Posts', () => {
     incorrectBasicCredentials,
     incorrectAccessToken,
   } = auth;
+  const {
+    correctCreateCommentDtos,
+    commentsBadQueryResponse,
+    incorrectCommentsDtos,
+    getCreatedCommentItem,
+  } = comments;
+  const { correctCreateUserDtos } = users;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
   let app: INestApplication;
   let post1, post2, post3;
-  let blog1, blog2;
+  let comment1, comment2;
+  let blog1;
+  let user1Token;
 
   beforeAll(async () => {
     app = await initTestApp();
-    ``;
     postsBadQueryResponse.errorsMessages.push({
       message: expect.any(String),
       field: 'blogId',
@@ -211,6 +221,121 @@ describe('Posts', () => {
     });
   });
 
+  describe('/(POST COMMENTS) create comments', () => {
+    beforeAll(async () => {
+      const response = await registrationRequest(app).send(
+        correctCreateUserDtos[0],
+      );
+      expect(response.status).toBe(204);
+
+      const response2 = await loginRequest(app).send({
+        loginOrEmail: correctCreateUserDtos[0].login,
+        password: correctCreateUserDtos[0].password,
+      });
+      expect(response2.status).toBe(200);
+      user1Token = `Bearer ${response2.body.accessToken}`;
+    });
+
+    it('without token or with incorrect token', async () => {
+      const response1 = await createCommentByPostIdRequest(app, post1.id).send(
+        correctCreateCommentDtos[0],
+      );
+      expect(response1.status).toBe(401);
+      expect(response1.body).toEqual(unauthorisedException);
+
+      const response2 = await createCommentByPostIdRequest(app, post1.id)
+        .set({ Authorization: incorrectAccessToken })
+        .send(correctCreateCommentDtos[0]);
+      expect(response2.status).toBe(401);
+      expect(response2.body).toEqual(unauthorisedException);
+    });
+
+    it('correct token but invalid id', async () => {
+      const response = await createCommentByPostIdRequest(app, INVALID_ID)
+        .set({ Authorization: user1Token })
+        .send(correctCreateCommentDtos[0]);
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual(notFoundException);
+    });
+
+    it('correct token, valid postId but incorrect input data', async () => {
+      for (let i = 0; i <= incorrectCommentsDtos.length; i++) {
+        const response = await createCommentByPostIdRequest(app, post1.id)
+          .set({ Authorization: user1Token })
+          .send(incorrectCommentsDtos[i]);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual(commentsBadQueryResponse);
+      }
+    });
+
+    it('everything is correct (token, id, input data)', async () => {
+      const response1 = await createCommentByPostIdRequest(app, post1.id)
+        .set({ Authorization: user1Token })
+        .send(correctCreateCommentDtos[0]);
+      expect(response1.status).toBe(201);
+      expect(response1.body).toEqual(
+        getCreatedCommentItem(
+          correctCreateCommentDtos[0].content,
+          correctCreateUserDtos[0].login,
+        ),
+      );
+      comment1 = response1.body;
+    });
+  });
+
+  describe('/GET All COMMENTS, get all comments', () => {
+    beforeAll(async () => {
+      const response1 = await createCommentByPostIdRequest(app, post1.id)
+        .set({ Authorization: user1Token })
+        .send(correctCreateCommentDtos[1]);
+      expect(response1.status).toBe(201);
+      comment2 = response1.body;
+    });
+
+    it('by invalid id', async () => {
+      const response = await getCommentsByPostIdRequest(app, INVALID_ID);
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual(notFoundException);
+    });
+
+    it('by valid postId without query params', async () => {
+      const response = await getCommentsByPostIdRequest(app, post1.id);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        page: 1,
+        pageSize: 10,
+        pagesCount: 1,
+        totalCount: 2,
+        items: [comment2, comment1],
+      });
+    });
+
+    it('by valid postId with query params', async () => {
+      const response1 = await getCommentsByPostIdRequest(app, post1.id).query({
+        pageNumber: 2,
+        pageSize: 1,
+      });
+      const expectedResult = getAllItemsWithPage2Size1<
+        FullCommentOutputModel,
+        AllCommentsOutputModel
+      >(comment1);
+      expect(response1.body).toEqual({
+        ...expectedResult,
+        pagesCount: 2,
+        totalCount: 2,
+      });
+
+      const response2 = await getCommentsByPostIdRequest(app, post1.id).query({
+        sortBy: 'content',
+        sortDirection: 'asc',
+      });
+      expect(response2.body.items[0].id).toBe(comment1.id);
+      expect(response2.body.items[response2.body.items.length - 1].id).toBe(
+        comment2.id,
+      );
+    });
+  });
+
   describe('/(DELETE ONE POST) delete blog', () => {
     it('incorrect auth credentials or without them', async () => {
       const response1 = await deletePostRequest(app, post1.id);
@@ -241,19 +366,6 @@ describe('Posts', () => {
       expect(response2.body).toEqual(notFoundException);
     });
   });
-
-  //
-  // it('GET ALL get comments for post by invalid postId', async () => {
-  //   const response = await getCommentsByPostIdRequest(app, INVALID_ID);
-  //   expect(response.status).toBe(404);
-  //   expect(response.body).toEqual(notFoundException);
-  // });
-  //
-  // it('GET All get comments for post by valid postId', async () => {
-  //   const response = await getCommentsByPostIdRequest(app, post2.id);
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toEqual(defaultGetAllResponse);
-  // });
 
   afterAll(async () => {
     await app.close();

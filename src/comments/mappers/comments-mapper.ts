@@ -1,13 +1,13 @@
 import { CommentDocument } from '../schemas/comment.schema';
 import {
-  CommentOutputModel,
+  ICommentOutputModel,
   FullCommentOutputModel,
 } from '../dto/comments-output-models.dto';
 import { LikesService } from '../../likes/likes.service';
 
 export const mapDbCommentToCommentOutputModel = (
   comment: CommentDocument,
-): CommentOutputModel => {
+): ICommentOutputModel => {
   return {
     id: String(comment._id),
     content: comment.content,
@@ -20,7 +20,7 @@ export const mapDbCommentToCommentOutputModel = (
 };
 
 export const getFullCommentOutputModel = async (
-  comment: CommentOutputModel,
+  comment: ICommentOutputModel,
   likesService: LikesService,
   userId: string = null,
 ): Promise<FullCommentOutputModel> => {

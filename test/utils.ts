@@ -76,9 +76,19 @@ export const deletePostRequest = (app: INestApplication, id: string) =>
   request(app.getHttpServer()).delete(`/posts/${id}`);
 export const updatePostRequest = (app: INestApplication, id: string) =>
   request(app.getHttpServer()).put(`/posts/${id}`);
-
-//Comments requests
+export const createCommentByPostIdRequest = (
+  app: INestApplication,
+  id: string,
+) => request(app.getHttpServer()).post(`/posts/${id}/comments`);
 export const getCommentsByPostIdRequest = (
   app: INestApplication,
   postId: string,
 ) => request(app.getHttpServer()).get(`/posts/${postId}/comments`);
+
+//Auth requests
+export const registrationRequest = (app: INestApplication) =>
+  request(app.getHttpServer()).post('/auth/registration');
+export const registrationConfirmationRequest = (app: INestApplication) =>
+  request(app.getHttpServer()).post('/auth/registration-confirmation');
+export const loginRequest = (app: INestApplication) =>
+  request(app.getHttpServer()).post('/auth/login');
