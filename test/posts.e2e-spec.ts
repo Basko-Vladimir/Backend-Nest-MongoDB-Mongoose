@@ -20,6 +20,8 @@ import {
   getPostsByBlogIdRequest,
   clearDataBase,
   getBlogRequest,
+  updateBlogRequest,
+  deleteBlogRequest,
 } from './utils';
 import {
   AllPostsOutputModel,
@@ -31,12 +33,14 @@ import {
 } from '../src/blogs/dto/blogs-output-models.dto';
 
 describe('Posts', () => {
-  const { correctCreateBlogDtos } = blogs;
+  const { correctCreateBlogDtos, incorrectBlogsIds } = blogs;
+  const { notFoundException } = errors;
   const {
     correctCreatePostDtos,
     incorrectPostsDtos,
     postsBadQueryResponse,
     getCreatedPostItem,
+    correctUpdatePostDto,
   } = posts;
   const {
     correctBasicCredentials,
@@ -50,9 +54,14 @@ describe('Posts', () => {
 
   beforeAll(async () => {
     app = await initTestApp();
+    ``;
+    postsBadQueryResponse.errorsMessages.push({
+      message: expect.any(String),
+      field: 'blogId',
+    });
   });
 
-  describe('/(POST) create post', () => {
+  describe('/(CREATE POST) create post', () => {
     it('incorrect auth credentials or without them', async () => {
       const response1 = await createPostRequest(app).send(
         correctCreatePostDtos[0],
@@ -66,12 +75,6 @@ describe('Posts', () => {
     });
 
     it('correct auth credentials and incorrect input data', async () => {
-      const incorrectBlogsIds = ['', '   ', '2156165465', INVALID_ID];
-      postsBadQueryResponse.errorsMessages.push({
-        message: expect.any(String),
-        field: 'blogId',
-      });
-
       for (let i = 0; i <= incorrectPostsDtos.length; i++) {
         const response = await createPostRequest(app)
           .set(correctBasicCredentials)
@@ -107,7 +110,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(GET All) get all posts', () => {
+  describe('/(GET All POSTS) get all posts', () => {
     it('with query Params', async () => {
       const response1 = await getPostsRequest(app).query({
         pageNumber: 2,
@@ -138,7 +141,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(GET ONE) get one post', () => {
+  describe('/(GET ONE POST) get one post', () => {
     it('by invalid id', async () => {
       const response1 = await createBlogsRequest(app)
         .set(correctBasicCredentials)
@@ -163,81 +166,82 @@ describe('Posts', () => {
     });
   });
 
-  // it('/GET ALL get all posts', async () => {
-  //   const response = await getPostsRequest(app);
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toEqual(defaultGetAllResponse);
-  // });
-  //
-  // it('/GET ALL posts with query Params', async () => {
-  //   const response1 = await getPostsRequest(app).query({
-  //     pageNumber: 2,
-  //     pageSize: 1,
-  //   });
-  //   const expectedResult = getAllItemsWithPage2Size1<
-  //     IPostOutputModel,
-  //     AllPostsOutputModel
-  //   >(post2);
-  //   expect(response1.body).toEqual(expectedResult);
-  //
-  //   const response3 = await getPostsRequest(app).query({
-  //     sortBy: 'title',
-  //     sortDirection: 'asc',
-  //   });
-  //   expect(response3.body.items[0].id).toBe(post1.id);
-  //   expect(response3.body.items[response3.body.items.length - 1].id).toBe(
-  //     post3.id,
-  //   );
-  // });
-  //
-  // it('/GET ONE get one post by invalid id', async () => {
-  //   const response = await getPostRequest(app, INVALID_ID);
-  //   expect(response.status).toBe(404);
-  //   expect(response.body).toEqual(notFoundException);
-  // });
-  //
-  // it('/GET ONE get one post by id', async () => {
-  //   const response = await getPostRequest(app, post2.id);
-  //   expect(response.status).toBe(200);
-  //   expect(response.body).toEqual(post2);
-  // });
-  //
-  // it('/UPDATE ONE update post by invalid id', async () => {
-  //   const response = await updatePostRequest(app, INVALID_ID).send(
-  //     updatedPostData,
-  //   );
-  //   expect(response.status).toBe(404);
-  //   expect(response.body).toEqual(notFoundException);
-  // });
-  //
-  // it('/UPDATE ONE update post by valid id', async () => {
-  //   const response1 = await updatePostRequest(app, post2.id).send({
-  //     ...updatedPostData,
-  //     blogId: blog1.id,
-  //   });
-  //   expect(response1.status).toBe(204);
-  //
-  //   const response2 = await getPostRequest(app, post2.id);
-  //   expect(response2.body).toEqual({
-  //     ...post2,
-  //     ...updatedPostData,
-  //   });
-  // });
-  //
-  // it('/DELETE ONE delete post by invalid id', async () => {
-  //   const response = await deletePostRequest(app, INVALID_ID);
-  //   expect(response.status).toBe(404);
-  //   expect(response.body).toEqual(notFoundException);
-  // });
-  //
-  // it('/DELETE ONE delete post by valid id', async () => {
-  //   const response = await deletePostRequest(app, post1.id);
-  //   expect(response.status).toBe(204);
-  //
-  //   const response2 = await deletePostRequest(app, post1.id);
-  //   expect(response2.status).toBe(404);
-  //   expect(response2.body).toEqual(notFoundException);
-  // });
+  describe('/(UPDATE ONE POST) update post', () => {
+    it('incorrect auth credentials or without them', async () => {
+      const response1 = await updatePostRequest(app, post1.id).send(
+        correctUpdatePostDto,
+      );
+      expect(response1.status).toBe(401);
+
+      const response2 = await updatePostRequest(app, post1.id)
+        .set(incorrectBasicCredentials)
+        .send({ ...correctUpdatePostDto, blogId: blog1.id });
+      expect(response2.status).toBe(401);
+    });
+
+    it('correct auth credentials but invalid id', async () => {
+      const response = await updatePostRequest(app, INVALID_ID)
+        .set(correctBasicCredentials)
+        .send({ ...correctUpdatePostDto, blogId: blog1.id });
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual(notFoundException);
+    });
+
+    it('correct auth credentials, valid id but incorrect input data', async () => {
+      for (let i = 0; i < incorrectPostsDtos.length; i++) {
+        const response = await updatePostRequest(app, post1.id)
+          .set(correctBasicCredentials)
+          .send({ ...incorrectPostsDtos[i], blogId: incorrectBlogsIds[i] });
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual(postsBadQueryResponse);
+      }
+    });
+
+    it('correct all (auth credentials, id, input data)', async () => {
+      const response1 = await updatePostRequest(app, post1.id)
+        .set(correctBasicCredentials)
+        .send({ ...correctUpdatePostDto, blogId: blog1.id });
+      expect(response1.status).toBe(204);
+
+      const response2 = await getPostRequest(app, post1.id);
+      expect(response2.body).toEqual({
+        ...post1,
+        ...correctUpdatePostDto,
+      });
+    });
+  });
+
+  describe('/(DELETE ONE POST) delete blog', () => {
+    it('incorrect auth credentials or without them', async () => {
+      const response1 = await deletePostRequest(app, post1.id);
+      expect(response1.status).toBe(401);
+
+      const response2 = await deleteBlogRequest(app, blog1.id).set(
+        incorrectBasicCredentials,
+      );
+      expect(response2.status).toBe(401);
+    });
+
+    it('correct auth credentials but invalid id', async () => {
+      const response = await deletePostRequest(app, INVALID_ID).set(
+        correctBasicCredentials,
+      );
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual(notFoundException);
+    });
+
+    it('correct auth credentials and valid id', async () => {
+      const response = await deletePostRequest(app, post1.id).set(
+        correctBasicCredentials,
+      );
+      expect(response.status).toBe(204);
+
+      const response2 = await getPostRequest(app, post1.id);
+      expect(response2.status).toBe(404);
+      expect(response2.body).toEqual(notFoundException);
+    });
+  });
+
   //
   // it('GET ALL get comments for post by invalid postId', async () => {
   //   const response = await getCommentsByPostIdRequest(app, INVALID_ID);

@@ -105,6 +105,7 @@ export const blogs = {
         '500+_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0101_Length_1GjrgergpmmpmKMKLjioememfOyJdTHB0cI9iW8GmbmPsd7O70PS4BdopkHksGCWm3KxPzkbQP3e5kE9yqLVEjqwroaoOqGwSftpKiVQfYwdZEW0',
     },
   ],
+  incorrectBlogsIds: ['', '   ', '2156165465', INVALID_ID],
   getCreatedBlogItem: (createBlogDto: CreateBlogDto): IBlogOutputModel => ({
     id: expect.any(String),
     name: createBlogDto.name,

@@ -7,24 +7,24 @@ const { MAX_TITLE_LENGTH, MAX_SHORT_DESCRIPTION_LENGTH, MAX_CONTENT_LENGTH } =
   postsConstants;
 
 export class UpdatePostDto {
-  @IsString()
-  @IsNotEmptyContent()
   @Length(MIN_STRINGS_LENGTH, MAX_TITLE_LENGTH)
+  @IsNotEmptyContent()
+  @IsString()
   readonly title: string;
 
-  @IsString()
-  @IsNotEmptyContent()
   @Length(MIN_STRINGS_LENGTH, MAX_SHORT_DESCRIPTION_LENGTH)
+  @IsNotEmptyContent()
+  @IsString()
   readonly shortDescription: string;
 
-  @IsString()
-  @IsNotEmptyContent()
   @Length(MIN_STRINGS_LENGTH, MAX_CONTENT_LENGTH)
+  @IsNotEmptyContent()
+  @IsString()
   readonly content: string;
 
-  @IsNotEmpty()
-  @IsNotEmptyContent()
-  @IsMongoId()
   @IsExistEntity()
+  @IsMongoId()
+  @IsNotEmptyContent()
+  @IsNotEmpty()
   readonly blogId: string;
 }
