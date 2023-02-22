@@ -38,7 +38,7 @@ describe('Blogs', () => {
     correctCreatePostDtos,
     incorrectPostsDtos,
     postsBadQueryResponse,
-    getCreatedPostItem,
+    getPostItem,
   } = posts;
   const { notFoundException } = errors;
   const { incorrectBasicCredentials, correctBasicCredentials } = auth;
@@ -288,7 +288,7 @@ describe('Blogs', () => {
       const response1 = await createPostByBlogIdRequest(app, blog1.id)
         .set(correctBasicCredentials)
         .send(correctCreatePostDtos[0]);
-      const targetPost1 = getCreatedPostItem(correctCreatePostDtos[0], blog1);
+      const targetPost1 = getPostItem(correctCreatePostDtos[0], blog1);
       expect(response1.status).toBe(201);
       expect(response1.body).toEqual(targetPost1);
       post1 = response1.body;
@@ -296,7 +296,7 @@ describe('Blogs', () => {
       const response2 = await createPostByBlogIdRequest(app, blog1.id)
         .set(correctBasicCredentials)
         .send(correctCreatePostDtos[1]);
-      const targetPost2 = getCreatedPostItem(correctCreatePostDtos[1], blog1);
+      const targetPost2 = getPostItem(correctCreatePostDtos[1], blog1);
       expect(response2.status).toBe(201);
       expect(response2.body).toEqual(targetPost2);
       post2 = response2.body;

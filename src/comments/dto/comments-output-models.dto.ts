@@ -13,7 +13,7 @@ export interface ICommentOutputModel {
   createdAt: string;
 }
 
-export interface FullCommentOutputModel extends ICommentOutputModel {
+export interface IFullCommentOutputModel extends ICommentOutputModel {
   likesInfo: LikesInfoOutputModel;
 }
 

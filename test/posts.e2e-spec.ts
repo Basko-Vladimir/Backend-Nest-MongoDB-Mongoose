@@ -8,6 +8,7 @@ import {
   errors,
   users,
   comments,
+  likes,
 } from './mockData';
 import {
   initTestApp,
@@ -24,15 +25,18 @@ import {
   createCommentByPostIdRequest,
   getCommentsByPostIdRequest,
   createUserRequest,
+  updatePostLikeStatus,
 } from './utils';
 import {
   AllPostsOutputModel,
+  IFullPostOutputModel,
   IPostOutputModel,
 } from '../src/posts/dto/posts-output-models.dto';
 import {
   AllCommentsOutputModel,
-  FullCommentOutputModel,
+  IFullCommentOutputModel,
 } from '../src/comments/dto/comments-output-models.dto';
+import { LikeStatus } from '../src/common/enums';
 
 describe('Posts', () => {
   const { correctCreateBlogDtos, incorrectBlogsIds } = blogs;
@@ -41,7 +45,7 @@ describe('Posts', () => {
     correctCreatePostDtos,
     incorrectPostsDtos,
     postsBadQueryResponse,
-    getCreatedPostItem,
+    getPostItem,
     correctUpdatePostDto,
   } = posts;
   const {
@@ -53,14 +57,20 @@ describe('Posts', () => {
     correctCreateCommentDtos,
     commentsBadQueryResponse,
     incorrectCommentsDtos,
-    getCreatedCommentItem,
+    getCommentItem,
   } = comments;
+  const {
+    correctUpdateLikeStatusDto,
+    incorrectLikeStatusDto,
+    likeBadQueryResponse,
+  } = likes;
   const { correctCreateUserDtos } = users;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
   let app: INestApplication;
   let post1, post2, post3;
   let comment1, comment2;
   let blog1;
+  let user1;
   let user1Token;
 
   beforeAll(async () => {
@@ -71,7 +81,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(CREATE POST) create post', () => {
+  describe('/(CREATE POST)', () => {
     it('incorrect auth credentials or without them', async () => {
       const response1 = await createPostRequest(app).send(
         correctCreatePostDtos[0],
@@ -109,7 +119,7 @@ describe('Posts', () => {
           .send({ ...correctCreatePostDtos[i], blogId });
         expect(result.status).toBe(201);
         expect(result.body).toEqual(
-          getCreatedPostItem(correctCreatePostDtos[i], blog1),
+          getPostItem(correctCreatePostDtos[i], blog1),
         );
         savedPosts[i] = result.body;
       }
@@ -120,7 +130,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(GET All POSTS) get all posts', () => {
+  describe('/(GET All POSTS)', () => {
     it('with query Params', async () => {
       const response1 = await getPostsRequest(app).query({
         pageNumber: 2,
@@ -151,7 +161,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(GET ONE POST) get one post', () => {
+  describe('/(GET ONE POST)', () => {
     it('by invalid id', async () => {
       const response1 = await createBlogsRequest(app)
         .set(correctBasicCredentials)
@@ -176,7 +186,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(UPDATE ONE POST) update post', () => {
+  describe('/(UPDATE ONE POST)', () => {
     it('incorrect auth credentials or without them', async () => {
       const response1 = await updatePostRequest(app, post1.id).send(
         correctUpdatePostDto,
@@ -221,12 +231,13 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(POST COMMENTS) create comments', () => {
+  describe('/(POST COMMENTS)', () => {
     beforeAll(async () => {
       const response1 = await createUserRequest(app)
         .set(correctBasicCredentials)
         .send(correctCreateUserDtos[0]);
       expect(response1.status).toBe(201);
+      user1 = response1.body;
 
       const response2 = await loginRequest(app).send({
         loginOrEmail: correctCreateUserDtos[0].login,
@@ -274,7 +285,7 @@ describe('Posts', () => {
         .send(correctCreateCommentDtos[0]);
       expect(response1.status).toBe(201);
       expect(response1.body).toEqual(
-        getCreatedCommentItem(
+        getCommentItem(
           correctCreateCommentDtos[0].content,
           correctCreateUserDtos[0].login,
         ),
@@ -283,7 +294,7 @@ describe('Posts', () => {
     });
   });
 
-  describe('/GET All COMMENTS, get all comments', () => {
+  describe('/(GET All COMMENTS)', () => {
     beforeAll(async () => {
       const response1 = await createCommentByPostIdRequest(app, post1.id)
         .set({ Authorization: user1Token })
@@ -316,7 +327,7 @@ describe('Posts', () => {
         pageSize: 1,
       });
       const expectedResult = getAllItemsWithPage2Size1<
-        FullCommentOutputModel,
+        IFullCommentOutputModel,
         AllCommentsOutputModel
       >(comment1);
       expect(response1.body).toEqual({
@@ -333,6 +344,75 @@ describe('Posts', () => {
       expect(response2.body.items[response2.body.items.length - 1].id).toBe(
         comment2.id,
       );
+    });
+  });
+
+  describe('/(UPDATE POST LIKE STATUS)', () => {
+    it('incorrect token or without it', async () => {
+      const response1 = await updatePostLikeStatus(app, post1.id).send(
+        correctUpdateLikeStatusDto[0],
+      );
+      expect(response1.status).toBe(401);
+
+      const response2 = await updatePostLikeStatus(app, post1.id)
+        .set({ Authorization: incorrectAccessToken })
+        .send(correctUpdateLikeStatusDto[0]);
+      expect(response2.status).toBe(401);
+    });
+
+    it('correct token but invalid id', async () => {
+      const response = await updatePostLikeStatus(app, INVALID_ID)
+        .set({ Authorization: user1Token })
+        .send(correctUpdateLikeStatusDto[0]);
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual(notFoundException);
+    });
+
+    it('correct token, valid id but incorrect input data', async () => {
+      for (let i = 0; i < incorrectLikeStatusDto.length; i++) {
+        const response = await updatePostLikeStatus(app, post1.id)
+          .set({ Authorization: user1Token })
+          .send(incorrectLikeStatusDto[i]);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual(likeBadQueryResponse);
+      }
+    });
+
+    it('correct all (token, id, input data)', async () => {
+      for (let i = 0; i < correctUpdateLikeStatusDto.length; i++) {
+        const isLike =
+          correctUpdateLikeStatusDto[i].likeStatus === LikeStatus.LIKE;
+        const isDislike =
+          correctUpdateLikeStatusDto[i].likeStatus === LikeStatus.DISLIKE;
+
+        const response1 = await updatePostLikeStatus(app, post1.id)
+          .set({ Authorization: user1Token })
+          .send(correctUpdateLikeStatusDto[i]);
+        expect(response1.status).toBe(204);
+
+        const response2 = await getPostRequest(app, post1.id).set({
+          Authorization: user1Token,
+        });
+        expect(response2.status).toBe(200);
+        expect(response2.body).toEqual({
+          ...post1,
+          ...correctUpdatePostDto,
+          extendedLikesInfo: {
+            likesCount: isLike ? 1 : 0,
+            dislikesCount: isDislike ? 1 : 0,
+            myStatus: correctUpdateLikeStatusDto[i].likeStatus,
+            newestLikes: isLike
+              ? [
+                  {
+                    login: user1.login,
+                    userId: user1.id,
+                    addedAt: expect.any(String),
+                  },
+                ]
+              : [],
+          },
+        } as IFullPostOutputModel);
+      }
     });
   });
 

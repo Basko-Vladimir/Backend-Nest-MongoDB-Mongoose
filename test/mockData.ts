@@ -3,9 +3,7 @@ import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/dto/create-post.dto';
 import { IBlogOutputModel } from '../src/blogs/dto/blogs-output-models.dto';
-import { FullCommentOutputModel } from '../src/comments/dto/comments-output-models.dto';
-import { IUserOutputModel } from '../src/users/dto/users-output-models.dto';
-import { CreateCommentDto } from '../src/comments/dto/create-comment.dto';
+import { IFullCommentOutputModel } from '../src/comments/dto/comments-output-models.dto';
 
 interface Exception {
   statusCode: number;
@@ -176,9 +174,10 @@ export const posts = {
       { message: expect.any(String), field: 'content' },
     ],
   },
-  getCreatedPostItem: (
+  getPostItem: (
     createPostDto: Omit<CreatePostDto, 'blogId'>,
     currentBlog: IBlogOutputModel,
+    likeStatus: LikeStatus = LikeStatus.NONE,
   ): IFullPostOutputModel => ({
     id: expect.any(String),
     blogId: currentBlog.id,
@@ -190,7 +189,7 @@ export const posts = {
     extendedLikesInfo: {
       likesCount: 0,
       dislikesCount: 0,
-      myStatus: LikeStatus.NONE,
+      myStatus: likeStatus,
       newestLikes: [],
     },
   }),
@@ -202,7 +201,7 @@ export const comments = {
     { content: 'Comment 2 content 222222222222222222222' },
     { content: 'Comment 3 content 333333333333333333333' },
   ],
-  correctUpdateCommentDtos: { content: 'Updated updated updated Comment 1' },
+  correctUpdateCommentDto: { content: 'Updated updated updated Comment 1' },
   incorrectCommentsDtos: [
     {},
     { content: '' },
@@ -216,10 +215,11 @@ export const comments = {
   commentsBadQueryResponse: {
     errorsMessages: [{ message: expect.any(String), field: 'content' }],
   },
-  getCreatedCommentItem: (
+  getCommentItem: (
     content: string,
     userLogin: string,
-  ): FullCommentOutputModel => ({
+    likeStatus: LikeStatus = LikeStatus.NONE,
+  ): IFullCommentOutputModel => ({
     id: expect.any(String),
     content,
     commentatorInfo: {
@@ -230,9 +230,26 @@ export const comments = {
     likesInfo: {
       likesCount: 0,
       dislikesCount: 0,
-      myStatus: LikeStatus.NONE,
+      myStatus: likeStatus,
     },
   }),
+};
+
+export const likes = {
+  correctUpdateLikeStatusDto: [
+    { likeStatus: LikeStatus.LIKE },
+    { likeStatus: LikeStatus.DISLIKE },
+    { likeStatus: LikeStatus.NONE },
+  ],
+  incorrectLikeStatusDto: [
+    {},
+    { likeStatus: '' },
+    { likeStatus: '     ' },
+    { likeStatus: 'nothing' },
+  ],
+  likeBadQueryResponse: {
+    errorsMessages: [{ message: expect.any(String), field: 'likeStatus' }],
+  },
 };
 
 export const errors: { [key: string]: Exception } = {

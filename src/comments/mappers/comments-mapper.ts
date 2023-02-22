@@ -1,7 +1,7 @@
 import { CommentDocument } from '../schemas/comment.schema';
 import {
   ICommentOutputModel,
-  FullCommentOutputModel,
+  IFullCommentOutputModel,
 } from '../dto/comments-output-models.dto';
 import { LikesService } from '../../likes/likes.service';
 
@@ -23,7 +23,7 @@ export const getFullCommentOutputModel = async (
   comment: ICommentOutputModel,
   likesService: LikesService,
   userId: string = null,
-): Promise<FullCommentOutputModel> => {
+): Promise<IFullCommentOutputModel> => {
   const likesInfo = await likesService.getLikesInfo(userId, comment.id);
 
   return { ...comment, likesInfo };

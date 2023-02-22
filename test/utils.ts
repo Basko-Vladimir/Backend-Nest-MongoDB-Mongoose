@@ -84,6 +84,8 @@ export const getCommentsByPostIdRequest = (
   app: INestApplication,
   postId: string,
 ) => request(app.getHttpServer()).get(`/posts/${postId}/comments`);
+export const updatePostLikeStatus = (app: INestApplication, postId: string) =>
+  request(app.getHttpServer()).put(`/posts/${postId}/like-status`);
 
 //Comments
 export const getCommentRequest = (app: INestApplication, id: string) =>
@@ -92,6 +94,10 @@ export const deleteCommentRequest = (app: INestApplication, id: string) =>
   request(app.getHttpServer()).delete(`/comments/${id}`);
 export const updateCommentRequest = (app: INestApplication, id: string) =>
   request(app.getHttpServer()).put(`/comments/${id}`);
+export const updateCommentLikeStatus = (
+  app: INestApplication,
+  commentId: string,
+) => request(app.getHttpServer()).put(`/comments/${commentId}/like-status`);
 
 //Auth requests
 export const registrationRequest = (app: INestApplication) =>
