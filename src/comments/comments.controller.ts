@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { FullCommentOutputModel } from './dto/comments-output-models.dto';
+import { IFullCommentOutputModel } from './dto/comments-output-models.dto';
 import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,
@@ -37,7 +37,7 @@ export class CommentsController {
   async findCommentById(
     @Param('id') commentId: string,
     @User('_id') userId: string,
-  ): Promise<FullCommentOutputModel> {
+  ): Promise<IFullCommentOutputModel> {
     userId = userId ? String(userId) : null;
     const targetComment = await this.commentsService.findCommentById(commentId);
     const commentOutputModel = mapDbCommentToCommentOutputModel(targetComment);

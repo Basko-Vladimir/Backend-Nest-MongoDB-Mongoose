@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'IsNotEmptyString', async: false })
-class IsNotEmptyStringValidator implements ValidatorConstraintInterface {
+class IsNotEmptyContentValidator implements ValidatorConstraintInterface {
   validate(text: string) {
     return typeof text === 'string' && text.trim() !== '';
   }
@@ -17,14 +17,14 @@ class IsNotEmptyStringValidator implements ValidatorConstraintInterface {
   }
 }
 
-export function IsNotEmptyString(validationOptions?: ValidationOptions) {
+export function IsNotEmptyContent(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],
-      validator: IsNotEmptyStringValidator,
+      validator: IsNotEmptyContentValidator,
     });
   };
 }

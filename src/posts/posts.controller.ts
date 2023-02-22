@@ -26,7 +26,7 @@ import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dto';
 import {
   AllCommentsOutputModel,
-  FullCommentOutputModel,
+  IFullCommentOutputModel,
 } from '../comments/dto/comments-output-models.dto';
 import {
   getFullCommentOutputModel,
@@ -146,7 +146,7 @@ export class PostsController {
     @Param('postId', checkParamIdPipe) postId: string,
     @Body() createCommentForPostDto: CreateCommentForPostDto,
     @User() user: UserDocument,
-  ): Promise<FullCommentOutputModel> {
+  ): Promise<IFullCommentOutputModel> {
     const createdComment = await this.commentsService.createComment({
       postId,
       content: createCommentForPostDto.content,
