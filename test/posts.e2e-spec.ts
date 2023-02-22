@@ -20,10 +20,10 @@ import {
   getPostsByBlogIdRequest,
   clearDataBase,
   deleteBlogRequest,
-  registrationRequest,
   loginRequest,
   createCommentByPostIdRequest,
   getCommentsByPostIdRequest,
+  createUserRequest,
 } from './utils';
 import {
   AllPostsOutputModel,
@@ -78,7 +78,7 @@ describe('Posts', () => {
       );
       expect(response1.status).toBe(401);
 
-      const response2 = await createBlogsRequest(app)
+      const response2 = await createPostRequest(app)
         .set(incorrectBasicCredentials)
         .send(correctCreatePostDtos[0]);
       expect(response2.status).toBe(401);
@@ -223,10 +223,10 @@ describe('Posts', () => {
 
   describe('/(POST COMMENTS) create comments', () => {
     beforeAll(async () => {
-      const response = await registrationRequest(app).send(
-        correctCreateUserDtos[0],
-      );
-      expect(response.status).toBe(204);
+      const response1 = await createUserRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateUserDtos[0]);
+      expect(response1.status).toBe(201);
 
       const response2 = await loginRequest(app).send({
         loginOrEmail: correctCreateUserDtos[0].login,

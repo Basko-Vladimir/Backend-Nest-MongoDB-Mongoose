@@ -85,6 +85,14 @@ export const getCommentsByPostIdRequest = (
   postId: string,
 ) => request(app.getHttpServer()).get(`/posts/${postId}/comments`);
 
+//Comments
+export const getCommentRequest = (app: INestApplication, id: string) =>
+  request(app.getHttpServer()).get(`/comments/${id}`);
+export const deleteCommentRequest = (app: INestApplication, id: string) =>
+  request(app.getHttpServer()).delete(`/comments/${id}`);
+export const updateCommentRequest = (app: INestApplication, id: string) =>
+  request(app.getHttpServer()).put(`/comments/${id}`);
+
 //Auth requests
 export const registrationRequest = (app: INestApplication) =>
   request(app.getHttpServer()).post('/auth/registration');

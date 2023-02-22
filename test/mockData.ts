@@ -202,6 +202,7 @@ export const comments = {
     { content: 'Comment 2 content 222222222222222222222' },
     { content: 'Comment 3 content 333333333333333333333' },
   ],
+  correctUpdateCommentDtos: { content: 'Updated updated updated Comment 1' },
   incorrectCommentsDtos: [
     {},
     { content: '' },
