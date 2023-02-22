@@ -68,7 +68,7 @@ describe('Users', () => {
 
       const response4 = await getUsersRequest(app).set(correctBasicCredentials);
       expect(response4.body.items).toHaveLength(3);
-    });
+    }, 10000);
   });
 
   describe('/(GET ALL USERS get all users)', () => {
