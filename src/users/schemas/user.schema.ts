@@ -80,6 +80,19 @@ export class User {
     return user;
   }
 
+  updatePasswordRecoveryCode(user: UserDocument): UserDocument {
+    user.passwordRecoveryCode = uuidv4();
+
+    return user;
+  }
+
+  updatePassword(user: UserDocument, hash, code): UserDocument {
+    user.passwordHash = hash;
+    user.passwordRecoveryCode = code;
+
+    return user;
+  }
+
   static async createUserEntity(
     createUserDto: CreateUserDto,
     passwordHash: string,
@@ -126,11 +139,10 @@ export type UserModelType = Model<User> & IUsersStaticMethods;
 export const userSchema = SchemaFactory.createForClass(User);
 
 userSchema.static('createUserEntity', User.createUserEntity);
-userSchema.method(
-  'confirmUserRegistration',
-  User.prototype.confirmUserRegistration,
-);
-userSchema.method(
-  'updateConfirmationCode',
-  User.prototype.updateConfirmationCode,
-);
+
+userSchema.methods = {
+  confirmUserRegistration: User.prototype.confirmUserRegistration,
+  updateConfirmationCode: User.prototype.updateConfirmationCode,
+  updatePasswordRecoveryCode: User.prototype.updatePasswordRecoveryCode,
+  updatePassword: User.prototype.updatePassword,
+};

@@ -18,6 +18,8 @@ import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { EmailDto } from './dto/email.dto';
 import { ResendingRegistrationEmailGuard } from '../common/guards/resending-registration-email.guard';
+import { SetNewPasswordDto } from './dto/set-new-password.dto';
+import { PasswordRecoveryCodeGuard } from '../common/guards/password-recovery-code.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -70,5 +72,15 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async recoverPassword(@Body() emailDto: EmailDto): Promise<void> {
     return this.authService.recoverPassword(emailDto);
+  }
+
+  @Post('new-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(PasswordRecoveryCodeGuard)
+  async setNewPassword(
+    @Body() setNewPasswordDto: SetNewPasswordDto,
+    @User() user: UserDocument,
+  ): Promise<void> {
+    return this.authService.setNewPassword(setNewPasswordDto, user);
   }
 }

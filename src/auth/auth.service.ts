@@ -20,6 +20,7 @@ import {
 import { ITokensPair } from '../common/types';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 import { EmailDto } from './dto/email.dto';
+import { SetNewPasswordDto } from './dto/set-new-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -133,16 +134,29 @@ export class AuthService {
 
   async recoverPassword(emailDto: EmailDto): Promise<void> {
     const { email } = emailDto;
-    const currentUser = await this.usersRepository.findUserByFilter({ email });
+    const targetUser = await this.usersRepository.findUserByFilter({ email });
+    const updatedUser = targetUser.updatePasswordRecoveryCode(targetUser);
+    const savedUser = await this.usersRepository.saveUser(updatedUser);
 
     try {
       return this.emailManager.recoverPassword(
         email,
-        currentUser.passwordRecoveryCode,
+        savedUser.passwordRecoveryCode,
       );
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  async setNewPassword(
+    setNewPasswordDto: SetNewPasswordDto,
+    user: UserDocument,
+  ): Promise<void> {
+    const { newPassword, recoveryCode } = setNewPasswordDto;
+    const newHash = await AuthService.generatePasswordHash(newPassword);
+
+    const updatedUser = await user.updatePassword(user, newHash, recoveryCode);
+    await this.usersRepository.saveUser(updatedUser);
   }
 
   async checkCredentials(

@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { DATE_ERROR_MESSAGE } from '../../common/error-messages';
 
 @Schema()
 export class EmailConfirmation {
@@ -19,7 +18,6 @@ export class EmailConfirmation {
   @Prop({
     type: Date,
     required: true,
-    min: [new Date(), DATE_ERROR_MESSAGE],
   })
   expirationDate: Date;
 }
