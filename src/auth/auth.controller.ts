@@ -16,7 +16,7 @@ import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 import { RegistrationConfirmationGuard } from '../common/guards/registration-confirmation.guard';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
-import { ResendEmailRegistrationDto } from './dto/resend-email-registration.dto';
+import { EmailDto } from './dto/email.dto';
 import { ResendingRegistrationEmailGuard } from '../common/guards/resending-registration-email.guard';
 
 @Controller('auth')
@@ -43,13 +43,10 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(ResendingRegistrationEmailGuard)
   async resendRegistrationEmail(
-    @Body() resendEmailRegistrationDto: ResendEmailRegistrationDto,
+    @Body() emailDto: EmailDto,
     @User() user: UserDocument,
   ): Promise<void> {
-    return this.authService.resendRegistrationEmail(
-      resendEmailRegistrationDto,
-      user,
-    );
+    return this.authService.resendRegistrationEmail(emailDto, user);
   }
 
   @Post('login')
@@ -67,5 +64,11 @@ export class AuthController {
     });
 
     return { accessToken };
+  }
+
+  @Post('password-recovery')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async recoverPassword(@Body() emailDto: EmailDto): Promise<void> {
+    return this.authService.recoverPassword(emailDto);
   }
 }

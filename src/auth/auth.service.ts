@@ -19,7 +19,7 @@ import {
 } from '../common/constants';
 import { ITokensPair } from '../common/types';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
-import { ResendEmailRegistrationDto } from './dto/resend-email-registration.dto';
+import { EmailDto } from './dto/email.dto';
 
 @Injectable()
 export class AuthService {
@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   async resendRegistrationEmail(
-    resendEmailRegistrationDto: ResendEmailRegistrationDto,
+    emailDto: EmailDto,
     user: UserDocument,
   ): Promise<void> {
     // await validateOrRejectInputDto(
@@ -129,6 +129,20 @@ export class AuthService {
     // } else {
     //   res.sendStatus(401);
     // }
+  }
+
+  async recoverPassword(emailDto: EmailDto): Promise<void> {
+    const { email } = emailDto;
+    const currentUser = await this.usersRepository.findUserByFilter({ email });
+
+    try {
+      return this.emailManager.recoverPassword(
+        email,
+        currentUser.passwordRecoveryCode,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async checkCredentials(

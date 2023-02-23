@@ -1,6 +1,7 @@
-import { IsEmail, IsString, Length, Matches } from 'class-validator';
+import { IsString, Length, Matches } from 'class-validator';
 import { usersConstants } from '../../common/constants';
 import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
+import { EmailDto } from '../../auth/dto/email.dto';
 
 const {
   MIN_LOGIN_LENGTH,
@@ -10,7 +11,7 @@ const {
   MAX_PASSWORD_LENGTH,
 } = usersConstants;
 
-export class CreateUserDto {
+export class CreateUserDto extends EmailDto {
   @Length(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH)
   @Matches(LOGIN_REG_EXP)
   @IsNotEmptyContent()
@@ -21,9 +22,4 @@ export class CreateUserDto {
   @IsNotEmptyContent()
   @IsString()
   readonly password: string;
-
-  @IsEmail()
-  @IsNotEmptyContent()
-  @IsString()
-  readonly email: string;
 }
