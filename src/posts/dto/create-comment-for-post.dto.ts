@@ -5,8 +5,8 @@ import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.
 const { MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH } = commentsConstants;
 
 export class CreateCommentForPostDto {
-  @IsString()
-  @IsNotEmptyContent()
   @Length(MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH)
+  @IsNotEmptyContent()
+  @IsString()
   readonly content: string;
 }

@@ -13,25 +13,25 @@ const { MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH } = commentsConstants;
 const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP } = usersConstants;
 
 export class CreateCommentDto {
-  @IsString()
-  @IsNotEmptyContent()
   @Length(MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH)
+  @IsNotEmptyContent()
+  @IsString()
   readonly content: string;
 
-  @IsNotEmpty()
-  @IsNotEmptyContent()
   @IsExistEntity()
+  @IsNotEmptyContent()
+  @IsNotEmpty()
   @IsMongoId()
   readonly postId: string;
 
-  @IsNotEmpty()
-  @IsNotEmptyContent()
   @IsMongoId()
+  @IsNotEmptyContent()
+  @IsNotEmpty()
   readonly userId: string;
 
-  @IsString()
   @Length(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH)
-  @IsNotEmptyContent()
   @Matches(LOGIN_REG_EXP)
+  @IsNotEmptyContent()
+  @IsString()
   readonly userLogin: string;
 }
