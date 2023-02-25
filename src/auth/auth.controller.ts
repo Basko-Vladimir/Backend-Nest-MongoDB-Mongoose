@@ -20,6 +20,8 @@ import { EmailDto } from './dto/email.dto';
 import { ResendingRegistrationEmailGuard } from '../common/guards/resending-registration-email.guard';
 import { SetNewPasswordDto } from './dto/set-new-password.dto';
 import { PasswordRecoveryCodeGuard } from '../common/guards/password-recovery-code.guard';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -82,5 +84,15 @@ export class AuthController {
     @User() user: UserDocument,
   ): Promise<void> {
     return this.authService.setNewPassword(setNewPasswordDto, user);
+  }
+
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RefreshTokenGuard)
+  async refreshToken(
+    @Body() refreshTokenDto: RefreshTokenDto,
+    @User() user: UserDocument,
+  ): Promise<void> {
+    return;
   }
 }
