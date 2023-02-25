@@ -35,6 +35,12 @@ import {
   DeviceSession,
   deviceSessionSchema,
 } from './devices-sessions/schemas/device-session.schema';
+import { ClientsRequestsRepository } from './clients-requests/clients-requests.repository';
+import { ClientsRequestsService } from './clients-requests/clients-requests.service';
+import {
+  ClientRequest,
+  clientRequestSchema,
+} from './clients-requests/schemas/client-request.schema';
 
 @Module({
   imports: [
@@ -49,6 +55,9 @@ import {
     MongooseModule.forFeature([{ name: Comment.name, schema: commentSchema }]),
     MongooseModule.forFeature([
       { name: DeviceSession.name, schema: deviceSessionSchema },
+    ]),
+    MongooseModule.forFeature([
+      { name: ClientRequest.name, schema: clientRequestSchema },
     ]),
   ],
   controllers: [
@@ -76,6 +85,8 @@ import {
     JwtService,
     DevicesSessionsService,
     DevicesSessionsRepository,
+    ClientsRequestsService,
+    ClientsRequestsRepository,
     EmailManager,
     EmailAdapter,
     IsExistEntityValidator,
