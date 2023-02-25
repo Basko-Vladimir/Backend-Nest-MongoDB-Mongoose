@@ -15,15 +15,56 @@ export class ClientRequest {
   })
   ip: string;
 
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  createTimeStamp: number;
+
   @Prop()
   createdAt: Date;
 
   @Prop()
   updatedAt: Date;
+
+  static createClientEntity(
+    clientRequestData: Partial<ClientRequest>,
+    ClientRequestModel: ClientRequestModelType,
+  ): ClientRequestDocument {
+    return new ClientRequestModel({
+      ...clientRequestData,
+      createTimeStamp: Date.now(),
+    });
+  }
+
+  updateClientRequest(
+    currentClientRequest: ClientRequestDocument,
+  ): ClientRequestDocument {
+    currentClientRequest.createTimeStamp = Date.now();
+
+    return currentClientRequest;
+  }
 }
 
 export type ClientRequestDocument = HydratedDocument<ClientRequest>;
 
-export type ClientRequestModelType = Model<ClientRequest>;
+interface IClientRequestStaticMethods {
+  createClientEntity(
+    clientRequestData: Partial<ClientRequest>,
+    ClientRequestModel: ClientRequestModelType,
+  ): ClientRequestDocument;
+}
+
+export type ClientRequestModelType = Model<ClientRequest> &
+  IClientRequestStaticMethods;
 
 export const clientRequestSchema = SchemaFactory.createForClass(ClientRequest);
+
+clientRequestSchema.static(
+  'createClientEntity',
+  ClientRequest.createClientEntity,
+);
+clientRequestSchema.method(
+  'updateClientRequest',
+  ClientRequest.prototype.updateClientRequest,
+);

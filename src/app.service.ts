@@ -9,6 +9,10 @@ import {
   DeviceSession,
   DeviceSessionModelType,
 } from './devices-sessions/schemas/device-session.schema';
+import {
+  ClientRequest,
+  ClientRequestModelType,
+} from './clients-requests/schemas/client-request.schema';
 
 @Injectable()
 export class AppService {
@@ -20,6 +24,8 @@ export class AppService {
     @InjectModel(Comment.name) private CommentModel: LikeModelType,
     @InjectModel(DeviceSession.name)
     private DeviceSessionModel: DeviceSessionModelType,
+    @InjectModel(ClientRequest.name)
+    private ClientRequestModel: ClientRequestModelType,
   ) {}
 
   getHello(): string {
@@ -34,6 +40,7 @@ export class AppService {
       this.LikeModel.deleteMany({}),
       this.CommentModel.deleteMany({}),
       this.DeviceSessionModel.deleteMany({}),
+      this.ClientRequestModel.deleteMany({}),
     ]);
   }
 }

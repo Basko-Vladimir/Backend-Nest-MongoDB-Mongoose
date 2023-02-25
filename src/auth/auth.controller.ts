@@ -27,6 +27,7 @@ import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
 import { Session } from '../common/decorators/session.decorator';
 import { DeviceSessionDocument } from '../devices-sessions/schemas/device-session.schema';
 import { AuthMeOutputModelDto } from './dto/auth-me-output-model.dto';
+import { ClientsRequestsGuard } from '../common/guards/clients-requests.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -44,13 +45,14 @@ export class AuthController {
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(ClientsRequestsGuard)
   async registration(@Body() createUserDto: CreateUserDto): Promise<void> {
     await this.authService.registerUser(createUserDto);
   }
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(RegistrationConfirmationGuard)
+  @UseGuards(RegistrationConfirmationGuard, ClientsRequestsGuard)
   async confirmRegistration(
     @Body() confirmRegistrationDto: ConfirmRegistrationDto,
     @User() user: UserDocument,
@@ -60,7 +62,7 @@ export class AuthController {
 
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(ResendingRegistrationEmailGuard)
+  @UseGuards(ResendingRegistrationEmailGuard, ClientsRequestsGuard)
   async resendRegistrationEmail(
     @Body() emailDto: EmailDto,
     @User() user: UserDocument,
@@ -70,6 +72,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(ClientsRequestsGuard)
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -90,13 +93,14 @@ export class AuthController {
 
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(ClientsRequestsGuard)
   async recoverPassword(@Body() emailDto: EmailDto): Promise<void> {
     return this.authService.recoverPassword(emailDto);
   }
 
   @Post('new-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(PasswordRecoveryCodeGuard)
+  @UseGuards(PasswordRecoveryCodeGuard, ClientsRequestsGuard)
   async setNewPassword(
     @Body() setNewPasswordDto: SetNewPasswordDto,
     @User() user: UserDocument,
