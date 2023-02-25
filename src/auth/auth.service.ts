@@ -1,4 +1,6 @@
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
+import { Types } from 'mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -21,6 +23,8 @@ import { ITokensPair } from '../common/types';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 import { EmailDto } from './dto/email.dto';
 import { SetNewPasswordDto } from './dto/set-new-password.dto';
+import { DeviceSession } from '../devices-sessions/schemas/device-session.schema';
+import { DevicesSessionsService } from '../devices-sessions/devices-sessions.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +32,7 @@ export class AuthService {
     protected usersRepository: UsersRepository,
     protected emailManager: EmailManager,
     protected jwtService: JwtService,
+    protected devicesSessionsService: DevicesSessionsService,
     @InjectModel(User.name) protected UserModel: UserModelType,
   ) {}
 
@@ -85,7 +90,11 @@ export class AuthService {
     await this.emailManager.sendRegistrationEmail(savedUser);
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<ITokensPair> {
+  async login(
+    loginUserDto: LoginUserDto,
+    ip: string,
+    userAgent: string,
+  ): Promise<ITokensPair> {
     // await validateOrRejectInputDto(loginUserDto, LoginUserDto);
 
     const { loginOrEmail, password } = loginUserDto;
@@ -93,43 +102,33 @@ export class AuthService {
 
     if (!userId) throw new UnauthorizedException();
 
+    const deviceId = uuidv4();
     const { accessToken, refreshToken } = await this.createNewTokensPair(
       { userId },
       ACCESS_TOKEN_LIFE_TIME,
-      { userId },
+      { userId, deviceId },
       REFRESH_TOKEN_LIFE_TIME,
     );
+    const refreshTokenPayload = await this.jwtService.getTokenPayload(
+      refreshToken,
+    );
+
+    if (!refreshTokenPayload) {
+      throw new Error(`Couldn't get payload from refresh token!`);
+    }
+
+    const deviceSessionData: DeviceSession = {
+      issuedAt: refreshTokenPayload.iat,
+      expiredDate: refreshTokenPayload.exp,
+      deviceId: refreshTokenPayload.deviceId,
+      deviceName: userAgent,
+      ip,
+      userId: new Types.ObjectId(userId),
+    };
+
+    await this.devicesSessionsService.createDeviceSession(deviceSessionData);
 
     return { accessToken, refreshToken };
-
-    //TODO : need to do it when devices and sessions will be added
-
-    // const deviceId = uuidv4();
-
-    // if (userId) {
-    //   const { accessToken, refreshToken } = await this
-    //     .createNewTokensPair({userId}, "10m", {userId, deviceId}, "1h");
-    //
-    //   const refreshTokenPayload = await this.jwtService.getTokenPayload(refreshToken);
-    //
-    //   const deviceSessionData: EntityWithoutId<DeviceSession> = {
-    //     issuedAt: refreshTokenPayload?.iat,
-    //     expiredDate: refreshTokenPayload?.exp,
-    //     deviceId: refreshTokenPayload!.deviceId,
-    //     deviceName: req.headers["user-agent"],
-    //     ip: req.ip,
-    //     userId: new ObjectId(userId)
-    //   };
-    //
-    //   await this.authService.createDeviceSession(deviceSessionData);
-    //
-    //   res
-    //     .cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-    //     .status(200)
-    //     .send({accessToken: accessToken});
-    // } else {
-    //   res.sendStatus(401);
-    // }
   }
 
   async recoverPassword(emailDto: EmailDto): Promise<void> {

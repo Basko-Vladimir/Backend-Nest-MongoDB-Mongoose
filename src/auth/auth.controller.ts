@@ -1,10 +1,11 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import {
   Body,
   Controller,
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -58,9 +59,12 @@ export class AuthController {
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
   ): Promise<LoginOutputModel> {
     const { accessToken, refreshToken } = await this.authService.login(
       loginUserDto,
+      request.ip,
+      request.headers['user-agent'],
     );
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,

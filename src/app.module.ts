@@ -28,6 +28,13 @@ import { AuthController } from './auth/auth.controller';
 import { EmailManager } from './common/managers/email.manager';
 import { EmailAdapter } from './common/adapters/email.adapter';
 import { IsExistEntityValidator } from './common/validators/is-exist-entity.validator';
+import { DevicesSessionsController } from './devices-sessions/devices-sessions.controller';
+import { DevicesSessionsService } from './devices-sessions/devices-sessions.service';
+import { DevicesSessionsRepository } from './devices-sessions/devices-sessions.repository';
+import {
+  DeviceSession,
+  deviceSessionSchema,
+} from './devices-sessions/schemas/device-session.schema';
 
 @Module({
   imports: [
@@ -40,6 +47,9 @@ import { IsExistEntityValidator } from './common/validators/is-exist-entity.vali
     MongooseModule.forFeature([{ name: Post.name, schema: postSchema }]),
     MongooseModule.forFeature([{ name: Like.name, schema: likeSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: commentSchema }]),
+    MongooseModule.forFeature([
+      { name: DeviceSession.name, schema: deviceSessionSchema },
+    ]),
   ],
   controllers: [
     AppController,
@@ -48,6 +58,7 @@ import { IsExistEntityValidator } from './common/validators/is-exist-entity.vali
     PostsController,
     CommentsController,
     AuthController,
+    DevicesSessionsController,
   ],
   providers: [
     AppService,
@@ -63,6 +74,8 @@ import { IsExistEntityValidator } from './common/validators/is-exist-entity.vali
     CommentsRepository,
     AuthService,
     JwtService,
+    DevicesSessionsService,
+    DevicesSessionsRepository,
     EmailManager,
     EmailAdapter,
     IsExistEntityValidator,
