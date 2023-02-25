@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { DevicesSessionsRepository } from './devices-sessions.repository';
 import { UpdateOrFilterModel } from '../common/types';
@@ -31,6 +32,14 @@ export class DevicesSessionsService {
 
     await this.devicesSessionsRepository.saveDeviceSession(
       createdDeviceSession,
+    );
+  }
+
+  async deleteAllDevicesSessionsExceptCurrent(
+    deviceSessionId: Types.ObjectId,
+  ): Promise<void> {
+    return this.devicesSessionsRepository.deleteAllDevicesSessionsExceptCurrent(
+      deviceSessionId,
     );
   }
 }

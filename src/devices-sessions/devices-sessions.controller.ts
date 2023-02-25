@@ -1,4 +1,13 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { DevicesSessionsService } from './devices-sessions.service';
 import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
@@ -17,5 +26,16 @@ export class DevicesSessionsController {
     return this.devicesSessionsService.getAllActiveDevicesSessions({
       userId: user._id,
     });
+  }
+
+  @Delete('devices')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(RefreshTokenGuard)
+  async deleteAllDevicesSessionsExceptCurrent(
+    @Req() request: Request,
+  ): Promise<void> {
+    await this.devicesSessionsService.deleteAllDevicesSessionsExceptCurrent(
+      request.context.session._id,
+    );
   }
 }
