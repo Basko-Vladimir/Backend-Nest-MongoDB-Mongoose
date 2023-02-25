@@ -5,6 +5,7 @@ import { UpdateOrFilterModel } from '../common/types';
 import { DeviceSessionOutputModel } from './dto/devices-sessions-output-models.dto';
 import {
   DeviceSession,
+  DeviceSessionDocument,
   DeviceSessionModelType,
 } from './schemas/device-session.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -41,5 +42,17 @@ export class DevicesSessionsService {
     return this.devicesSessionsRepository.deleteAllDevicesSessionsExceptCurrent(
       deviceSessionId,
     );
+  }
+
+  async deleteDeviceSessionById(deviceSessionId: string): Promise<void> {
+    return this.devicesSessionsRepository.deleteDeviceSessionById(
+      deviceSessionId,
+    );
+  }
+
+  async findDeviceSessionByFilter(
+    filter: UpdateOrFilterModel,
+  ): Promise<DeviceSessionDocument | null> {
+    return this.devicesSessionsRepository.findDeviceSessionByFilter(filter);
   }
 }

@@ -2,9 +2,12 @@ import { Request } from 'express';
 import {
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
+  Param,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -36,6 +39,27 @@ export class DevicesSessionsController {
   ): Promise<void> {
     await this.devicesSessionsService.deleteAllDevicesSessionsExceptCurrent(
       request.context.session._id,
+    );
+  }
+
+  @Delete('devices/:deviceId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(RefreshTokenGuard)
+  async deleteDeviceSessionByDeviceId(
+    @Param('deviceId') deviceId: string,
+    @User() user: UserDocument,
+  ): Promise<void> {
+    const targetDeviceSession =
+      await this.devicesSessionsService.findDeviceSessionByFilter({ deviceId });
+
+    if (!targetDeviceSession) throw new NotFoundException();
+
+    if (String(targetDeviceSession.userId) !== String(user._id)) {
+      throw new ForbiddenException();
+    }
+
+    await this.devicesSessionsService.deleteDeviceSessionById(
+      String(targetDeviceSession._id),
     );
   }
 }

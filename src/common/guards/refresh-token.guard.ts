@@ -25,7 +25,7 @@ export class RefreshTokenGuard implements CanActivate {
 
     const tokenPayload = await this.jwtService.getTokenPayload(refreshToken);
     const currentDeviceSession =
-      await this.devicesSessionsRepository.findDevicesSessionByFilter({
+      await this.devicesSessionsRepository.findDeviceSessionByFilter({
         deviceId: tokenPayload?.deviceId,
         issuedAt: tokenPayload?.iat,
       });
