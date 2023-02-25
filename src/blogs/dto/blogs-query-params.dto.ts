@@ -3,11 +3,11 @@ import { CommonQueryParamsDto } from '../../common/common.dto';
 import { BlogSortByField } from '../../common/enums';
 
 export class BlogsQueryParamsDto extends CommonQueryParamsDto {
-  @IsEnum(BlogSortByField)
   @IsOptional()
+  @IsEnum(BlogSortByField)
   readonly sortBy: BlogSortByField = BlogSortByField.createdAt;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   readonly searchNameTerm: string = '';
 }

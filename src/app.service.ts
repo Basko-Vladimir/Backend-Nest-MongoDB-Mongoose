@@ -5,6 +5,14 @@ import { Blog, BlogModelType } from './blogs/schemas/blog.schema';
 import { Post, PostModelType } from './posts/schemas/post.schema';
 import { Like, LikeModelType } from './likes/schemas/like.schema';
 import { Comment } from './comments/schemas/comment.schema';
+import {
+  DeviceSession,
+  DeviceSessionModelType,
+} from './devices-sessions/schemas/device-session.schema';
+import {
+  ClientRequest,
+  ClientRequestModelType,
+} from './clients-requests/schemas/client-request.schema';
 
 @Injectable()
 export class AppService {
@@ -14,6 +22,10 @@ export class AppService {
     @InjectModel(Post.name) private PostModel: PostModelType,
     @InjectModel(Like.name) private LikeModel: LikeModelType,
     @InjectModel(Comment.name) private CommentModel: LikeModelType,
+    @InjectModel(DeviceSession.name)
+    private DeviceSessionModel: DeviceSessionModelType,
+    @InjectModel(ClientRequest.name)
+    private ClientRequestModel: ClientRequestModelType,
   ) {}
 
   getHello(): string {
@@ -27,6 +39,8 @@ export class AppService {
       this.PostModel.deleteMany({}),
       this.LikeModel.deleteMany({}),
       this.CommentModel.deleteMany({}),
+      this.DeviceSessionModel.deleteMany({}),
+      this.ClientRequestModel.deleteMany({}),
     ]);
   }
 }

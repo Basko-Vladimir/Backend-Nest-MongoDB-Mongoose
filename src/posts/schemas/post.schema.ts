@@ -103,7 +103,7 @@ export class Post {
 
 export type PostDocument = HydratedDocument<Post>;
 
-export interface IPostStaticMethods {
+interface IPostStaticMethods {
   createPostEntity(
     postData: CreatePostDto,
     blogName: string,

@@ -3,15 +3,15 @@ import { CommonQueryParamsDto } from '../../common/common.dto';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UsersQueryParamsDto extends CommonQueryParamsDto {
-  @IsEnum(UserSortByField)
   @IsOptional()
+  @IsEnum(UserSortByField)
   readonly sortBy: UserSortByField = UserSortByField.createdAt;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   readonly searchLoginTerm: string = '';
 
-  @IsString()
   @IsOptional()
+  @IsString()
   readonly searchEmailTerm: string = '';
 }
