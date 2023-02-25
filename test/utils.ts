@@ -1,4 +1,3 @@
-import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -25,7 +24,6 @@ export const initTestApp = async (): Promise<INestApplication> => {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await app.init();
-  app.use(cookieParser());
   await clearDataBase(app);
 
   return app;
