@@ -187,6 +187,10 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  async logout(deviceSessionId: string): Promise<void> {
+    return this.devicesSessionsService.deleteDeviceSessionById(deviceSessionId);
+  }
+
   async checkCredentials(
     loginOrEmail: string,
     password: string,

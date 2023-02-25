@@ -53,8 +53,4 @@ export class DevicesSessionsRepository {
 
     if (!deletedCount) throw new NotFoundException();
   }
-
-  async deleteAllDevicesSessions(): Promise<void> {
-    await this.DeviceSessionModel.deleteMany({});
-  }
 }

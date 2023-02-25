@@ -113,4 +113,11 @@ export class AuthController {
 
     return { accessToken };
   }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RefreshTokenGuard)
+  async logout(@Session() session: DeviceSessionDocument): Promise<void> {
+    await this.authService.logout(String(session._id));
+  }
 }
