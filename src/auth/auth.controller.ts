@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -25,10 +26,21 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
 import { Session } from '../common/decorators/session.decorator';
 import { DeviceSessionDocument } from '../devices-sessions/schemas/device-session.schema';
+import { AuthMeOutputModelDto } from './dto/auth-me-output-model.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(protected authService: AuthService) {}
+
+  @Get('me')
+  @UseGuards(RefreshTokenGuard)
+  async authMe(@User() user: UserDocument): Promise<AuthMeOutputModelDto> {
+    return {
+      userId: String(user._id),
+      email: user.email,
+      login: user.login,
+    };
+  }
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
