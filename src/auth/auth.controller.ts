@@ -52,7 +52,7 @@ export class AuthController {
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(RegistrationConfirmationGuard, ClientsRequestsGuard)
+  @UseGuards(ClientsRequestsGuard, RegistrationConfirmationGuard)
   async confirmRegistration(
     @Body() confirmRegistrationDto: ConfirmRegistrationDto,
     @User() user: UserDocument,
