@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import {
   Controller,
   Delete,
@@ -8,7 +7,6 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { DevicesSessionsService } from './devices-sessions.service';
@@ -16,6 +14,8 @@ import { User } from '../common/decorators/user.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { DeviceSessionOutputModel } from './dto/devices-sessions-output-models.dto';
 import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
+import { Session } from '../common/decorators/session.decorator';
+import { DeviceSessionDocument } from './schemas/device-session.schema';
 
 @Controller('security')
 export class DevicesSessionsController {
@@ -35,10 +35,10 @@ export class DevicesSessionsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(RefreshTokenGuard)
   async deleteAllDevicesSessionsExceptCurrent(
-    @Req() request: Request,
+    @Session() session: DeviceSessionDocument,
   ): Promise<void> {
     await this.devicesSessionsService.deleteAllDevicesSessionsExceptCurrent(
-      request.context.session._id,
+      session._id,
     );
   }
 

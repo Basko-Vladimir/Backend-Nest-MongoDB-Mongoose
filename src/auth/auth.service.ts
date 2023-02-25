@@ -23,7 +23,10 @@ import { ITokensPair } from '../common/types';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 import { EmailDto } from './dto/email.dto';
 import { SetNewPasswordDto } from './dto/set-new-password.dto';
-import { DeviceSession } from '../devices-sessions/schemas/device-session.schema';
+import {
+  DeviceSession,
+  DeviceSessionDocument,
+} from '../devices-sessions/schemas/device-session.schema';
 import { DevicesSessionsService } from '../devices-sessions/devices-sessions.service';
 
 @Injectable()
@@ -117,7 +120,7 @@ export class AuthService {
       throw new Error(`Couldn't get payload from refresh token!`);
     }
 
-    const deviceSessionData: DeviceSession = {
+    const deviceSessionData: Partial<DeviceSession> = {
       issuedAt: refreshTokenPayload.iat,
       expiredDate: refreshTokenPayload.exp,
       deviceId: refreshTokenPayload.deviceId,
@@ -156,6 +159,32 @@ export class AuthService {
 
     const updatedUser = await user.updatePassword(user, newHash, recoveryCode);
     await this.usersRepository.saveUser(updatedUser);
+  }
+
+  async refreshTokens(
+    userId: string,
+    session: DeviceSessionDocument,
+  ): Promise<ITokensPair> {
+    const { accessToken, refreshToken } = await this.createNewTokensPair(
+      { userId },
+      ACCESS_TOKEN_LIFE_TIME,
+      { userId, deviceId: session.deviceId },
+      REFRESH_TOKEN_LIFE_TIME,
+    );
+    const refreshTokenPayload = await this.jwtService.getTokenPayload(
+      refreshToken,
+    );
+
+    if (!refreshTokenPayload) {
+      throw new Error(`Couldn't get payload from refresh token!`);
+    }
+
+    await this.devicesSessionsService.updateDeviceSessionData(
+      session,
+      refreshTokenPayload.iat,
+    );
+
+    return { accessToken, refreshToken };
   }
 
   async checkCredentials(

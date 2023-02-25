@@ -49,10 +49,19 @@ export class DeviceSession {
   updatedAt?: Date;
 
   static createDeviceSessionEntity(
-    deviceSessionData: DeviceSession,
+    deviceSessionData: Partial<DeviceSession>,
     DeviceSessionModel: DeviceSessionModelType,
   ): DeviceSessionDocument {
     return new DeviceSessionModel(deviceSessionData);
+  }
+
+  updateDeviceSessionData(
+    issuedAt: number,
+    currentDeviceSession: DeviceSessionDocument,
+  ): DeviceSessionDocument {
+    currentDeviceSession.issuedAt = issuedAt;
+
+    return currentDeviceSession;
   }
 }
 
@@ -60,7 +69,7 @@ export type DeviceSessionDocument = HydratedDocument<DeviceSession>;
 
 interface IDeviceSessionStaticMethods {
   createDeviceSessionEntity(
-    deviceSessionData: DeviceSession,
+    deviceSessionData: Partial<DeviceSession>,
     DeviceSessionModel: DeviceSessionModelType,
   ): DeviceSessionDocument;
 }
@@ -73,4 +82,8 @@ export const deviceSessionSchema = SchemaFactory.createForClass(DeviceSession);
 deviceSessionSchema.static(
   'createDeviceSessionEntity',
   DeviceSession.createDeviceSessionEntity,
+);
+deviceSessionSchema.method(
+  'updateDeviceSessionData',
+  DeviceSession.prototype.updateDeviceSessionData,
 );

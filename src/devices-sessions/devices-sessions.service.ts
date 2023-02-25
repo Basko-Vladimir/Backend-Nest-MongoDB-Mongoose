@@ -24,7 +24,9 @@ export class DevicesSessionsService {
     return this.devicesSessionsRepository.getAllActiveDevicesSessions(filter);
   }
 
-  async createDeviceSession(deviceSessionData: DeviceSession): Promise<void> {
+  async createDeviceSession(
+    deviceSessionData: Partial<DeviceSession>,
+  ): Promise<void> {
     const createdDeviceSession =
       this.DeviceSessionModel.createDeviceSessionEntity(
         deviceSessionData,
@@ -54,5 +56,19 @@ export class DevicesSessionsService {
     filter: UpdateOrFilterModel,
   ): Promise<DeviceSessionDocument | null> {
     return this.devicesSessionsRepository.findDeviceSessionByFilter(filter);
+  }
+
+  async updateDeviceSessionData(
+    session: DeviceSessionDocument,
+    issuedAt: number,
+  ): Promise<void> {
+    const updatedDeviceSession = await session.updateDeviceSessionData(
+      issuedAt,
+      session,
+    );
+
+    await this.devicesSessionsRepository.saveDeviceSession(
+      updatedDeviceSession,
+    );
   }
 }

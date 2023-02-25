@@ -23,6 +23,8 @@ import { SetNewPasswordDto } from './dto/set-new-password.dto';
 import { PasswordRecoveryCodeGuard } from '../common/guards/password-recovery-code.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
+import { Session } from '../common/decorators/session.decorator';
+import { DeviceSessionDocument } from '../devices-sessions/schemas/device-session.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -93,10 +95,22 @@ export class AuthController {
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RefreshTokenGuard)
-  async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
+  async refreshTokens(
     @User() user: UserDocument,
-  ): Promise<void> {
-    return;
+    @Session() session: DeviceSessionDocument,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<LoginOutputModel> {
+    const userId = String(user._id);
+    const { accessToken, refreshToken } = await this.authService.refreshTokens(
+      userId,
+      session,
+    );
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return { accessToken };
   }
 }
