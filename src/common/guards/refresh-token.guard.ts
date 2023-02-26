@@ -24,13 +24,16 @@ export class RefreshTokenGuard implements CanActivate {
     if (!refreshToken) throw new UnauthorizedException();
 
     const tokenPayload = await this.jwtService.getTokenPayload(refreshToken);
+
+    if (!tokenPayload) throw new UnauthorizedException();
+
     const currentDeviceSession =
       await this.devicesSessionsRepository.findDeviceSessionByFilter({
-        deviceId: tokenPayload?.deviceId,
-        issuedAt: tokenPayload?.iat,
+        deviceId: tokenPayload.deviceId,
+        issuedAt: tokenPayload.iat,
       });
 
-    if (!tokenPayload || !currentDeviceSession) {
+    if (!currentDeviceSession) {
       throw new UnauthorizedException();
     }
 

@@ -12,15 +12,16 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class JwtService {
-  async createJWT(payload: jwt.JwtPayload, expiresIn: string): Promise<string> {
+  async createJWT(
+    payload: jwt.JwtPayload,
+    expiresIn: string | number,
+  ): Promise<string> {
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
   }
 
   async getTokenPayload(token: string): Promise<jwt.JwtPayload | null> {
     try {
-      const result: jwt.JwtPayload = <jwt.JwtPayload>(
-        jwt.verify(token, process.env.JWT_SECRET)
-      );
+      const result: jwt.JwtPayload = jwt.verify(token, process.env.JWT_SECRET);
       return result;
     } catch {
       return null;

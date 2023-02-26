@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { Types } from 'mongoose';
 import { JwtPayload } from 'jsonwebtoken';
@@ -19,7 +20,7 @@ import {
   ACCESS_TOKEN_LIFE_TIME,
   REFRESH_TOKEN_LIFE_TIME,
 } from '../common/constants';
-import { ITokensPair } from '../common/types';
+import { ITokensData } from '../common/types';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 import { EmailDto } from './dto/email.dto';
 import { SetNewPasswordDto } from './dto/set-new-password.dto';
@@ -28,6 +29,7 @@ import {
   DeviceSessionDocument,
 } from '../devices-sessions/schemas/device-session.schema';
 import { DevicesSessionsService } from '../devices-sessions/devices-sessions.service';
+import { CookieOptions } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -97,7 +99,7 @@ export class AuthService {
     loginUserDto: LoginUserDto,
     ip: string,
     userAgent: string,
-  ): Promise<ITokensPair> {
+  ): Promise<ITokensData> {
     // await validateOrRejectInputDto(loginUserDto, LoginUserDto);
 
     const { loginOrEmail, password } = loginUserDto;
@@ -131,7 +133,11 @@ export class AuthService {
 
     await this.devicesSessionsService.createDeviceSession(deviceSessionData);
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      refreshTokenSettings: AuthService.getCookieSettings(refreshTokenPayload),
+    };
   }
 
   async recoverPassword(emailDto: EmailDto): Promise<void> {
@@ -164,7 +170,7 @@ export class AuthService {
   async refreshTokens(
     userId: string,
     session: DeviceSessionDocument,
-  ): Promise<ITokensPair> {
+  ): Promise<ITokensData> {
     const { accessToken, refreshToken } = await this.createNewTokensPair(
       { userId },
       ACCESS_TOKEN_LIFE_TIME,
@@ -184,7 +190,11 @@ export class AuthService {
       refreshTokenPayload.iat,
     );
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      refreshTokenSettings: AuthService.getCookieSettings(refreshTokenPayload),
+    };
   }
 
   async logout(deviceSessionId: string): Promise<void> {
@@ -213,11 +223,19 @@ export class AuthService {
     return bcrypt.hash(password, passwordSalt);
   }
 
+  static getCookieSettings(tokenPayload: jwt.JwtPayload): CookieOptions {
+    return {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(tokenPayload.exp),
+    };
+  }
+
   private async createNewTokensPair(
     accessTokenPayload: JwtPayload,
-    accessTokenLifetime: string,
+    accessTokenLifetime: string | number,
     refreshTokenPayload: JwtPayload,
-    refreshTokenLifetime: string,
+    refreshTokenLifetime: string | number,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const accessToken = await this.jwtService.createJWT(
       { ...accessTokenPayload, iat: Date.now() },

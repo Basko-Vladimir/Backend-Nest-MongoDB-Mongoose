@@ -1,3 +1,4 @@
+import { CookieOptions } from 'express';
 import { DbSortDirection, SortDirection } from './enums';
 
 export interface UpdateOrFilterModel<T = unknown> {
@@ -32,7 +33,8 @@ export interface IEmailInfoModel {
   html: string;
 }
 
-export interface ITokensPair {
+export interface ITokensData {
   accessToken: string;
   refreshToken: string;
+  refreshTokenSettings: CookieOptions;
 }

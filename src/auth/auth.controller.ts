@@ -22,7 +22,6 @@ import { EmailDto } from './dto/email.dto';
 import { ResendingRegistrationEmailGuard } from '../common/guards/resending-registration-email.guard';
 import { SetNewPasswordDto } from './dto/set-new-password.dto';
 import { PasswordRecoveryCodeGuard } from '../common/guards/password-recovery-code.guard';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
 import { Session } from '../common/decorators/session.decorator';
 import { DeviceSessionDocument } from '../devices-sessions/schemas/device-session.schema';
@@ -78,15 +77,13 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request,
   ): Promise<LoginOutputModel> {
-    const { accessToken, refreshToken } = await this.authService.login(
-      loginUserDto,
-      request.ip,
-      request.headers['user-agent'],
-    );
-    response.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-    });
+    const { accessToken, refreshToken, refreshTokenSettings } =
+      await this.authService.login(
+        loginUserDto,
+        request.ip,
+        request.headers['user-agent'],
+      );
+    response.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
     return { accessToken };
   }
@@ -117,15 +114,10 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginOutputModel> {
     const userId = String(user._id);
-    const { accessToken, refreshToken } = await this.authService.refreshTokens(
-      userId,
-      session,
-    );
+    const { accessToken, refreshToken, refreshTokenSettings } =
+      await this.authService.refreshTokens(userId, session);
 
-    response.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-    });
+    response.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
     return { accessToken };
   }
