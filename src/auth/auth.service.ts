@@ -233,18 +233,18 @@ export class AuthService {
 
   private async createNewTokensPair(
     accessTokenPayload: JwtPayload,
-    accessTokenLifetime: string | number,
+    accessTokenLifetime: string,
     refreshTokenPayload: JwtPayload,
-    refreshTokenLifetime: string | number,
+    refreshTokenLifetime: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     console.log(accessTokenLifetime, refreshTokenLifetime);
     const accessToken = await this.jwtService.createJWT(
       { ...accessTokenPayload },
-      '10s',
+      accessTokenLifetime,
     );
     const refreshToken = await this.jwtService.createJWT(
       { ...refreshTokenPayload },
-      '20s',
+      refreshTokenLifetime,
     );
 
     return { accessToken, refreshToken };

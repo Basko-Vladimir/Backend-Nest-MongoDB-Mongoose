@@ -12,10 +12,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class JwtService {
-  async createJWT(
-    payload: jwt.JwtPayload,
-    expiresIn: string | number,
-  ): Promise<string> {
+  async createJWT(payload: jwt.JwtPayload, expiresIn: string): Promise<string> {
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
   }
 
