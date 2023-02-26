@@ -27,13 +27,14 @@ import { Session } from '../common/decorators/session.decorator';
 import { DeviceSessionDocument } from '../devices-sessions/schemas/device-session.schema';
 import { AuthMeOutputModelDto } from './dto/auth-me-output-model.dto';
 import { ClientsRequestsGuard } from '../common/guards/clients-requests.guard';
+import { AuthGuard } from '../common/guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(protected authService: AuthService) {}
 
   @Get('me')
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(AuthGuard)
   async authMe(@User() user: UserDocument): Promise<AuthMeOutputModelDto> {
     return {
       userId: String(user._id),
