@@ -237,13 +237,14 @@ export class AuthService {
     refreshTokenPayload: JwtPayload,
     refreshTokenLifetime: string | number,
   ): Promise<{ accessToken: string; refreshToken: string }> {
+    console.log(accessTokenLifetime, refreshTokenLifetime);
     const accessToken = await this.jwtService.createJWT(
-      { ...accessTokenPayload, iat: Date.now() },
-      accessTokenLifetime,
+      { ...accessTokenPayload },
+      '10s',
     );
     const refreshToken = await this.jwtService.createJWT(
-      { ...refreshTokenPayload, iat: Date.now() },
-      refreshTokenLifetime,
+      { ...refreshTokenPayload },
+      '20s',
     );
 
     return { accessToken, refreshToken };
