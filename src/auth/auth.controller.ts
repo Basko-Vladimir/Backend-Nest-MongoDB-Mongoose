@@ -45,14 +45,14 @@ export class AuthController {
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(ClientsRequestsGuard)
+  // @UseGuards(ClientsRequestsGuard)
   async registration(@Body() createUserDto: CreateUserDto): Promise<void> {
     await this.authService.registerUser(createUserDto);
   }
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(ClientsRequestsGuard, RegistrationConfirmationGuard)
+  @UseGuards(RegistrationConfirmationGuard) //Temporary removing ClientsRequestsGuard
   async confirmRegistration(
     @Body() confirmRegistrationDto: ConfirmRegistrationDto,
     @User() user: UserDocument,
@@ -62,7 +62,7 @@ export class AuthController {
 
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(ResendingRegistrationEmailGuard, ClientsRequestsGuard)
+  @UseGuards(ResendingRegistrationEmailGuard) //Temporary removing ClientsRequestsGuard
   async resendRegistrationEmail(
     @Body() emailDto: EmailDto,
     @User() user: UserDocument,
@@ -72,7 +72,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(ClientsRequestsGuard)
+  // @UseGuards(ClientsRequestsGuard)
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -91,14 +91,14 @@ export class AuthController {
 
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(ClientsRequestsGuard)
+  // @UseGuards(ClientsRequestsGuard)
   async recoverPassword(@Body() emailDto: EmailDto): Promise<void> {
     return this.authService.recoverPassword(emailDto);
   }
 
   @Post('new-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(PasswordRecoveryCodeGuard, ClientsRequestsGuard)
+  @UseGuards(PasswordRecoveryCodeGuard) //Temporary removing ClientsRequestsGuard
   async setNewPassword(
     @Body() setNewPasswordDto: SetNewPasswordDto,
     @User() user: UserDocument,
