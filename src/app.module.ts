@@ -46,8 +46,26 @@ import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.use
 import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.useCase';
 import { UpdateBlogUseCase } from './blogs/application/use-cases/update-blog.useCase';
 import { QueryBlogsRepository } from './blogs/infrastructure/query-blogs.repository';
+import { RegisterUserUseCase } from './auth/application/use-cases/register-user.useCase';
+import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.useCase';
+import { LoginUserUseCase } from './auth/application/use-cases/login-user.useCase';
+import { RecoverPasswordUseCase } from './auth/application/use-cases/recover-password.useCase';
+import { ChangePasswordUseCase } from './auth/application/use-cases/change-password.useCase';
+import { RefreshTokensUseCase } from './auth/application/use-cases/refresh-tokens.useCase';
+import { LogoutUseCase } from './auth/application/use-cases/logout.useCase';
 
-const useCases = [CreateBlogUseCase, DeleteBlogUseCase, UpdateBlogUseCase];
+const useCases = [
+  CreateBlogUseCase,
+  DeleteBlogUseCase,
+  UpdateBlogUseCase,
+  RegisterUserUseCase,
+  ResendRegistrationEmailUseCase,
+  LoginUserUseCase,
+  RecoverPasswordUseCase,
+  ChangePasswordUseCase,
+  RefreshTokensUseCase,
+  LogoutUseCase,
+];
 
 @Module({
   imports: [

@@ -10,11 +10,11 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { AuthService } from '../application/auth.service';
 import { CreateUserDto } from '../../users/api/dto/create-user.dto';
 import { LoginOutputModel } from './dto/login-output-model.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
 import { RegistrationConfirmationGuard } from '../../common/guards/registration-confirmation.guard';
 import { User } from '../../common/decorators/user.decorator';
 import { UserDocument } from '../../users/schemas/user.schema';
@@ -28,10 +28,21 @@ import { DeviceSessionDocument } from '../../devices-sessions/schemas/device-ses
 import { AuthMeOutputModelDto } from './dto/auth-me-output-model.dto';
 import { ClientsRequestsGuard } from '../../common/guards/clients-requests.guard';
 import { AuthGuard } from '../../common/guards/auth.guard';
+import { RegisterUserCommand } from '../application/use-cases/register-user.useCase';
+import { ConfirmRegistrationCommand } from '../application/use-cases/confirm-registration.useCase';
+import { ResendRegistrationEmailCommand } from '../application/use-cases/resend-registration-email.useCase';
+import { LoginUserCommand } from '../application/use-cases/login-user.useCase';
+import { RecoverPasswordCommand } from '../application/use-cases/recover-password.useCase';
+import { ChangePasswordCommand } from '../application/use-cases/change-password.useCase';
+import { RefreshTokensCommand } from '../application/use-cases/refresh-tokens.useCase';
+import { LogoutCommand } from '../application/use-cases/logout.useCase';
 
 @Controller('auth')
 export class AuthController {
-  constructor(protected authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private commandBus: CommandBus,
+  ) {}
 
   @Get('me')
   @UseGuards(AuthGuard)
@@ -45,45 +56,42 @@ export class AuthController {
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // @UseGuards(ClientsRequestsGuard)
+  // @UseGuards(ClientsRequestsGuard) //Temporary turned off ClientsRequestsGuard
   async registration(@Body() createUserDto: CreateUserDto): Promise<void> {
-    await this.authService.registerUser(createUserDto);
+    await this.commandBus.execute(new RegisterUserCommand(createUserDto));
   }
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(RegistrationConfirmationGuard) //Temporary removing ClientsRequestsGuard
-  async confirmRegistration(
-    @Body() confirmRegistrationDto: ConfirmRegistrationDto,
-    @User() user: UserDocument,
-  ): Promise<void> {
-    await this.authService.confirmRegistration(confirmRegistrationDto, user);
+  async confirmRegistration(@User() user: UserDocument): Promise<void> {
+    await this.commandBus.execute(new ConfirmRegistrationCommand(user));
   }
 
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(ResendingRegistrationEmailGuard) //Temporary removing ClientsRequestsGuard
-  async resendRegistrationEmail(
-    @Body() emailDto: EmailDto,
-    @User() user: UserDocument,
-  ): Promise<void> {
-    return this.authService.resendRegistrationEmail(emailDto, user);
+  async resendRegistrationEmail(@User() user: UserDocument): Promise<void> {
+    await this.commandBus.execute(new ResendRegistrationEmailCommand(user));
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  // @UseGuards(ClientsRequestsGuard)
+  // @UseGuards(ClientsRequestsGuard) //Temporary turned off ClientsRequestsGuard
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request,
   ): Promise<LoginOutputModel> {
     const { accessToken, refreshToken, refreshTokenSettings } =
-      await this.authService.login(
-        loginUserDto,
-        request.ip,
-        request.headers['user-agent'] || 'test-user-agent',
+      await this.commandBus.execute(
+        new LoginUserCommand(
+          loginUserDto,
+          request.ip,
+          request.headers['user-agent'] || 'test-user-agent',
+        ),
       );
+
     response.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
     return { accessToken };
@@ -91,19 +99,21 @@ export class AuthController {
 
   @Post('password-recovery')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // @UseGuards(ClientsRequestsGuard)
+  // @UseGuards(ClientsRequestsGuard) //Temporary turned off ClientsRequestsGuard
   async recoverPassword(@Body() emailDto: EmailDto): Promise<void> {
-    return this.authService.recoverPassword(emailDto);
+    return this.commandBus.execute(new RecoverPasswordCommand(emailDto));
   }
 
   @Post('new-password')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(PasswordRecoveryCodeGuard) //Temporary removing ClientsRequestsGuard
-  async setNewPassword(
+  async changePassword(
     @Body() setNewPasswordDto: SetNewPasswordDto,
     @User() user: UserDocument,
   ): Promise<void> {
-    return this.authService.setNewPassword(setNewPasswordDto, user);
+    return this.commandBus.execute(
+      new ChangePasswordCommand(setNewPasswordDto, user),
+    );
   }
 
   @Post('refresh-token')
@@ -116,7 +126,7 @@ export class AuthController {
   ): Promise<LoginOutputModel> {
     const userId = String(user._id);
     const { accessToken, refreshToken, refreshTokenSettings } =
-      await this.authService.refreshTokens(userId, session);
+      await this.commandBus.execute(new RefreshTokensCommand(userId, session));
 
     response.cookie('refreshToken', refreshToken, refreshTokenSettings);
 
@@ -127,6 +137,6 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(RefreshTokenGuard)
   async logout(@Session() session: DeviceSessionDocument): Promise<void> {
-    await this.authService.logout(String(session._id));
+    return this.commandBus.execute(new LogoutCommand(String(session._id)));
   }
 }

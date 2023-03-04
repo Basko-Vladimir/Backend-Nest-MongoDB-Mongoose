@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { InjectModel } from '@nestjs/mongoose';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CreateUserDto } from '../api/dto/create-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from '../schemas/user.schema';
 import { UsersQueryParamsDto } from '../api/dto/users-query-params.dto';
 import { AllUsersOutputModel } from '../api/dto/users-output-models.dto';
 import { validateOrRejectInputDto } from '../../common/utils';
-import { AuthService } from '../../auth/application/auth.service';
+import { RegisterUserCommand } from '../../auth/application/use-cases/register-user.useCase';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) protected UserModel: UserModelType,
-    protected usersRepository: UsersRepository,
-    protected authService: AuthService,
+    private usersRepository: UsersRepository,
+    private commandBus: CommandBus,
   ) {}
 
   async findAllUsers(
@@ -29,9 +30,8 @@ export class UsersService {
   async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
     await validateOrRejectInputDto(createUserDto, CreateUserDto);
 
-    const createdUserId = await this.authService.registerUser(
-      createUserDto,
-      true,
+    const createdUserId = await this.commandBus.execute(
+      new RegisterUserCommand(createUserDto),
     );
 
     return this.usersRepository.findUserById(createdUserId);
