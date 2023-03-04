@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User, userSchema } from './users/schemas/user.schema';
@@ -12,7 +13,7 @@ import { BlogsController } from './blogs/blogs.controller';
 import { PostsController } from './posts/posts.controller';
 import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
-import { BlogsService } from './blogs/blogs.service';
+import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/posts.service';
 import { LikesService } from './likes/likes.service';
 import { UsersRepository } from './users/users.repository';
@@ -41,6 +42,9 @@ import {
   ClientRequest,
   clientRequestSchema,
 } from './clients-requests/schemas/client-request.schema';
+import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.useCase';
+
+const useCases = [CreateBlogUseCase];
 
 @Module({
   imports: [
@@ -59,6 +63,7 @@ import {
     MongooseModule.forFeature([
       { name: ClientRequest.name, schema: clientRequestSchema },
     ]),
+    CqrsModule,
   ],
   controllers: [
     AppController,
@@ -90,6 +95,7 @@ import {
     EmailManager,
     EmailAdapter,
     IsExistEntityValidator,
+    ...useCases,
   ],
 })
 export class AppModule {}

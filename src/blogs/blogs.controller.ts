@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BlogsService } from './blogs.service';
+import { BlogsService } from './application/blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
 import {
   AllBlogsOutputModel,
@@ -34,10 +34,13 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
 import { User } from '../common/decorators/user.decorator';
 import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateBlogUseCommand } from './application/use-cases/create-blog.useCase';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
+    private commandBus: CommandBus,
     protected blogsService: BlogsService,
     protected postsService: PostsService,
     protected likesService: LikesService,
@@ -63,7 +66,9 @@ export class BlogsController {
   async createBlog(
     @Body() creatingData: CreateBlogDto,
   ): Promise<IBlogOutputModel> {
-    const createdBlog = await this.blogsService.createBlog(creatingData);
+    const createdBlog = await this.commandBus.execute(
+      new CreateBlogUseCommand(creatingData),
+    );
 
     return mapDbBlogToBlogOutputModel(createdBlog);
   }

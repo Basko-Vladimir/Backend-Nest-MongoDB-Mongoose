@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.BlogsService = void 0;
 var common_1 = require("@nestjs/common");
-var blog_schema_1 = require("./schemas/blog.schema");
+var blog_schema_1 = require("../schemas/blog.schema");
 var mongoose_1 = require("@nestjs/mongoose");
 var BlogsService = /** @class */ (function () {
     function BlogsService(BlogModel, blogsRepository) {
