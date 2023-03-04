@@ -1,0 +1,27 @@
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { InjectModel } from '@nestjs/mongoose';
+import { UpdateBlogDto } from '../../dto/update-blog.dto';
+import { BlogsRepository } from '../../blogs.repository';
+import { Blog, BlogModelType } from '../../schemas/blog.schema';
+
+export class UpdateBlogCommand {
+  constructor(public blogId: string, public updateBlogDto: UpdateBlogDto) {}
+}
+
+@CommandHandler(UpdateBlogCommand)
+export class UpdateBlogUseCase implements ICommandHandler<UpdateBlogCommand> {
+  constructor(
+    private blogsRepository: BlogsRepository,
+    @InjectModel(Blog.name) protected BlogModel: BlogModelType,
+  ) {}
+
+  async execute(command: UpdateBlogCommand): Promise<void> {
+    const targetBlog = await this.blogsRepository.findBlogById(command.blogId);
+    const updatedBlog = targetBlog.updateBlog(
+      command.updateBlogDto,
+      targetBlog,
+    );
+
+    await this.blogsRepository.saveBlog(updatedBlog);
+  }
+}

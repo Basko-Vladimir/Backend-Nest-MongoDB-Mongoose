@@ -43,8 +43,10 @@ import {
   clientRequestSchema,
 } from './clients-requests/schemas/client-request.schema';
 import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.useCase';
+import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.useCase';
+import { UpdateBlogUseCase } from './blogs/application/use-cases/update-blog.useCase';
 
-const useCases = [CreateBlogUseCase];
+const useCases = [CreateBlogUseCase, DeleteBlogUseCase, UpdateBlogUseCase];
 
 @Module({
   imports: [

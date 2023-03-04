@@ -36,6 +36,8 @@ import { User } from '../common/decorators/user.decorator';
 import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateBlogUseCommand } from './application/use-cases/create-blog.useCase';
+import { DeleteBlogCommand } from './application/use-cases/delete-blog.useCase';
+import { UpdateBlogCommand } from './application/use-cases/update-blog.useCase';
 
 @Controller('blogs')
 export class BlogsController {
@@ -79,7 +81,7 @@ export class BlogsController {
   async deleteBlog(
     @Param('id', checkParamIdPipe) blogId: string,
   ): Promise<void> {
-    return this.blogsService.deleteBlog(blogId);
+    return this.commandBus.execute(new DeleteBlogCommand(blogId));
   }
 
   @Put(':id')
@@ -87,9 +89,11 @@ export class BlogsController {
   @UseGuards(AuthGuard)
   async updateBlog(
     @Param('id', checkParamIdPipe) blogId: string,
-    @Body() updatingData: UpdateBlogDto,
+    @Body() updateBlogDto: UpdateBlogDto,
   ): Promise<void> {
-    return this.blogsService.updateBlog(blogId, updatingData);
+    return this.commandBus.execute(
+      new UpdateBlogCommand(blogId, updateBlogDto),
+    );
   }
 
   @Get(':blogId/posts')

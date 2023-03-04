@@ -21,10 +21,6 @@ export class BlogsService {
     return this.blogsRepository.findBlogById(blogId);
   }
 
-  async deleteBlog(blogId: string): Promise<void> {
-    return this.blogsRepository.deleteBlog(blogId);
-  }
-
   async updateBlog(
     blogId: string,
     updateBlogDto: UpdateBlogDto,
