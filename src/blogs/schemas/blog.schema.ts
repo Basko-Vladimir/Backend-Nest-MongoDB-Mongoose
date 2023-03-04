@@ -5,8 +5,8 @@ import {
   generateRegExpError,
 } from '../../common/error-messages';
 import { HydratedDocument, Model } from 'mongoose';
-import { CreateBlogDto } from '../dto/create-blog.dto';
-import { UpdateBlogDto } from '../dto/update-blog.dto';
+import { CreateBlogDto } from '../api/dto/create-blog.dto';
+import { UpdateBlogDto } from '../api/dto/update-blog.dto';
 
 const {
   MAX_NAME_LENGTH,

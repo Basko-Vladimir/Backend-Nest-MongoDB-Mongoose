@@ -237,7 +237,6 @@ export class AuthService {
     refreshTokenPayload: JwtPayload,
     refreshTokenLifetime: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    console.log(accessTokenLifetime, refreshTokenLifetime);
     const accessToken = await this.jwtService.createJWT(
       { ...accessTokenPayload },
       accessTokenLifetime,

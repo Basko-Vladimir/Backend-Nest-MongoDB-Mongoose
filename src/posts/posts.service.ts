@@ -6,7 +6,7 @@ import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AllPostsOutputModel } from './dto/posts-output-models.dto';
-import { BlogsRepository } from '../blogs/blogs.repository';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { validateOrRejectInputDto } from '../common/utils';
 import { LikesService } from '../likes/likes.service';
 import { UserDocument } from '../users/schemas/user.schema';

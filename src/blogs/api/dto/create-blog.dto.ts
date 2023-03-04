@@ -5,8 +5,8 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
-import { blogsConstants, MIN_STRINGS_LENGTH } from '../../common/constants';
-import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
+import { blogsConstants, MIN_STRINGS_LENGTH } from '../../../common/constants';
+import { IsNotEmptyContent } from '../../../common/validators/is-not-empty-content.validator';
 
 const {
   MAX_NAME_LENGTH,

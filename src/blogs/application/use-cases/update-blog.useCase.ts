@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { UpdateBlogDto } from '../../dto/update-blog.dto';
-import { BlogsRepository } from '../../blogs.repository';
+import { UpdateBlogDto } from '../../api/dto/update-blog.dto';
+import { BlogsRepository } from '../../infrastructure/blogs.repository';
 import { Blog, BlogModelType } from '../../schemas/blog.schema';
 
 export class UpdateBlogCommand {

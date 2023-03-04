@@ -1,6 +1,6 @@
 import { IsString, Length } from 'class-validator';
-import { MIN_STRINGS_LENGTH, postsConstants } from '../../common/constants';
-import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
+import { MIN_STRINGS_LENGTH, postsConstants } from '../../../common/constants';
+import { IsNotEmptyContent } from '../../../common/validators/is-not-empty-content.validator';
 
 const { MAX_TITLE_LENGTH, MAX_SHORT_DESCRIPTION_LENGTH, MAX_CONTENT_LENGTH } =
   postsConstants;

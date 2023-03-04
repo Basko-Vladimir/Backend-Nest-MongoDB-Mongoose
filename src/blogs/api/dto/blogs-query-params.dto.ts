@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { CommonQueryParamsDto } from '../../common/common.dto';
-import { BlogSortByField } from '../../common/enums';
+import { CommonQueryParamsDto } from '../../../common/common.dto';
+import { BlogSortByField } from '../../../common/enums';
 
 export class BlogsQueryParamsDto extends CommonQueryParamsDto {
   @IsOptional()

@@ -9,7 +9,7 @@ import {
 import {
   AllBlogsOutputModel,
   IBlogOutputModel,
-} from '../src/blogs/dto/blogs-output-models.dto';
+} from '../src/blogs/api/dto/blogs-output-models.dto';
 import {
   initTestApp,
   createBlogsRequest,

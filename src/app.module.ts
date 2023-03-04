@@ -9,7 +9,7 @@ import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { Post, postSchema } from './posts/schemas/post.schema';
 import { Like, likeSchema } from './likes/schemas/like.schema';
 import { Comment, commentSchema } from './comments/schemas/comment.schema';
-import { BlogsController } from './blogs/blogs.controller';
+import { BlogsController } from './blogs/api/blogs.controller';
 import { PostsController } from './posts/posts.controller';
 import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
@@ -17,7 +17,7 @@ import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/posts.service';
 import { LikesService } from './likes/likes.service';
 import { UsersRepository } from './users/users.repository';
-import { BlogsRepository } from './blogs/blogs.repository';
+import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
 import { PostsRepository } from './posts/posts.repository';
 import { LikesRepository } from './likes/likes.repository';
 import { CommentsController } from './comments/comments.controller';
@@ -45,6 +45,7 @@ import {
 import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.useCase';
 import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.useCase';
 import { UpdateBlogUseCase } from './blogs/application/use-cases/update-blog.useCase';
+import { QueryBlogsRepository } from './blogs/infrastructure/query-blogs.repository';
 
 const useCases = [CreateBlogUseCase, DeleteBlogUseCase, UpdateBlogUseCase];
 
@@ -82,6 +83,7 @@ const useCases = [CreateBlogUseCase, DeleteBlogUseCase, UpdateBlogUseCase];
     UsersRepository,
     BlogsService,
     BlogsRepository,
+    QueryBlogsRepository,
     PostsService,
     PostsRepository,
     LikesService,

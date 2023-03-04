@@ -11,56 +11,55 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BlogsService } from './application/blogs.service';
 import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
 import {
   AllBlogsOutputModel,
   BlogAllFullPostsOutputModel,
   IBlogOutputModel,
 } from './dto/blogs-output-models.dto';
-import { mapDbBlogToBlogOutputModel } from './mappers/blogs-mappers';
+import { mapDbBlogToBlogOutputModel } from '../mappers/blogs-mappers';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { IFullPostOutputModel } from '../posts/dto/posts-output-models.dto';
-import { PostsService } from '../posts/posts.service';
+import { IFullPostOutputModel } from '../../posts/dto/posts-output-models.dto';
+import { PostsService } from '../../posts/posts.service';
 import {
   getFullPostOutputModel,
   mapDbPostToPostOutputModel,
-} from '../posts/mappers/posts-mapper';
-import { LikesService } from '../likes/likes.service';
-import { PostsQueryParamsDto } from '../posts/dto/posts-query-params.dto';
-import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
-import { User } from '../common/decorators/user.decorator';
-import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
+} from '../../posts/mappers/posts-mapper';
+import { LikesService } from '../../likes/likes.service';
+import { PostsQueryParamsDto } from '../../posts/dto/posts-query-params.dto';
+import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
+import { User } from '../../common/decorators/user.decorator';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateBlogUseCommand } from './application/use-cases/create-blog.useCase';
-import { DeleteBlogCommand } from './application/use-cases/delete-blog.useCase';
-import { UpdateBlogCommand } from './application/use-cases/update-blog.useCase';
+import { CreateBlogUseCommand } from '../application/use-cases/create-blog.useCase';
+import { DeleteBlogCommand } from '../application/use-cases/delete-blog.useCase';
+import { UpdateBlogCommand } from '../application/use-cases/update-blog.useCase';
+import { QueryBlogsRepository } from '../infrastructure/query-blogs.repository';
+import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
     private commandBus: CommandBus,
-    protected blogsService: BlogsService,
-    protected postsService: PostsService,
-    protected likesService: LikesService,
+    private postsService: PostsService,
+    private likesService: LikesService,
+    private queryBlogsRepository: QueryBlogsRepository,
   ) {}
 
   @Get()
   async findAllBlogs(
     @Query() query: BlogsQueryParamsDto,
   ): Promise<AllBlogsOutputModel> {
-    return this.blogsService.findAllBlogs(query);
+    return this.queryBlogsRepository.findAllBlogs(query);
   }
 
   @Get(':id')
   async findBlogById(
     @Param('id', checkParamIdPipe) blogId: string,
   ): Promise<IBlogOutputModel> {
-    const targetBlog = await this.blogsService.findBlogById(blogId);
-    return mapDbBlogToBlogOutputModel(targetBlog);
+    return this.queryBlogsRepository.findBlogById(blogId);
   }
 
   @Post()

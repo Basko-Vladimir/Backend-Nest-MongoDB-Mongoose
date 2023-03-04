@@ -21,7 +21,7 @@ import {
   mapDbPostToPostOutputModel,
 } from './mappers/posts-mapper';
 import { LikesService } from '../likes/likes.service';
-import { BlogAllFullPostsOutputModel } from '../blogs/dto/blogs-output-models.dto';
+import { BlogAllFullPostsOutputModel } from '../blogs/api/dto/blogs-output-models.dto';
 import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dto';
 import {
