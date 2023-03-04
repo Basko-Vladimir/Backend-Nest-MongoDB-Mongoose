@@ -17,10 +17,7 @@ import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { IFullPostOutputModel } from './dto/posts-output-models.dto';
-import {
-  getFullPostOutputModel,
-  mapDbPostToPostOutputModel,
-} from '../mappers/posts-mapper';
+import { getFullPostOutputModel } from '../mappers/posts-mapper';
 import { LikesService } from '../../likes/likes.service';
 import { BlogAllFullPostsOutputModel } from '../../blogs/api/dto/blogs-output-models.dto';
 import { CommentsService } from '../../comments/comments.service';
@@ -42,6 +39,8 @@ import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.g
 import { CreateCommentForPostDto } from './dto/create-comment-for-post.dto';
 import { CreatePostCommand } from '../application/use-cases/create-post.useCase';
 import { QueryPostsRepository } from '../infrastructure/query-posts.repository';
+import { DeletePostCommand } from '../application/use-cases/delete-post.useCase';
+import { UpdatePostCommand } from '../application/use-cases/update-post.useCase';
 
 @Controller('posts')
 export class PostsController {
@@ -60,7 +59,9 @@ export class PostsController {
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
-    const postsOutputModel = await this.postsService.findPosts(queryParams);
+    const postsOutputModel = await this.queryPostsRepository.findAllPosts(
+      queryParams,
+    );
     const posts = postsOutputModel.items;
     const fullPosts = [];
 
@@ -110,8 +111,10 @@ export class PostsController {
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
     userId = userId ? String(userId) : null;
-    const targetPost = await this.postsService.findPostById(postId);
-    const postOutputModel = mapDbPostToPostOutputModel(targetPost);
+    const postOutputModel = await this.queryPostsRepository.findPostById(
+      postId,
+    );
+
     return getFullPostOutputModel(postOutputModel, this.likesService, userId);
   }
 
@@ -137,7 +140,7 @@ export class PostsController {
   async deletePost(
     @Param('id', checkParamIdPipe) postId: string,
   ): Promise<void> {
-    return this.postsService.deletePost(postId);
+    return this.commandBus.execute(new DeletePostCommand(postId));
   }
 
   @Put(':id')
@@ -147,7 +150,7 @@ export class PostsController {
     @Param('id', checkParamIdPipe) postId: string,
     @Body() body: UpdatePostDto,
   ): Promise<void> {
-    return this.postsService.updatePost(postId, body);
+    return this.commandBus.execute(new UpdatePostCommand(postId, body));
   }
 
   @Post(':postId/comments')

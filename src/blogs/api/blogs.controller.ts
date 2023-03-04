@@ -102,7 +102,7 @@ export class BlogsController {
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
-    const postsOutputModel = await this.postsService.findPosts(
+    const postsOutputModel = await this.queryPostsRepository.findAllPosts(
       queryParams,
       blogId,
     );

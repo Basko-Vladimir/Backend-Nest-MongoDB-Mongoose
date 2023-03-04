@@ -1,50 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { PostsRepository } from '../infrastructure/posts.repository';
-import { Post, PostDocument, PostModelType } from '../schemas/post.schema';
-import { PostsQueryParamsDto } from '../api/dto/posts-query-params.dto';
-import { UpdatePostDto } from '../api/dto/update-post.dto';
-import { AllPostsOutputModel } from '../api/dto/posts-output-models.dto';
-import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
-import { validateOrRejectInputDto } from '../../common/utils';
+import { Injectable } from '@nestjs/common';
 import { LikesService } from '../../likes/likes.service';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { LikeStatus } from '../../common/enums';
 
 @Injectable()
 export class PostsService {
-  constructor(
-    protected postsRepository: PostsRepository,
-    protected blogsRepository: BlogsRepository,
-    protected likesService: LikesService,
-    @InjectModel(Post.name) protected PostModel: PostModelType,
-  ) {}
-
-  async findPosts(
-    queryParams: PostsQueryParamsDto,
-    blogId?: string,
-  ): Promise<AllPostsOutputModel> {
-    return this.postsRepository.findPosts(queryParams, blogId);
-  }
-
-  async findPostById(id: string): Promise<PostDocument> {
-    return this.postsRepository.findPostById(id);
-  }
-
-  async deletePost(id: string): Promise<void> {
-    return this.postsRepository.deletePost(id);
-  }
-
-  async updatePost(id: string, updatePostDto: UpdatePostDto): Promise<void> {
-    const targetPost = await this.findPostById(id);
-
-    if (!targetPost) throw new NotFoundException();
-
-    // await validateOrRejectInputDto(updatePostDto, UpdatePostDto);
-
-    const updatedPost = targetPost.updatePost(updatePostDto, targetPost);
-    await this.postsRepository.savePost(updatedPost);
-  }
+  constructor(private likesService: LikesService) {}
 
   async updatePostLikeStatus(
     user: UserDocument,

@@ -58,6 +58,8 @@ import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use
 import { QueryUsersRepository } from './users/infrastructure/query-users.repository';
 import { CreatePostUseCase } from './posts/application/use-cases/create-post.useCase';
 import { QueryPostsRepository } from './posts/infrastructure/query-posts.repository';
+import { DeletePostUseCase } from './posts/application/use-cases/delete-post.useCase';
+import { UpdatePostUseCase } from './posts/application/use-cases/update-post.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -73,6 +75,8 @@ const useCases = [
   CreateUserUseCase,
   DeleteUserUseCase,
   CreatePostUseCase,
+  DeletePostUseCase,
+  UpdatePostUseCase,
 ];
 
 @Module({
