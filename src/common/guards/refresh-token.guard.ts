@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtService } from '../../auth/jwt.service';
+import { JwtService } from '../../auth/infrastructure/jwt.service';
 import { UsersRepository } from '../../users/users.repository';
 import { DevicesSessionsRepository } from '../../devices-sessions/devices-sessions.repository';
 

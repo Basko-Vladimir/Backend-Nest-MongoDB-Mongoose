@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
-import { usersConstants } from '../../common/constants';
+import { IsNotEmptyContent } from '../../../common/validators/is-not-empty-content.validator';
+import { usersConstants } from '../../../common/constants';
 
 const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = usersConstants;
 

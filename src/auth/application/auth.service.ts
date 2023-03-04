@@ -9,26 +9,26 @@ import {
   User,
   UserDocument,
   UserModelType,
-} from '../users/schemas/user.schema';
-import { UsersRepository } from '../users/users.repository';
-import { CreateUserDto } from '../users/dto/create-user.dto';
-import { EmailManager } from '../common/managers/email.manager';
-import { LoginUserDto } from './dto/login-user.dto';
-import { validateOrRejectInputDto } from '../common/utils';
-import { JwtService } from './jwt.service';
+} from '../../users/schemas/user.schema';
+import { UsersRepository } from '../../users/users.repository';
+import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { EmailManager } from '../../common/managers/email.manager';
+import { LoginUserDto } from '../api/dto/login-user.dto';
+import { validateOrRejectInputDto } from '../../common/utils';
+import { JwtService } from '../infrastructure/jwt.service';
 import {
   ACCESS_TOKEN_LIFE_TIME,
   REFRESH_TOKEN_LIFE_TIME,
-} from '../common/constants';
-import { ITokensData } from '../common/types';
-import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';
-import { EmailDto } from './dto/email.dto';
-import { SetNewPasswordDto } from './dto/set-new-password.dto';
+} from '../../common/constants';
+import { ITokensData } from '../../common/types';
+import { ConfirmRegistrationDto } from '../api/dto/confirm-registration.dto';
+import { EmailDto } from '../api/dto/email.dto';
+import { SetNewPasswordDto } from '../api/dto/set-new-password.dto';
 import {
   DeviceSession,
   DeviceSessionDocument,
-} from '../devices-sessions/schemas/device-session.schema';
-import { DevicesSessionsService } from '../devices-sessions/devices-sessions.service';
+} from '../../devices-sessions/schemas/device-session.schema';
+import { DevicesSessionsService } from '../../devices-sessions/devices-sessions.service';
 import { CookieOptions } from 'express';
 
 @Injectable()

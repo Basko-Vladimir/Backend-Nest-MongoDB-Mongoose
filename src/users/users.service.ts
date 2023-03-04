@@ -6,7 +6,7 @@ import { User, UserDocument, UserModelType } from './schemas/user.schema';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import { AllUsersOutputModel } from './dto/users-output-models.dto';
 import { validateOrRejectInputDto } from '../common/utils';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/application/auth.service';
 
 @Injectable()
 export class UsersService {

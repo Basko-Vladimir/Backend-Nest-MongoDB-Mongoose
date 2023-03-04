@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthType } from '../enums';
-import { JwtService } from '../../auth/jwt.service';
+import { JwtService } from '../../auth/infrastructure/jwt.service';
 import { UsersService } from '../../users/users.service';
 import { authErrorsMessages } from '../error-messages';
 
