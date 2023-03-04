@@ -82,7 +82,7 @@ export class AuthController {
       await this.authService.login(
         loginUserDto,
         request.ip,
-        request.headers['user-agent'],
+        request.headers['user-agent'] || 'test-user-agent',
       );
     response.cookie('refreshToken', refreshToken, refreshTokenSettings);
 

@@ -5,7 +5,7 @@ import { initTestApp } from './utils';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await initTestApp();
   });
 

@@ -27,6 +27,7 @@ import {
 } from '../src/posts/dto/posts-output-models.dto';
 
 describe('Blogs', () => {
+  // jest.setTimeout(60 * 1000);
   const {
     incorrectBlogsDtos,
     correctCreateBlogDtos,
