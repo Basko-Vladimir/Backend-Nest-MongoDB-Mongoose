@@ -56,6 +56,8 @@ import { LogoutUseCase } from './auth/application/use-cases/logout.useCase';
 import { CreateUserUseCase } from './users/application/use-cases/create-user.useCase';
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.useCase';
 import { QueryUsersRepository } from './users/infrastructure/query-users.repository';
+import { CreatePostUseCase } from './posts/application/use-cases/create-post.useCase';
+import { QueryPostsRepository } from './posts/infrastructure/query-posts.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -70,6 +72,7 @@ const useCases = [
   LogoutUseCase,
   CreateUserUseCase,
   DeleteUserUseCase,
+  CreatePostUseCase,
 ];
 
 @Module({
@@ -110,6 +113,7 @@ const useCases = [
     QueryBlogsRepository,
     PostsService,
     PostsRepository,
+    QueryPostsRepository,
     LikesService,
     LikesRepository,
     CommentsService,

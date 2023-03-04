@@ -11,6 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -39,18 +40,22 @@ import { UserDocument } from '../../users/schemas/user.schema';
 import { LikeStatusDto } from '../../likes/dto/like-status.dto';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
 import { CreateCommentForPostDto } from './dto/create-comment-for-post.dto';
+import { CreatePostCommand } from '../application/use-cases/create-post.useCase';
+import { QueryPostsRepository } from '../infrastructure/query-posts.repository';
 
 @Controller('posts')
 export class PostsController {
   constructor(
-    protected postsService: PostsService,
-    protected likesService: LikesService,
-    protected commentsService: CommentsService,
+    private postsService: PostsService,
+    private queryPostsRepository: QueryPostsRepository,
+    private likesService: LikesService,
+    private commentsService: CommentsService,
+    private commandBus: CommandBus,
   ) {}
 
   @Get()
   @UseGuards(AddUserToRequestGuard)
-  async findPosts(
+  async findAllPosts(
     @Query() queryParams: PostsQueryParamsDto,
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
@@ -113,11 +118,16 @@ export class PostsController {
   @Post()
   @UseGuards(AuthGuard)
   async createPost(
-    @Body() body: CreatePostDto,
+    @Body() createPostDto: CreatePostDto,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
-    const createdPost = await this.postsService.createPost(body);
-    const postOutputModel = mapDbPostToPostOutputModel(createdPost);
+    const createdPostId = await this.commandBus.execute(
+      new CreatePostCommand(createPostDto),
+    );
+    const postOutputModel = await this.queryPostsRepository.findPostById(
+      createdPostId,
+    );
+
     return getFullPostOutputModel(postOutputModel, this.likesService, userId);
   }
 

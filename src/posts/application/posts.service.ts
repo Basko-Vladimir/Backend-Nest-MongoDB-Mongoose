@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PostsRepository } from '../infrastructure/posts.repository';
 import { Post, PostDocument, PostModelType } from '../schemas/post.schema';
 import { PostsQueryParamsDto } from '../api/dto/posts-query-params.dto';
-import { CreatePostDto } from '../api/dto/create-post.dto';
 import { UpdatePostDto } from '../api/dto/update-post.dto';
 import { AllPostsOutputModel } from '../api/dto/posts-output-models.dto';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
@@ -30,23 +29,6 @@ export class PostsService {
 
   async findPostById(id: string): Promise<PostDocument> {
     return this.postsRepository.findPostById(id);
-  }
-
-  async createPost(createPostDto: CreatePostDto): Promise<PostDocument> {
-    // await validateOrRejectInputDto(createPostDto, CreatePostDto);
-
-    const targetBlog = await this.blogsRepository.findBlogById(
-      createPostDto.blogId,
-    );
-
-    if (!targetBlog) throw new NotFoundException();
-
-    const createdPost = await this.PostModel.createPostEntity(
-      createPostDto,
-      targetBlog.name,
-      this.PostModel,
-    );
-    return this.postsRepository.savePost(createdPost);
   }
 
   async deletePost(id: string): Promise<void> {

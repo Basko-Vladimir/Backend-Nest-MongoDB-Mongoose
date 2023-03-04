@@ -21,10 +21,7 @@ import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { IFullPostOutputModel } from '../../posts/api/dto/posts-output-models.dto';
 import { PostsService } from '../../posts/application/posts.service';
-import {
-  getFullPostOutputModel,
-  mapDbPostToPostOutputModel,
-} from '../../posts/mappers/posts-mapper';
+import { getFullPostOutputModel } from '../../posts/mappers/posts-mapper';
 import { LikesService } from '../../likes/likes.service';
 import { PostsQueryParamsDto } from '../../posts/api/dto/posts-query-params.dto';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
@@ -37,6 +34,8 @@ import { DeleteBlogCommand } from '../application/use-cases/delete-blog.useCase'
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.useCase';
 import { QueryBlogsRepository } from '../infrastructure/query-blogs.repository';
 import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
+import { CreatePostCommand } from '../../posts/application/use-cases/create-post.useCase';
+import { QueryPostsRepository } from '../../posts/infrastructure/query-posts.repository';
 
 @Controller('blogs')
 export class BlogsController {
@@ -45,6 +44,7 @@ export class BlogsController {
     private postsService: PostsService,
     private likesService: LikesService,
     private queryBlogsRepository: QueryBlogsRepository,
+    private queryPostsRepository: QueryPostsRepository,
   ) {}
 
   @Get()
@@ -128,11 +128,16 @@ export class BlogsController {
     @Body() createPostForBlogDto: CreatePostForBlogDto,
     @User('_id') userId: string,
   ): Promise<IFullPostOutputModel> {
-    const createdPost = await this.postsService.createPost({
-      ...createPostForBlogDto,
-      blogId,
-    });
-    const postOutputModel = mapDbPostToPostOutputModel(createdPost);
+    const createdPostId = await this.commandBus.execute(
+      new CreatePostCommand({
+        ...createPostForBlogDto,
+        blogId,
+      }),
+    );
+    const postOutputModel = await this.queryPostsRepository.findPostById(
+      createdPostId,
+    );
+
     return await getFullPostOutputModel(
       postOutputModel,
       this.likesService,
