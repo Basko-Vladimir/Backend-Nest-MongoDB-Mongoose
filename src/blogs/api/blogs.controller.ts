@@ -17,7 +17,6 @@ import {
   BlogAllFullPostsOutputModel,
   IBlogOutputModel,
 } from './dto/blogs-output-models.dto';
-import { mapDbBlogToBlogOutputModel } from '../mappers/blogs-mappers';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { IFullPostOutputModel } from '../../posts/dto/posts-output-models.dto';
@@ -67,11 +66,11 @@ export class BlogsController {
   async createBlog(
     @Body() creatingData: CreateBlogDto,
   ): Promise<IBlogOutputModel> {
-    const createdBlog = await this.commandBus.execute(
+    const createdBlogId = await this.commandBus.execute(
       new CreateBlogUseCommand(creatingData),
     );
 
-    return mapDbBlogToBlogOutputModel(createdBlog);
+    return this.queryBlogsRepository.findBlogById(createdBlogId);
   }
 
   @Delete(':id')

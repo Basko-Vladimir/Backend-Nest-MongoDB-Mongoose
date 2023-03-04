@@ -9,6 +9,7 @@ import { AuthType } from '../enums';
 import { JwtService } from '../../auth/infrastructure/jwt.service';
 import { UsersService } from '../../users/application/users.service';
 import { authErrorsMessages } from '../error-messages';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 
 const { INVALID_TOKEN } = authErrorsMessages;
 const BASIC_AUTH_CREDENTIALS_BASE64 = 'YWRtaW46cXdlcnR5';
@@ -17,7 +18,7 @@ const BASIC_AUTH_CREDENTIALS_BASE64 = 'YWRtaW46cXdlcnR5';
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private userService: UsersService,
+    private usersRepository: UsersRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -41,7 +42,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException(INVALID_TOKEN);
       }
 
-      const targetUser = await this.userService.findUserById(
+      const targetUser = await this.usersRepository.findUserById(
         tokenPayload.userId,
       );
 

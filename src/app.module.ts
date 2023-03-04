@@ -53,6 +53,9 @@ import { RecoverPasswordUseCase } from './auth/application/use-cases/recover-pas
 import { ChangePasswordUseCase } from './auth/application/use-cases/change-password.useCase';
 import { RefreshTokensUseCase } from './auth/application/use-cases/refresh-tokens.useCase';
 import { LogoutUseCase } from './auth/application/use-cases/logout.useCase';
+import { CreateUserUseCase } from './users/application/use-cases/create-user.useCase';
+import { DeleteUserUseCase } from './users/application/use-cases/delete-user.useCase';
+import { QueryUsersRepository } from './users/infrastructure/query-users.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -65,6 +68,8 @@ const useCases = [
   ChangePasswordUseCase,
   RefreshTokensUseCase,
   LogoutUseCase,
+  CreateUserUseCase,
+  DeleteUserUseCase,
 ];
 
 @Module({
@@ -99,6 +104,7 @@ const useCases = [
     AppService,
     UsersService,
     UsersRepository,
+    QueryUsersRepository,
     BlogsService,
     BlogsRepository,
     QueryBlogsRepository,
