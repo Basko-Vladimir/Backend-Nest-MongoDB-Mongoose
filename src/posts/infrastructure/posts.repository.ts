@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument, PostModelType } from './schemas/post.schema';
-import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
-import { AllPostsOutputModel } from './dto/posts-output-models.dto';
-import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
-import { PostSortByField, SortDirection } from '../common/enums';
-import { mapDbPostToPostOutputModel } from './mappers/posts-mapper';
+import { Post, PostDocument, PostModelType } from '../schemas/post.schema';
+import { PostsQueryParamsDto } from '../api/dto/posts-query-params.dto';
+import { AllPostsOutputModel } from '../api/dto/posts-output-models.dto';
+import { countSkipValue, getFilterByDbId, setSortValue } from '../../common/utils';
+import { PostSortByField, SortDirection } from '../../common/enums';
+import { mapDbPostToPostOutputModel } from '../mappers/posts-mapper';
 
 @Injectable()
 export class PostsRepository {

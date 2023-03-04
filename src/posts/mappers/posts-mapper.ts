@@ -1,7 +1,7 @@
 import {
   IFullPostOutputModel,
   IPostOutputModel,
-} from '../dto/posts-output-models.dto';
+} from '../api/dto/posts-output-models.dto';
 import { PostDocument } from '../schemas/post.schema';
 import { LikesService } from '../../likes/likes.service';
 

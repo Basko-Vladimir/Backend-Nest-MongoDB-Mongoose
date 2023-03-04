@@ -31,7 +31,7 @@ import {
   AllPostsOutputModel,
   IFullPostOutputModel,
   IPostOutputModel,
-} from '../src/posts/dto/posts-output-models.dto';
+} from '../src/posts/api/dto/posts-output-models.dto';
 import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,

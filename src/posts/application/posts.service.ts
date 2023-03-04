@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PostsRepository } from './posts.repository';
-import { Post, PostDocument, PostModelType } from './schemas/post.schema';
-import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { AllPostsOutputModel } from './dto/posts-output-models.dto';
-import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
-import { validateOrRejectInputDto } from '../common/utils';
-import { LikesService } from '../likes/likes.service';
-import { UserDocument } from '../users/schemas/user.schema';
-import { LikeStatus } from '../common/enums';
+import { PostsRepository } from '../infrastructure/posts.repository';
+import { Post, PostDocument, PostModelType } from '../schemas/post.schema';
+import { PostsQueryParamsDto } from '../api/dto/posts-query-params.dto';
+import { CreatePostDto } from '../api/dto/create-post.dto';
+import { UpdatePostDto } from '../api/dto/update-post.dto';
+import { AllPostsOutputModel } from '../api/dto/posts-output-models.dto';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { validateOrRejectInputDto } from '../../common/utils';
+import { LikesService } from '../../likes/likes.service';
+import { UserDocument } from '../../users/schemas/user.schema';
+import { LikeStatus } from '../../common/enums';
 
 @Injectable()
 export class PostsService {

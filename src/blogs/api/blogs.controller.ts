@@ -19,14 +19,14 @@ import {
 } from './dto/blogs-output-models.dto';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { IFullPostOutputModel } from '../../posts/dto/posts-output-models.dto';
-import { PostsService } from '../../posts/posts.service';
+import { IFullPostOutputModel } from '../../posts/api/dto/posts-output-models.dto';
+import { PostsService } from '../../posts/application/posts.service';
 import {
   getFullPostOutputModel,
   mapDbPostToPostOutputModel,
 } from '../../posts/mappers/posts-mapper';
 import { LikesService } from '../../likes/likes.service';
-import { PostsQueryParamsDto } from '../../posts/dto/posts-query-params.dto';
+import { PostsQueryParamsDto } from '../../posts/api/dto/posts-query-params.dto';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';

@@ -1,7 +1,7 @@
 import { CreateBlogDto } from '../src/blogs/api/dto/create-blog.dto';
-import { IFullPostOutputModel } from '../src/posts/dto/posts-output-models.dto';
+import { IFullPostOutputModel } from '../src/posts/api/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
-import { CreatePostDto } from '../src/posts/dto/create-post.dto';
+import { CreatePostDto } from '../src/posts/api/dto/create-post.dto';
 import { IBlogOutputModel } from '../src/blogs/api/dto/blogs-output-models.dto';
 import { IFullCommentOutputModel } from '../src/comments/dto/comments-output-models.dto';
 

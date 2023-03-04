@@ -1,5 +1,5 @@
 import { AllEntitiesOutputModel } from '../../../common/types';
-import { IPostOutputModel } from '../../../posts/dto/posts-output-models.dto';
+import { IPostOutputModel } from '../../../posts/api/dto/posts-output-models.dto';
 
 export interface IBlogOutputModel {
   id: string;

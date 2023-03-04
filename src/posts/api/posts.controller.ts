@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
+import { PostsService } from '../application/posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -19,25 +19,25 @@ import { IFullPostOutputModel } from './dto/posts-output-models.dto';
 import {
   getFullPostOutputModel,
   mapDbPostToPostOutputModel,
-} from './mappers/posts-mapper';
-import { LikesService } from '../likes/likes.service';
-import { BlogAllFullPostsOutputModel } from '../blogs/api/dto/blogs-output-models.dto';
-import { CommentsService } from '../comments/comments.service';
-import { CommentsQueryParamsDto } from '../comments/dto/comments-query-params.dto';
+} from '../mappers/posts-mapper';
+import { LikesService } from '../../likes/likes.service';
+import { BlogAllFullPostsOutputModel } from '../../blogs/api/dto/blogs-output-models.dto';
+import { CommentsService } from '../../comments/comments.service';
+import { CommentsQueryParamsDto } from '../../comments/dto/comments-query-params.dto';
 import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,
-} from '../comments/dto/comments-output-models.dto';
+} from '../../comments/dto/comments-output-models.dto';
 import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,
-} from '../comments/mappers/comments-mapper';
-import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { User } from '../common/decorators/user.decorator';
-import { UserDocument } from '../users/schemas/user.schema';
-import { LikeStatusDto } from '../likes/dto/like-status.dto';
-import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
+} from '../../comments/mappers/comments-mapper';
+import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import { User } from '../../common/decorators/user.decorator';
+import { UserDocument } from '../../users/schemas/user.schema';
+import { LikeStatusDto } from '../../likes/dto/like-status.dto';
+import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
 import { CreateCommentForPostDto } from './dto/create-comment-for-post.dto';
 
 @Controller('posts')

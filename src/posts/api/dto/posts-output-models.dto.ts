@@ -1,5 +1,5 @@
-import { AllEntitiesOutputModel } from '../../common/types';
-import { ExtendedLikesInfoOutputModel } from '../../likes/dto/likes-output-models.dto';
+import { AllEntitiesOutputModel } from '../../../common/types';
+import { ExtendedLikesInfoOutputModel } from '../../../likes/dto/likes-output-models.dto';
 
 export interface IPostOutputModel {
   id: string;

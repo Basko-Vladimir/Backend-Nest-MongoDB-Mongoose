@@ -3,7 +3,7 @@ import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { generateCustomBadRequestException } from '../utils';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { IdTypes } from '../enums';
-import { PostsRepository } from '../../posts/posts.repository';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { CommentsRepository } from '../../comments/comments.repository';
 
 @Injectable()

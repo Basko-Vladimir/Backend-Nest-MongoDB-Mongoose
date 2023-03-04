@@ -24,7 +24,7 @@ import {
 import {
   AllPostsOutputModel,
   IPostOutputModel,
-} from '../src/posts/dto/posts-output-models.dto';
+} from '../src/posts/api/dto/posts-output-models.dto';
 
 describe('Blogs', () => {
   // jest.setTimeout(60 * 1000);
