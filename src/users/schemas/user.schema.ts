@@ -6,7 +6,7 @@ import {
   generateLengthErrorMessage,
   generateRegExpError,
 } from '../../common/error-messages';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { CreateUserDto } from '../api/dto/create-user.dto';
 import { HydratedDocument, Model } from 'mongoose';
 import {
   EmailConfirmation,

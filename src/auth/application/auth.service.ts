@@ -10,8 +10,8 @@ import {
   UserDocument,
   UserModelType,
 } from '../../users/schemas/user.schema';
-import { UsersRepository } from '../../users/users.repository';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { CreateUserDto } from '../../users/api/dto/create-user.dto';
 import { EmailManager } from '../../common/managers/email.manager';
 import { LoginUserDto } from '../api/dto/login-user.dto';
 import { validateOrRejectInputDto } from '../../common/utils';

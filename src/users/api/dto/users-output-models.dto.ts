@@ -1,4 +1,4 @@
-import { AllEntitiesOutputModel } from '../../common/types';
+import { AllEntitiesOutputModel } from '../../../common/types';
 
 export interface IUserOutputModel {
   id: string;

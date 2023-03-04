@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '../../auth/infrastructure/jwt.service';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/application/users.service';
 import { AuthType } from '../enums';
 
 @Injectable()

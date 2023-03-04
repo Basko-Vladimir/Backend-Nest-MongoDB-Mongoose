@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
-import { CreateUserDto } from './dto/create-user.dto';
+import { UsersRepository } from '../infrastructure/users.repository';
+import { CreateUserDto } from '../api/dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelType } from './schemas/user.schema';
-import { UsersQueryParamsDto } from './dto/users-query-params.dto';
-import { AllUsersOutputModel } from './dto/users-output-models.dto';
-import { validateOrRejectInputDto } from '../common/utils';
-import { AuthService } from '../auth/application/auth.service';
+import { User, UserDocument, UserModelType } from '../schemas/user.schema';
+import { UsersQueryParamsDto } from '../api/dto/users-query-params.dto';
+import { AllUsersOutputModel } from '../api/dto/users-output-models.dto';
+import { validateOrRejectInputDto } from '../../common/utils';
+import { AuthService } from '../../auth/application/auth.service';
 
 @Injectable()
 export class UsersService {

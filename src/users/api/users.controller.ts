@@ -10,16 +10,16 @@ import {
   UseGuards,
   HttpStatus,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from '../application/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { mapDbUserToUserOutputModel } from './mappers/users-mappers';
+import { mapDbUserToUserOutputModel } from '../mappers/users-mappers';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from './dto/users-output-models.dto';
-import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
-import { AuthGuard } from '../common/guards/auth.guard';
+import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
+import { AuthGuard } from '../../common/guards/auth.guard';
 
 @Controller('users')
 export class UsersController {

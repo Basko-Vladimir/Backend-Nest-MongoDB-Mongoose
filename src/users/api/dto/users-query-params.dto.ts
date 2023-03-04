@@ -1,5 +1,5 @@
-import { UserSortByField } from '../../common/enums';
-import { CommonQueryParamsDto } from '../../common/common.dto';
+import { UserSortByField } from '../../../common/enums';
+import { CommonQueryParamsDto } from '../../../common/common.dto';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UsersQueryParamsDto extends CommonQueryParamsDto {

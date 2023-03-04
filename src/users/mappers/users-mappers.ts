@@ -1,5 +1,5 @@
 import { UserDocument } from '../schemas/user.schema';
-import { IUserOutputModel } from '../dto/users-output-models.dto';
+import { IUserOutputModel } from '../api/dto/users-output-models.dto';
 
 export const mapDbUserToUserOutputModel = (
   user: UserDocument,

@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { CreateUserDto } from '../../users/api/dto/create-user.dto';
 import { LoginOutputModel } from './dto/login-output-model.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ConfirmRegistrationDto } from './dto/confirm-registration.dto';

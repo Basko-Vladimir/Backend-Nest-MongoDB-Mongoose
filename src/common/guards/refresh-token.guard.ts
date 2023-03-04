@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '../../auth/infrastructure/jwt.service';
-import { UsersRepository } from '../../users/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { DevicesSessionsRepository } from '../../devices-sessions/devices-sessions.repository';
 
 @Injectable()

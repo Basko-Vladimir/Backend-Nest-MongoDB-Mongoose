@@ -1,7 +1,7 @@
 import { IsString, Length, Matches } from 'class-validator';
-import { usersConstants } from '../../common/constants';
-import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
-import { EmailDto } from '../../auth/api/dto/email.dto';
+import { usersConstants } from '../../../common/constants';
+import { IsNotEmptyContent } from '../../../common/validators/is-not-empty-content.validator';
+import { EmailDto } from '../../../auth/api/dto/email.dto';
 
 const {
   MIN_LOGIN_LENGTH,
