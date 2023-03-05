@@ -13,16 +13,20 @@ import { validateOrRejectInputDto } from '../../common/utils';
 import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { LikeStatus } from '../../common/enums';
-import { LikesService } from '../../likes/application/likes.service';
 import { UpdateCommentDto } from '../api/dto/update-comment.dto';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateLikeCommand } from '../../likes/application/use-cases/create-like.useCase';
+import { UpdateLikeCommand } from '../../likes/application/use-cases/update-like.useCase';
+import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 
 @Injectable()
 export class CommentsService {
   constructor(
-    protected commentsRepository: CommentsRepository,
-    protected postsRepository: PostsRepository,
-    protected likeService: LikesService,
+    private commentsRepository: CommentsRepository,
+    private postsRepository: PostsRepository,
+    private likesRepository: LikesRepository,
     @InjectModel(Comment.name) protected CommentModel: CommentModelType,
+    private commandBus: CommandBus,
   ) {}
 
   async findComments(
@@ -79,22 +83,26 @@ export class CommentsService {
     commentId: string,
     newStatus: LikeStatus,
   ): Promise<void> {
-    const existingLike = await this.likeService.getLikeByFilter({
+    const existingLike = await this.likesRepository.getLikeByFilter({
       userId: String(user._id),
       commentId,
     });
 
     if (existingLike) {
-      return this.likeService.updateLike(existingLike, newStatus);
+      return this.commandBus.execute(
+        new UpdateLikeCommand(existingLike, newStatus),
+      );
     } else {
       const targetComment = await this.commentsRepository.findCommentById(
         commentId,
       );
-      await this.likeService.createLike(
-        user,
-        String(targetComment.postId),
-        newStatus,
-        commentId,
+      await this.commandBus.execute(
+        new CreateLikeCommand(
+          user,
+          String(targetComment.postId),
+          newStatus,
+          commentId,
+        ),
       );
     }
   }

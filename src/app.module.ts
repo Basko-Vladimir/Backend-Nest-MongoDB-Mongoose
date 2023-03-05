@@ -61,6 +61,9 @@ import { QueryPostsRepository } from './posts/infrastructure/query-posts.reposit
 import { DeletePostUseCase } from './posts/application/use-cases/delete-post.useCase';
 import { UpdatePostUseCase } from './posts/application/use-cases/update-post.useCase';
 import { QueryLikesRepository } from './likes/infrastructure/query-likes.repository';
+import { CreateLikeUseCase } from './likes/application/use-cases/create-like.useCase';
+import { UpdateLikeUseCase } from './likes/application/use-cases/update-like.useCase';
+import { UpdatePostLikeStatusUseCase } from './posts/application/use-cases/update-post-like-status.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -78,6 +81,9 @@ const useCases = [
   CreatePostUseCase,
   DeletePostUseCase,
   UpdatePostUseCase,
+  UpdatePostLikeStatusUseCase,
+  CreateLikeUseCase,
+  UpdateLikeUseCase,
 ];
 
 @Module({

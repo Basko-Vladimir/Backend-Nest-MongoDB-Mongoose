@@ -42,6 +42,7 @@ import { QueryPostsRepository } from '../infrastructure/query-posts.repository';
 import { DeletePostCommand } from '../application/use-cases/delete-post.useCase';
 import { UpdatePostCommand } from '../application/use-cases/update-post.useCase';
 import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
+import { UpdatePostLikeStatusCommand } from '../application/use-cases/update-post-like-status.useCase';
 
 @Controller('posts')
 export class PostsController {
@@ -202,6 +203,8 @@ export class PostsController {
     @User() user: UserDocument,
   ): Promise<void> {
     const { likeStatus } = likeStatusDto;
-    await this.postsService.updatePostLikeStatus(user, postId, likeStatus);
+    await this.commandBus.execute(
+      new UpdatePostLikeStatusCommand(user, postId, likeStatus),
+    );
   }
 }

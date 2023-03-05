@@ -20,7 +20,7 @@ export class ServerErrorsFilter implements ExceptionFilter {
       stack: exception.stack,
     };
     // }
-
+    console.log(exception);
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result);
   }
 }
