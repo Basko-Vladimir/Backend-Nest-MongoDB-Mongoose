@@ -41,6 +41,7 @@ import { CreatePostCommand } from '../application/use-cases/create-post.useCase'
 import { QueryPostsRepository } from '../infrastructure/query-posts.repository';
 import { DeletePostCommand } from '../application/use-cases/delete-post.useCase';
 import { UpdatePostCommand } from '../application/use-cases/update-post.useCase';
+import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 
 @Controller('posts')
 export class PostsController {
@@ -48,6 +49,7 @@ export class PostsController {
     private postsService: PostsService,
     private queryPostsRepository: QueryPostsRepository,
     private likesService: LikesService,
+    private queryLikesRepository: QueryLikesRepository,
     private commentsService: CommentsService,
     private commandBus: CommandBus,
   ) {}
@@ -67,7 +69,11 @@ export class PostsController {
 
     for (let i = 0; i < posts.length; i++) {
       fullPosts.push(
-        await getFullPostOutputModel(posts[i], this.likesService, userId),
+        await getFullPostOutputModel(
+          posts[i],
+          this.queryLikesRepository,
+          userId,
+        ),
       );
     }
 
@@ -94,7 +100,11 @@ export class PostsController {
 
     for (let i = 0; i < comments.length; i++) {
       fullComments.push(
-        await getFullCommentOutputModel(comments[i], this.likesService, userId),
+        await getFullCommentOutputModel(
+          comments[i],
+          this.queryLikesRepository,
+          userId,
+        ),
       );
     }
 
@@ -115,7 +125,11 @@ export class PostsController {
       postId,
     );
 
-    return getFullPostOutputModel(postOutputModel, this.likesService, userId);
+    return getFullPostOutputModel(
+      postOutputModel,
+      this.queryLikesRepository,
+      userId,
+    );
   }
 
   @Post()
@@ -131,7 +145,11 @@ export class PostsController {
       createdPostId,
     );
 
-    return getFullPostOutputModel(postOutputModel, this.likesService, userId);
+    return getFullPostOutputModel(
+      postOutputModel,
+      this.queryLikesRepository,
+      userId,
+    );
   }
 
   @Delete(':id')
@@ -170,7 +188,7 @@ export class PostsController {
 
     return getFullCommentOutputModel(
       commentOutputModel,
-      this.likesService,
+      this.queryLikesRepository,
       String(user._id),
     );
   }

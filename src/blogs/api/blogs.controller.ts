@@ -36,6 +36,7 @@ import { QueryBlogsRepository } from '../infrastructure/query-blogs.repository';
 import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
 import { CreatePostCommand } from '../../posts/application/use-cases/create-post.useCase';
 import { QueryPostsRepository } from '../../posts/infrastructure/query-posts.repository';
+import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 
 @Controller('blogs')
 export class BlogsController {
@@ -45,6 +46,7 @@ export class BlogsController {
     private likesService: LikesService,
     private queryBlogsRepository: QueryBlogsRepository,
     private queryPostsRepository: QueryPostsRepository,
+    private queryLikesRepository: QueryLikesRepository,
   ) {}
 
   @Get()
@@ -111,7 +113,11 @@ export class BlogsController {
 
     for (let i = 0; i < posts.length; i++) {
       fullPosts.push(
-        await getFullPostOutputModel(posts[i], this.likesService, userId),
+        await getFullPostOutputModel(
+          posts[i],
+          this.queryLikesRepository,
+          userId,
+        ),
       );
     }
 
@@ -140,7 +146,7 @@ export class BlogsController {
 
     return await getFullPostOutputModel(
       postOutputModel,
-      this.likesService,
+      this.queryLikesRepository,
       userId,
     );
   }

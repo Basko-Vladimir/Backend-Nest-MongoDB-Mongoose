@@ -15,7 +15,6 @@ import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,
 } from '../mappers/comments-mapper';
-import { LikesService } from '../../likes/application/likes.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { LikeStatusDto } from '../../likes/dto/like-status.dto';
@@ -24,12 +23,13 @@ import { UserDocument } from '../../users/schemas/user.schema';
 import { DeleteCommentGuard } from '../../common/guards/delete-comment.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
+import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
     protected commentsService: CommentsService,
-    protected likesService: LikesService,
+    protected queryLikesRepository: QueryLikesRepository,
   ) {}
 
   @Get(':id')
@@ -44,7 +44,7 @@ export class CommentsController {
 
     return getFullCommentOutputModel(
       commentOutputModel,
-      this.likesService,
+      this.queryLikesRepository,
       userId,
     );
   }

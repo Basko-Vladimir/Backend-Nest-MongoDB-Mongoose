@@ -60,6 +60,7 @@ import { CreatePostUseCase } from './posts/application/use-cases/create-post.use
 import { QueryPostsRepository } from './posts/infrastructure/query-posts.repository';
 import { DeletePostUseCase } from './posts/application/use-cases/delete-post.useCase';
 import { UpdatePostUseCase } from './posts/application/use-cases/update-post.useCase';
+import { QueryLikesRepository } from './likes/infrastructure/query-likes.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -122,6 +123,7 @@ const useCases = [
     LikesRepository,
     CommentsService,
     CommentsRepository,
+    QueryLikesRepository,
     AuthService,
     JwtService,
     DevicesSessionsService,

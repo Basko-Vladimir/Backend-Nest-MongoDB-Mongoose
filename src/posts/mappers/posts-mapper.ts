@@ -3,7 +3,7 @@ import {
   IPostOutputModel,
 } from '../api/dto/posts-output-models.dto';
 import { PostDocument } from '../schemas/post.schema';
-import { LikesService } from '../../likes/application/likes.service';
+import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 
 export const mapDbPostToPostOutputModel = (
   post: PostDocument,
@@ -21,10 +21,10 @@ export const mapDbPostToPostOutputModel = (
 
 export const getFullPostOutputModel = async (
   post: IPostOutputModel,
-  likesService: LikesService,
+  queryLikesRepository: QueryLikesRepository,
   userId: string = null,
 ): Promise<IFullPostOutputModel> => {
-  const extendedLikesInfo = await likesService.getExtendedLikesInfo(
+  const extendedLikesInfo = await queryLikesRepository.getExtendedLikesInfo(
     userId,
     post.id,
   );
