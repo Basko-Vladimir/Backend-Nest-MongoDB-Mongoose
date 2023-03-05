@@ -2,8 +2,8 @@ import { CommentDocument } from '../schemas/comment.schema';
 import {
   ICommentOutputModel,
   IFullCommentOutputModel,
-} from '../dto/comments-output-models.dto';
-import { LikesService } from '../../likes/likes.service';
+} from '../api/dto/comments-output-models.dto';
+import { LikesService } from '../../likes/application/likes.service';
 
 export const mapDbCommentToCommentOutputModel = (
   comment: CommentDocument,

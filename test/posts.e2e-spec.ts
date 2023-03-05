@@ -35,7 +35,7 @@ import {
 import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,
-} from '../src/comments/dto/comments-output-models.dto';
+} from '../src/comments/api/dto/comments-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 
 describe('Posts', () => {

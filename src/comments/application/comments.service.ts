@@ -1,20 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CommentsRepository } from './comments.repository';
+import { CommentsRepository } from '../infrastructure/comments.repository';
 import {
   CommentDocument,
   CommentModelType,
   Comment,
-} from './schemas/comment.schema';
-import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
-import { CommentsQueryParamsDto } from './dto/comments-query-params.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { validateOrRejectInputDto } from '../common/utils';
-import { PostsRepository } from '../posts/infrastructure/posts.repository';
-import { UserDocument } from '../users/schemas/user.schema';
-import { LikeStatus } from '../common/enums';
-import { LikesService } from '../likes/likes.service';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+} from '../schemas/comment.schema';
+import { AllCommentsOutputModel } from '../api/dto/comments-output-models.dto';
+import { CommentsQueryParamsDto } from '../api/dto/comments-query-params.dto';
+import { CreateCommentDto } from '../api/dto/create-comment.dto';
+import { validateOrRejectInputDto } from '../../common/utils';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
+import { UserDocument } from '../../users/schemas/user.schema';
+import { LikeStatus } from '../../common/enums';
+import { LikesService } from '../../likes/application/likes.service';
+import { UpdateCommentDto } from '../api/dto/update-comment.dto';
 
 @Injectable()
 export class CommentsService {

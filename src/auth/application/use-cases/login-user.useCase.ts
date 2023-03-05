@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ITokensData } from '../../../common/types';
 import { LoginUserDto } from '../../api/dto/login-user.dto';
 import { JwtService } from '../../infrastructure/jwt.service';
-import { DevicesSessionsService } from '../../../devices-sessions/devices-sessions.service';
+import { DevicesSessionsService } from '../../../devices-sessions/application/devices-sessions.service';
 import {
   ACCESS_TOKEN_LIFE_TIME,
   REFRESH_TOKEN_LIFE_TIME,

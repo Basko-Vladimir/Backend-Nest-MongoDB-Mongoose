@@ -23,7 +23,7 @@ import {
   updatePostLikeStatus,
 } from './utils';
 import { LikeStatus } from '../src/common/enums';
-import { IFullCommentOutputModel } from '../src/comments/dto/comments-output-models.dto';
+import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 
 describe('Comments', () => {
   // jest.setTimeout(60 * 1000);

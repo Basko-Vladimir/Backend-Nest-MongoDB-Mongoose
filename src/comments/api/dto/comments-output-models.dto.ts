@@ -1,5 +1,5 @@
-import { LikesInfoOutputModel } from '../../likes/dto/likes-output-models.dto';
-import { AllEntitiesOutputModel } from '../../common/types';
+import { LikesInfoOutputModel } from '../../../likes/dto/likes-output-models.dto';
+import { AllEntitiesOutputModel } from '../../../common/types';
 
 interface CommentatorInfo {
   userId: string;

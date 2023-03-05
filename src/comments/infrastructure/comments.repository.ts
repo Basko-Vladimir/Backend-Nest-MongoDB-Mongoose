@@ -3,13 +3,13 @@ import {
   Comment,
   CommentDocument,
   CommentModelType,
-} from './schemas/comment.schema';
+} from '../schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { AllCommentsOutputModel } from './dto/comments-output-models.dto';
-import { countSkipValue, getFilterByDbId, setSortValue } from '../common/utils';
-import { CommentSortByField, SortDirection } from '../common/enums';
-import { mapDbCommentToCommentOutputModel } from './mappers/comments-mapper';
-import { CommentsQueryParamsDto } from './dto/comments-query-params.dto';
+import { AllCommentsOutputModel } from '../api/dto/comments-output-models.dto';
+import { countSkipValue, getFilterByDbId, setSortValue } from '../../common/utils';
+import { CommentSortByField, SortDirection } from '../../common/enums';
+import { mapDbCommentToCommentOutputModel } from '../mappers/comments-mapper';
+import { CommentsQueryParamsDto } from '../api/dto/comments-query-params.dto';
 
 @Injectable()
 export class CommentsRepository {

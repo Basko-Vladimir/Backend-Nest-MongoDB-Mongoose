@@ -9,21 +9,21 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CommentsService } from './comments.service';
+import { CommentsService } from '../application/comments.service';
 import { IFullCommentOutputModel } from './dto/comments-output-models.dto';
 import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,
-} from './mappers/comments-mapper';
-import { LikesService } from '../likes/likes.service';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { checkParamIdPipe } from '../common/pipes/check-param-id-pipe.service';
-import { LikeStatusDto } from '../likes/dto/like-status.dto';
-import { User } from '../common/decorators/user.decorator';
-import { UserDocument } from '../users/schemas/user.schema';
-import { DeleteCommentGuard } from '../common/guards/delete-comment.guard';
+} from '../mappers/comments-mapper';
+import { LikesService } from '../../likes/application/likes.service';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
+import { LikeStatusDto } from '../../likes/dto/like-status.dto';
+import { User } from '../../common/decorators/user.decorator';
+import { UserDocument } from '../../users/schemas/user.schema';
+import { DeleteCommentGuard } from '../../common/guards/delete-comment.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { AddUserToRequestGuard } from '../common/guards/add-user-to-request.guard';
+import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
 
 @Controller('comments')
 export class CommentsController {

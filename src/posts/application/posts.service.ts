@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LikesService } from '../../likes/likes.service';
+import { LikesService } from '../../likes/application/likes.service';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { LikeStatus } from '../../common/enums';
 

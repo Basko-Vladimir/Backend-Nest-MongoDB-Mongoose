@@ -1,5 +1,5 @@
-import { CommentSortByField } from '../../common/enums';
-import { CommonQueryParamsDto } from '../../common/common.dto';
+import { CommentSortByField } from '../../../common/enums';
+import { CommonQueryParamsDto } from '../../../common/common.dto';
 import { IsEnum, IsOptional } from 'class-validator';
 
 export class CommentsQueryParamsDto extends CommonQueryParamsDto {

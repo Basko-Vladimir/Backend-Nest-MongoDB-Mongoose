@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { UpdateOrFilterModel } from '../common/types';
-import { Like, LikeDocument, LikeModelType } from './schemas/like.schema';
+import { UpdateOrFilterModel } from '../../common/types';
+import { Like, LikeDocument, LikeModelType } from '../schemas/like.schema';
 import {
   ExtendedLikesInfoOutputModel,
   LikesInfoOutputModel,
-} from './dto/likes-output-models.dto';
-import { LikeStatus } from '../common/enums';
-import { mapDbLikeToLikeInfoOutputModel } from './mappers/likes-mapper';
+} from '../dto/likes-output-models.dto';
+import { LikeStatus } from '../../common/enums';
+import { mapDbLikeToLikeInfoOutputModel } from '../mappers/likes-mapper';
 
 @Injectable()
 export class LikesRepository {

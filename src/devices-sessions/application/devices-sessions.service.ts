@@ -1,13 +1,13 @@
 import { Types } from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { DevicesSessionsRepository } from './devices-sessions.repository';
-import { UpdateOrFilterModel } from '../common/types';
-import { DeviceSessionOutputModel } from './dto/devices-sessions-output-models.dto';
+import { DevicesSessionsRepository } from '../infrastructure/devices-sessions.repository';
+import { UpdateOrFilterModel } from '../../common/types';
+import { DeviceSessionOutputModel } from '../api/dto/devices-sessions-output-models.dto';
 import {
   DeviceSession,
   DeviceSessionDocument,
   DeviceSessionModelType,
-} from './schemas/device-session.schema';
+} from '../schemas/device-session.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()

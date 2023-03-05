@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { ITokensData } from '../../../common/types';
 import { DeviceSessionDocument } from '../../../devices-sessions/schemas/device-session.schema';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { DevicesSessionsService } from '../../../devices-sessions/devices-sessions.service';
+import { DevicesSessionsService } from '../../../devices-sessions/application/devices-sessions.service';
 import { JwtService } from '../../infrastructure/jwt.service';
 import {
   ACCESS_TOKEN_LIFE_TIME,

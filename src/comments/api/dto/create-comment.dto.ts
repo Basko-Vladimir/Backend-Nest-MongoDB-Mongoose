@@ -5,9 +5,9 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { commentsConstants, usersConstants } from '../../common/constants';
-import { IsNotEmptyContent } from '../../common/validators/is-not-empty-content.validator';
-import { IsExistEntity } from '../../common/validators/is-exist-entity.validator';
+import { commentsConstants, usersConstants } from '../../../common/constants';
+import { IsNotEmptyContent } from '../../../common/validators/is-not-empty-content.validator';
+import { IsExistEntity } from '../../../common/validators/is-exist-entity.validator';
 
 const { MIN_CONTENT_LENGTH, MAX_CONTENT_LENGTH } = commentsConstants;
 const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP } = usersConstants;

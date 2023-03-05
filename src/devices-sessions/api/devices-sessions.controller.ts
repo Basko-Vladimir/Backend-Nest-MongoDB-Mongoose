@@ -9,13 +9,13 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { DevicesSessionsService } from './devices-sessions.service';
-import { User } from '../common/decorators/user.decorator';
-import { UserDocument } from '../users/schemas/user.schema';
+import { DevicesSessionsService } from '../application/devices-sessions.service';
+import { User } from '../../common/decorators/user.decorator';
+import { UserDocument } from '../../users/schemas/user.schema';
 import { DeviceSessionOutputModel } from './dto/devices-sessions-output-models.dto';
-import { RefreshTokenGuard } from '../common/guards/refresh-token.guard';
-import { Session } from '../common/decorators/session.decorator';
-import { DeviceSessionDocument } from './schemas/device-session.schema';
+import { RefreshTokenGuard } from '../../common/guards/refresh-token.guard';
+import { Session } from '../../common/decorators/session.decorator';
+import { DeviceSessionDocument } from '../schemas/device-session.schema';
 
 @Controller('security')
 export class DevicesSessionsController {

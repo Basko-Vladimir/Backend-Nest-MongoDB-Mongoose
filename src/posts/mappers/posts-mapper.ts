@@ -3,7 +3,7 @@ import {
   IPostOutputModel,
 } from '../api/dto/posts-output-models.dto';
 import { PostDocument } from '../schemas/post.schema';
-import { LikesService } from '../../likes/likes.service';
+import { LikesService } from '../../likes/application/likes.service';
 
 export const mapDbPostToPostOutputModel = (
   post: PostDocument,

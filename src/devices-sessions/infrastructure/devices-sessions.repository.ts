@@ -5,11 +5,11 @@ import {
   DeviceSession,
   DeviceSessionDocument,
   DeviceSessionModelType,
-} from './schemas/device-session.schema';
-import { UpdateOrFilterModel } from '../common/types';
-import { mapDbDeviceSessionToDeviceSessionOutputModel } from './mappers/devices-sessions.mapper';
-import { DeviceSessionOutputModel } from './dto/devices-sessions-output-models.dto';
-import { getFilterByDbId } from '../common/utils';
+} from '../schemas/device-session.schema';
+import { UpdateOrFilterModel } from '../../common/types';
+import { mapDbDeviceSessionToDeviceSessionOutputModel } from '../mappers/devices-sessions.mapper';
+import { DeviceSessionOutputModel } from '../api/dto/devices-sessions-output-models.dto';
+import { getFilterByDbId } from '../../common/utils';
 
 @Injectable()
 export class DevicesSessionsRepository {

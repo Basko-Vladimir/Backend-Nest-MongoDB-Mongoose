@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { ClientRequestSortByField, DbSortDirection } from '../enums';
-import { ClientsRequestsService } from '../../clients-requests/clients-requests.service';
+import { ClientsRequestsService } from '../../clients-requests/application/clients-requests.service';
 import { TooManyRequestsException } from '../exceptions/too-many-requests.exception';
 
 @Injectable()

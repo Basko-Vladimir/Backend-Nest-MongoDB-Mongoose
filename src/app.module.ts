@@ -15,29 +15,29 @@ import { UsersController } from './users/api/users.controller';
 import { UsersService } from './users/application/users.service';
 import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/application/posts.service';
-import { LikesService } from './likes/likes.service';
+import { LikesService } from './likes/application/likes.service';
 import { UsersRepository } from './users/infrastructure/users.repository';
 import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
-import { LikesRepository } from './likes/likes.repository';
-import { CommentsController } from './comments/comments.controller';
-import { CommentsService } from './comments/comments.service';
-import { CommentsRepository } from './comments/comments.repository';
+import { LikesRepository } from './likes/infrastructure/likes.repository';
+import { CommentsController } from './comments/api/comments.controller';
+import { CommentsService } from './comments/application/comments.service';
+import { CommentsRepository } from './comments/infrastructure/comments.repository';
 import { JwtService } from './auth/infrastructure/jwt.service';
 import { AuthService } from './auth/application/auth.service';
 import { AuthController } from './auth/api/auth.controller';
 import { EmailManager } from './common/managers/email.manager';
 import { EmailAdapter } from './common/adapters/email.adapter';
 import { IsExistEntityValidator } from './common/validators/is-exist-entity.validator';
-import { DevicesSessionsController } from './devices-sessions/devices-sessions.controller';
-import { DevicesSessionsService } from './devices-sessions/devices-sessions.service';
-import { DevicesSessionsRepository } from './devices-sessions/devices-sessions.repository';
+import { DevicesSessionsController } from './devices-sessions/api/devices-sessions.controller';
+import { DevicesSessionsService } from './devices-sessions/application/devices-sessions.service';
+import { DevicesSessionsRepository } from './devices-sessions/infrastructure/devices-sessions.repository';
 import {
   DeviceSession,
   deviceSessionSchema,
 } from './devices-sessions/schemas/device-session.schema';
-import { ClientsRequestsRepository } from './clients-requests/clients-requests.repository';
-import { ClientsRequestsService } from './clients-requests/clients-requests.service';
+import { ClientsRequestsRepository } from './clients-requests/infrastructure/clients-requests.repository';
+import { ClientsRequestsService } from './clients-requests/application/clients-requests.service';
 import {
   ClientRequest,
   clientRequestSchema,

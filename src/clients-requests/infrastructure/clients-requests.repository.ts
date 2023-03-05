@@ -4,9 +4,9 @@ import { ClientRequest } from 'http';
 import {
   ClientRequestDocument,
   ClientRequestModelType,
-} from './schemas/client-request.schema';
-import { UpdateOrFilterModel } from '../common/types';
-import { DbSortDirection } from '../common/enums';
+} from '../schemas/client-request.schema';
+import { UpdateOrFilterModel } from '../../common/types';
+import { DbSortDirection } from '../../common/enums';
 
 @Injectable()
 export class ClientsRequestsRepository {

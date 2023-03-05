@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { DevicesSessionsRepository } from '../../../devices-sessions/devices-sessions.repository';
+import { DevicesSessionsRepository } from '../../../devices-sessions/infrastructure/devices-sessions.repository';
 
 export class LogoutCommand {
   constructor(public deviceSessionId: string) {}

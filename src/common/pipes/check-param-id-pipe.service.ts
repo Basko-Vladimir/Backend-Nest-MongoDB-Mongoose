@@ -4,7 +4,7 @@ import { generateCustomBadRequestException } from '../utils';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { IdTypes } from '../enums';
 import { PostsRepository } from '../../posts/infrastructure/posts.repository';
-import { CommentsRepository } from '../../comments/comments.repository';
+import { CommentsRepository } from '../../comments/infrastructure/comments.repository';
 
 @Injectable()
 export class checkParamIdPipe implements PipeTransform {

@@ -22,7 +22,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { IFullPostOutputModel } from '../../posts/api/dto/posts-output-models.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { getFullPostOutputModel } from '../../posts/mappers/posts-mapper';
-import { LikesService } from '../../likes/likes.service';
+import { LikesService } from '../../likes/application/likes.service';
 import { PostsQueryParamsDto } from '../../posts/api/dto/posts-query-params.dto';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';

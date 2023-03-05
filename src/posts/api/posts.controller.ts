@@ -18,14 +18,14 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { IFullPostOutputModel } from './dto/posts-output-models.dto';
 import { getFullPostOutputModel } from '../mappers/posts-mapper';
-import { LikesService } from '../../likes/likes.service';
+import { LikesService } from '../../likes/application/likes.service';
 import { BlogAllFullPostsOutputModel } from '../../blogs/api/dto/blogs-output-models.dto';
-import { CommentsService } from '../../comments/comments.service';
-import { CommentsQueryParamsDto } from '../../comments/dto/comments-query-params.dto';
+import { CommentsService } from '../../comments/application/comments.service';
+import { CommentsQueryParamsDto } from '../../comments/api/dto/comments-query-params.dto';
 import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,
-} from '../../comments/dto/comments-output-models.dto';
+} from '../../comments/api/dto/comments-output-models.dto';
 import {
   getFullCommentOutputModel,
   mapDbCommentToCommentOutputModel,

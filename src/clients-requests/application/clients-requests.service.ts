@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ClientsRequestsRepository } from './clients-requests.repository';
-import { UpdateOrFilterModel } from '../common/types';
-import { DbSortDirection } from '../common/enums';
+import { ClientsRequestsRepository } from '../infrastructure/clients-requests.repository';
+import { UpdateOrFilterModel } from '../../common/types';
+import { DbSortDirection } from '../../common/enums';
 import {
   ClientRequest,
   ClientRequestDocument,
   ClientRequestModelType,
-} from './schemas/client-request.schema';
+} from '../schemas/client-request.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
