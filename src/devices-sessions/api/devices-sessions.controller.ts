@@ -17,12 +17,16 @@ import { Session } from '../../common/decorators/session.decorator';
 import { DeviceSessionDocument } from '../schemas/device-session.schema';
 import { QueryDevicesSessionsRepository } from '../infrastructure/query-devices-sessions.repository';
 import { DevicesSessionsService } from '../application/devices-sessions.service';
+import { CommandBus } from '@nestjs/cqrs';
+import { DeleteAllDevicesSessionsExceptCurrentCommand } from '../application/use-cases/delete-all-devices-sessions-except-current.useCase';
+import { DeleteDeviceSessionCommand } from '../application/use-cases/delete-device-session.useCase';
 
 @Controller('security')
 export class DevicesSessionsController {
   constructor(
     private devicesSessionsService: DevicesSessionsService,
     private queryDevicesSessionsRepository: QueryDevicesSessionsRepository,
+    private commandBus: CommandBus,
   ) {}
 
   @Get('devices')
@@ -41,8 +45,8 @@ export class DevicesSessionsController {
   async deleteAllDevicesSessionsExceptCurrent(
     @Session() session: DeviceSessionDocument,
   ): Promise<void> {
-    await this.devicesSessionsService.deleteAllDevicesSessionsExceptCurrent(
-      session._id,
+    await this.commandBus.execute(
+      new DeleteAllDevicesSessionsExceptCurrentCommand(session._id),
     );
   }
 
@@ -62,8 +66,8 @@ export class DevicesSessionsController {
       throw new ForbiddenException();
     }
 
-    await this.devicesSessionsService.deleteDeviceSessionById(
-      String(targetDeviceSession._id),
+    await this.commandBus.execute(
+      new DeleteDeviceSessionCommand(String(targetDeviceSession._id)),
     );
   }
 }

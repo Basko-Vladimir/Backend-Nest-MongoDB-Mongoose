@@ -65,6 +65,10 @@ import { CreateLikeUseCase } from './likes/application/use-cases/create-like.use
 import { UpdateLikeUseCase } from './likes/application/use-cases/update-like.useCase';
 import { UpdatePostLikeStatusUseCase } from './posts/application/use-cases/update-post-like-status.useCase';
 import { QueryDevicesSessionsRepository } from './devices-sessions/infrastructure/query-devices-sessions.repository';
+import { CreateDeviceSessionUseCase } from './devices-sessions/application/use-cases/create-device-session.useCase';
+import { DeleteAllDevicesSessionsExceptCurrentUseCase } from './devices-sessions/application/use-cases/delete-all-devices-sessions-except-current.useCase';
+import { DeleteDeviceSessionUseCase } from './devices-sessions/application/use-cases/delete-device-session.useCase';
+import { UpdateDeviceSessionUseCase } from './devices-sessions/application/use-cases/update-device-session.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -85,6 +89,10 @@ const useCases = [
   UpdatePostLikeStatusUseCase,
   CreateLikeUseCase,
   UpdateLikeUseCase,
+  CreateDeviceSessionUseCase,
+  DeleteAllDevicesSessionsExceptCurrentUseCase,
+  DeleteDeviceSessionUseCase,
+  UpdateDeviceSessionUseCase,
 ];
 
 @Module({

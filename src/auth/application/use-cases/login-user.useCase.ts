@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +12,7 @@ import {
 } from '../../../common/constants';
 import { DeviceSession } from '../../../devices-sessions/schemas/device-session.schema';
 import { AuthService } from '../auth.service';
+import { CreateDeviceSessionCommand } from '../../../devices-sessions/application/use-cases/create-device-session.useCase';
 
 export class LoginUserCommand {
   constructor(
@@ -27,6 +28,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     private jwtService: JwtService,
     private devicesSessionsService: DevicesSessionsService,
     private authService: AuthService,
+    private commandBus: CommandBus,
   ) {}
 
   async execute(command: LoginUserCommand): Promise<ITokensData> {
@@ -64,7 +66,9 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
       userId: new Types.ObjectId(userId),
     };
 
-    await this.devicesSessionsService.createDeviceSession(deviceSessionData);
+    await this.commandBus.execute(
+      new CreateDeviceSessionCommand(deviceSessionData),
+    );
 
     return {
       accessToken,

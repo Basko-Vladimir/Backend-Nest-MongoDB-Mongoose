@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthService } from '../auth.service';
 import { ITokensData } from '../../../common/types';
 import { DeviceSessionDocument } from '../../../devices-sessions/schemas/device-session.schema';
@@ -9,6 +9,7 @@ import {
   ACCESS_TOKEN_LIFE_TIME,
   REFRESH_TOKEN_LIFE_TIME,
 } from '../../../common/constants';
+import { UpdateDeviceSessionCommand } from '../../../devices-sessions/application/use-cases/update-device-session.useCase';
 
 export class RefreshTokensCommand {
   constructor(public userId: string, public session: DeviceSessionDocument) {}
@@ -23,6 +24,7 @@ export class RefreshTokensUseCase
     private jwtService: JwtService,
     private devicesSessionsService: DevicesSessionsService,
     private authService: AuthService,
+    private commandBus: CommandBus,
   ) {}
 
   async execute(command: RefreshTokensCommand): Promise<ITokensData> {
@@ -42,9 +44,8 @@ export class RefreshTokensUseCase
       throw new Error(`Couldn't get payload from refresh token!`);
     }
 
-    await this.devicesSessionsService.updateDeviceSessionData(
-      session,
-      refreshTokenPayload.iat,
+    await this.commandBus.execute(
+      new UpdateDeviceSessionCommand(session, refreshTokenPayload.iat),
     );
 
     return {
