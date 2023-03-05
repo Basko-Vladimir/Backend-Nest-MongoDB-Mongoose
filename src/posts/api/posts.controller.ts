@@ -26,10 +26,7 @@ import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,
 } from '../../comments/api/dto/comments-output-models.dto';
-import {
-  getFullCommentOutputModel,
-  mapDbCommentToCommentOutputModel,
-} from '../../comments/mappers/comments-mapper';
+import { getFullCommentOutputModel } from '../../comments/mappers/comments-mapper';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { User } from '../../common/decorators/user.decorator';
@@ -44,6 +41,7 @@ import { UpdatePostCommand } from '../application/use-cases/update-post.useCase'
 import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 import { UpdatePostLikeStatusCommand } from '../application/use-cases/update-post-like-status.useCase';
 import { QueryCommentsRepository } from '../../comments/infrastructure/query-comments.repository';
+import { CreateCommentCommand } from '../../comments/application/use-cases/create-comment.useCase';
 
 @Controller('posts')
 export class PostsController {
@@ -179,13 +177,16 @@ export class PostsController {
     @Body() createCommentForPostDto: CreateCommentForPostDto,
     @User() user: UserDocument,
   ): Promise<IFullCommentOutputModel> {
-    const createdComment = await this.commentsService.createComment({
-      postId,
-      content: createCommentForPostDto.content,
-      userId: user.id,
-      userLogin: user.login,
-    });
-    const commentOutputModel = mapDbCommentToCommentOutputModel(createdComment);
+    const createdCommentId = await this.commandBus.execute(
+      new CreateCommentCommand({
+        postId,
+        content: createCommentForPostDto.content,
+        userId: user.id,
+        userLogin: user.login,
+      }),
+    );
+    const commentOutputModel =
+      await this.queryCommentsRepository.findCommentById(createdCommentId);
 
     return getFullCommentOutputModel(
       commentOutputModel,

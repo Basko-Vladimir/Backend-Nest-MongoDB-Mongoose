@@ -73,6 +73,10 @@ import { CreateClientRequestUseCase } from './clients-requests/application/use-c
 import { UpdateClientRequestUseCase } from './clients-requests/application/use-cases/update-client-request.useCase';
 import { UpdateManyClientsRequestsUseCase } from './clients-requests/application/use-cases/update-many-clients-requests.useCase';
 import { QueryCommentsRepository } from './comments/infrastructure/query-comments.repository';
+import { CreateCommentUseCase } from './comments/application/use-cases/create-comment.useCase';
+import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.useCase';
+import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.useCase';
+import { UpdateCommentLikeStatusUseCase } from './comments/application/use-cases/update-comment-like-status.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -100,6 +104,10 @@ const useCases = [
   CreateClientRequestUseCase,
   UpdateClientRequestUseCase,
   UpdateManyClientsRequestsUseCase,
+  CreateCommentUseCase,
+  DeleteCommentUseCase,
+  UpdateCommentUseCase,
+  UpdateCommentLikeStatusUseCase,
 ];
 
 @Module({

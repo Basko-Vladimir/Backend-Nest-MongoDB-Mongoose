@@ -9,12 +9,9 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CommentsService } from '../application/comments.service';
+import { CommandBus } from '@nestjs/cqrs';
 import { IFullCommentOutputModel } from './dto/comments-output-models.dto';
-import {
-  getFullCommentOutputModel,
-  mapDbCommentToCommentOutputModel,
-} from '../mappers/comments-mapper';
+import { getFullCommentOutputModel } from '../mappers/comments-mapper';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { LikeStatusDto } from '../../likes/dto/like-status.dto';
@@ -25,13 +22,16 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
 import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 import { QueryCommentsRepository } from '../infrastructure/query-comments.repository';
+import { DeleteCommentCommand } from '../application/use-cases/delete-comment.useCase';
+import { UpdateCommentCommand } from '../application/use-cases/update-comment.useCase';
+import { UpdateCommentLikeStatusCommand } from '../application/use-cases/update-comment-like-status.useCase';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
-    private commentsService: CommentsService,
     private queryLikesRepository: QueryLikesRepository,
     private queryCommentsRepository: QueryCommentsRepository,
+    private commandBus: CommandBus,
   ) {}
 
   @Get(':id')
@@ -41,10 +41,8 @@ export class CommentsController {
     @User('_id') userId: string,
   ): Promise<IFullCommentOutputModel> {
     userId = userId ? String(userId) : null;
-    const targetComment = await this.queryCommentsRepository.findCommentById(
-      commentId,
-    );
-    const commentOutputModel = mapDbCommentToCommentOutputModel(targetComment);
+    const commentOutputModel =
+      await this.queryCommentsRepository.findCommentById(commentId);
 
     return getFullCommentOutputModel(
       commentOutputModel,
@@ -59,7 +57,7 @@ export class CommentsController {
   async deleteComment(
     @Param('commentId', checkParamIdPipe) commentId: string,
   ): Promise<void> {
-    return await this.commentsService.deleteComment(commentId);
+    return await this.commandBus.execute(new DeleteCommentCommand(commentId));
   }
 
   @Put(':commentId')
@@ -69,7 +67,9 @@ export class CommentsController {
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ): Promise<void> {
-    await this.commentsService.updateComment(commentId, updateCommentDto);
+    await this.commandBus.execute(
+      new UpdateCommentCommand(commentId, updateCommentDto),
+    );
   }
 
   @Put(':commentId/like-status')
@@ -80,10 +80,12 @@ export class CommentsController {
     @Body() likeStatusDto: LikeStatusDto,
     @User() user: UserDocument,
   ): Promise<void> {
-    await this.commentsService.updateCommentLikeStatus(
-      user,
-      commentId,
-      likeStatusDto.likeStatus,
+    await this.commandBus.execute(
+      new UpdateCommentLikeStatusCommand(
+        user,
+        commentId,
+        likeStatusDto.likeStatus,
+      ),
     );
   }
 }

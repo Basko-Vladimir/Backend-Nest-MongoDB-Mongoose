@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Comment, CommentModelType } from '../schemas/comment.schema';
 import {
-  Comment,
-  CommentDocument,
-  CommentModelType,
-} from '../schemas/comment.schema';
-import { AllCommentsOutputModel } from '../api/dto/comments-output-models.dto';
+  AllCommentsOutputModel,
+  ICommentOutputModel,
+} from '../api/dto/comments-output-models.dto';
 import { countSkipValue, setSortValue } from '../../common/utils';
 import { CommentSortByField, SortDirection } from '../../common/enums';
 import { mapDbCommentToCommentOutputModel } from '../mappers/comments-mapper';
@@ -45,11 +44,11 @@ export class QueryCommentsRepository {
     };
   }
 
-  async findCommentById(id: string): Promise<CommentDocument> {
+  async findCommentById(id: string): Promise<ICommentOutputModel> {
     const targetComment = await this.CommentModel.findById(id);
 
     if (!targetComment) throw new NotFoundException();
 
-    return targetComment;
+    return mapDbCommentToCommentOutputModel(targetComment);
   }
 }
