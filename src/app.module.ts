@@ -69,6 +69,9 @@ import { CreateDeviceSessionUseCase } from './devices-sessions/application/use-c
 import { DeleteAllDevicesSessionsExceptCurrentUseCase } from './devices-sessions/application/use-cases/delete-all-devices-sessions-except-current.useCase';
 import { DeleteDeviceSessionUseCase } from './devices-sessions/application/use-cases/delete-device-session.useCase';
 import { UpdateDeviceSessionUseCase } from './devices-sessions/application/use-cases/update-device-session.useCase';
+import { CreateClientRequestUseCase } from './clients-requests/application/use-cases/create-client-request.useCase';
+import { UpdateClientRequestUseCase } from './clients-requests/application/use-cases/update-client-request.useCase';
+import { UpdateManyClientsRequestsUseCase } from './clients-requests/application/use-cases/update-many-clients-requests.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -93,6 +96,9 @@ const useCases = [
   DeleteAllDevicesSessionsExceptCurrentUseCase,
   DeleteDeviceSessionUseCase,
   UpdateDeviceSessionUseCase,
+  CreateClientRequestUseCase,
+  UpdateClientRequestUseCase,
+  UpdateManyClientsRequestsUseCase,
 ];
 
 @Module({
