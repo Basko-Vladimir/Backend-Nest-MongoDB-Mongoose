@@ -6,10 +6,7 @@ import {
   CommentModelType,
   Comment,
 } from '../schemas/comment.schema';
-import { AllCommentsOutputModel } from '../api/dto/comments-output-models.dto';
-import { CommentsQueryParamsDto } from '../api/dto/comments-query-params.dto';
 import { CreateCommentDto } from '../api/dto/create-comment.dto';
-import { validateOrRejectInputDto } from '../../common/utils';
 import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { LikeStatus } from '../../common/enums';
@@ -28,17 +25,6 @@ export class CommentsService {
     @InjectModel(Comment.name) protected CommentModel: CommentModelType,
     private commandBus: CommandBus,
   ) {}
-
-  async findComments(
-    queryParams: CommentsQueryParamsDto,
-    postId?: string,
-  ): Promise<AllCommentsOutputModel> {
-    return this.commentsRepository.findComments(queryParams, postId);
-  }
-
-  async findCommentById(id: string): Promise<CommentDocument> {
-    return this.commentsRepository.findCommentById(id);
-  }
 
   async createComment(
     createCommentDto: CreateCommentDto,

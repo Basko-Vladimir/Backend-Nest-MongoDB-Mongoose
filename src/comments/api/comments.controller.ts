@@ -24,12 +24,14 @@ import { DeleteCommentGuard } from '../../common/guards/delete-comment.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
 import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
+import { QueryCommentsRepository } from '../infrastructure/query-comments.repository';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
-    protected commentsService: CommentsService,
-    protected queryLikesRepository: QueryLikesRepository,
+    private commentsService: CommentsService,
+    private queryLikesRepository: QueryLikesRepository,
+    private queryCommentsRepository: QueryCommentsRepository,
   ) {}
 
   @Get(':id')
@@ -39,7 +41,9 @@ export class CommentsController {
     @User('_id') userId: string,
   ): Promise<IFullCommentOutputModel> {
     userId = userId ? String(userId) : null;
-    const targetComment = await this.commentsService.findCommentById(commentId);
+    const targetComment = await this.queryCommentsRepository.findCommentById(
+      commentId,
+    );
     const commentOutputModel = mapDbCommentToCommentOutputModel(targetComment);
 
     return getFullCommentOutputModel(

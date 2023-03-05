@@ -43,6 +43,7 @@ import { DeletePostCommand } from '../application/use-cases/delete-post.useCase'
 import { UpdatePostCommand } from '../application/use-cases/update-post.useCase';
 import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 import { UpdatePostLikeStatusCommand } from '../application/use-cases/update-post-like-status.useCase';
+import { QueryCommentsRepository } from '../../comments/infrastructure/query-comments.repository';
 
 @Controller('posts')
 export class PostsController {
@@ -52,6 +53,7 @@ export class PostsController {
     private likesService: LikesService,
     private queryLikesRepository: QueryLikesRepository,
     private commentsService: CommentsService,
+    private queryCommentsRepository: QueryCommentsRepository,
     private commandBus: CommandBus,
   ) {}
 
@@ -92,10 +94,8 @@ export class PostsController {
     @User('_id') userId: string,
   ): Promise<AllCommentsOutputModel> {
     userId = userId ? String(userId) : null;
-    const commentsOutputModel = await this.commentsService.findComments(
-      queryParams,
-      postId,
-    );
+    const commentsOutputModel =
+      await this.queryCommentsRepository.findAllComments(queryParams, postId);
     const comments = commentsOutputModel.items;
     const fullComments = [];
 

@@ -5,45 +5,13 @@ import {
   CommentModelType,
 } from '../schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { AllCommentsOutputModel } from '../api/dto/comments-output-models.dto';
-import { countSkipValue, getFilterByDbId, setSortValue } from '../../common/utils';
-import { CommentSortByField, SortDirection } from '../../common/enums';
-import { mapDbCommentToCommentOutputModel } from '../mappers/comments-mapper';
-import { CommentsQueryParamsDto } from '../api/dto/comments-query-params.dto';
+import { getFilterByDbId } from '../../common/utils';
 
 @Injectable()
 export class CommentsRepository {
   constructor(
     @InjectModel(Comment.name) protected CommentModel: CommentModelType,
   ) {}
-
-  async findComments(
-    queryParams: CommentsQueryParamsDto,
-    postId?: string,
-  ): Promise<AllCommentsOutputModel> {
-    const {
-      sortBy = CommentSortByField.createdAt,
-      sortDirection = SortDirection.desc,
-      pageNumber = 1,
-      pageSize = 10,
-    } = queryParams;
-    const filter = postId ? { postId } : {};
-    const skip = countSkipValue(pageNumber, pageSize);
-    const sortSetting = setSortValue(sortBy, sortDirection);
-    const totalCount = await this.CommentModel.find(filter).countDocuments();
-    const comments = await this.CommentModel.find(filter)
-      .skip(skip)
-      .limit(pageSize)
-      .sort(sortSetting);
-
-    return {
-      pagesCount: Math.ceil(totalCount / pageSize),
-      page: pageNumber,
-      pageSize: pageSize,
-      totalCount: totalCount,
-      items: comments.map(mapDbCommentToCommentOutputModel),
-    };
-  }
 
   async findCommentById(id: string): Promise<CommentDocument> {
     const targetComment = await this.CommentModel.findById(id);

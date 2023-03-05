@@ -72,6 +72,7 @@ import { UpdateDeviceSessionUseCase } from './devices-sessions/application/use-c
 import { CreateClientRequestUseCase } from './clients-requests/application/use-cases/create-client-request.useCase';
 import { UpdateClientRequestUseCase } from './clients-requests/application/use-cases/update-client-request.useCase';
 import { UpdateManyClientsRequestsUseCase } from './clients-requests/application/use-cases/update-many-clients-requests.useCase';
+import { QueryCommentsRepository } from './comments/infrastructure/query-comments.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -142,9 +143,10 @@ const useCases = [
     QueryPostsRepository,
     LikesService,
     LikesRepository,
+    QueryLikesRepository,
     CommentsService,
     CommentsRepository,
-    QueryLikesRepository,
+    QueryCommentsRepository,
     AuthService,
     JwtService,
     DevicesSessionsService,
