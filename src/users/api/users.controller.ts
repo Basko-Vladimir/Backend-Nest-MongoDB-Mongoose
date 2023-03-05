@@ -10,7 +10,6 @@ import {
   UseGuards,
   HttpStatus,
 } from '@nestjs/common';
-import { UsersService } from '../application/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { mapDbUserToUserOutputModel } from '../mappers/users-mappers';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
@@ -28,7 +27,6 @@ import { QueryUsersRepository } from '../infrastructure/query-users.repository';
 @Controller('users')
 export class UsersController {
   constructor(
-    private usersService: UsersService,
     private queryUsersRepository: QueryUsersRepository,
     private commandBus: CommandBus,
   ) {}

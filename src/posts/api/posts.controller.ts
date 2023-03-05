@@ -12,20 +12,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { PostsService } from '../application/posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { IFullPostOutputModel } from './dto/posts-output-models.dto';
-import { LikesService } from '../../likes/application/likes.service';
 import { BlogAllFullPostsOutputModel } from '../../blogs/api/dto/blogs-output-models.dto';
-import { CommentsService } from '../../comments/application/comments.service';
 import { CommentsQueryParamsDto } from '../../comments/api/dto/comments-query-params.dto';
 import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,
 } from '../../comments/api/dto/comments-output-models.dto';
-import { getFullCommentOutputModel } from '../../comments/mappers/comments-mapper';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { User } from '../../common/decorators/user.decorator';
@@ -37,21 +33,18 @@ import { CreatePostCommand } from '../application/use-cases/create-post.useCase'
 import { QueryPostsRepository } from '../infrastructure/query-posts.repository';
 import { DeletePostCommand } from '../application/use-cases/delete-post.useCase';
 import { UpdatePostCommand } from '../application/use-cases/update-post.useCase';
-import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 import { UpdatePostLikeStatusCommand } from '../application/use-cases/update-post-like-status.useCase';
 import { QueryCommentsRepository } from '../../comments/infrastructure/query-comments.repository';
 import { CreateCommentCommand } from '../../comments/application/use-cases/create-comment.useCase';
 import { GetFullPostQuery } from '../application/use-cases/get-full-post.useCase';
 import { GetAllFullPostsQuery } from '../application/use-cases/get-all-full-posts.useCase';
+import { GetFullCommentQuery } from '../../comments/application/use-cases/get-full-comment.useCase';
+import { GetAllFullCommentsQuery } from '../../comments/application/use-cases/get-all-full-comments.useCase';
 
 @Controller('posts')
 export class PostsController {
   constructor(
-    private postsService: PostsService,
     private queryPostsRepository: QueryPostsRepository,
-    private likesService: LikesService,
-    private queryLikesRepository: QueryLikesRepository,
-    private commentsService: CommentsService,
     private queryCommentsRepository: QueryCommentsRepository,
     private commandBus: CommandBus,
     private queryBus: QueryBus,
@@ -81,25 +74,12 @@ export class PostsController {
     @User('_id') userId: string,
   ): Promise<AllCommentsOutputModel> {
     userId = userId ? String(userId) : null;
-    const commentsOutputModel =
+    const allCommentsOutputModel =
       await this.queryCommentsRepository.findAllComments(queryParams, postId);
-    const comments = commentsOutputModel.items;
-    const fullComments = [];
 
-    for (let i = 0; i < comments.length; i++) {
-      fullComments.push(
-        await getFullCommentOutputModel(
-          comments[i],
-          this.queryLikesRepository,
-          userId,
-        ),
-      );
-    }
-
-    return {
-      ...commentsOutputModel,
-      items: fullComments,
-    };
+    return this.queryBus.execute(
+      new GetAllFullCommentsQuery(allCommentsOutputModel, userId),
+    );
   }
 
   @Get(':id')
@@ -169,10 +149,8 @@ export class PostsController {
     const commentOutputModel =
       await this.queryCommentsRepository.findCommentById(createdCommentId);
 
-    return getFullCommentOutputModel(
-      commentOutputModel,
-      this.queryLikesRepository,
-      String(user._id),
+    return this.queryBus.execute(
+      new GetFullCommentQuery(commentOutputModel, String(user._id)),
     );
   }
 

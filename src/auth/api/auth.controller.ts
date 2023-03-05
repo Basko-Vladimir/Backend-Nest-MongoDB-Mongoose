@@ -11,7 +11,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { AuthService } from '../application/auth.service';
 import { CreateUserDto } from '../../users/api/dto/create-user.dto';
 import { LoginOutputModel } from './dto/login-output-model.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -39,10 +38,7 @@ import { LogoutCommand } from '../application/use-cases/logout.useCase';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private commandBus: CommandBus,
-  ) {}
+  constructor(private commandBus: CommandBus) {}
 
   @Get('me')
   @UseGuards(AuthGuard)

@@ -79,6 +79,8 @@ import { UpdateCommentUseCase } from './comments/application/use-cases/update-co
 import { UpdateCommentLikeStatusUseCase } from './comments/application/use-cases/update-comment-like-status.useCase';
 import { GetFullPostUseCase } from './posts/application/use-cases/get-full-post.useCase';
 import { GetAllFullPostsUseCase } from './posts/application/use-cases/get-all-full-posts.useCase';
+import { GetFullCommentUseCase } from './comments/application/use-cases/get-full-comment.useCase';
+import { GetAllFullCommentsUseCase } from './comments/application/use-cases/get-all-full-comments.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -112,6 +114,8 @@ const useCases = [
   DeleteCommentUseCase,
   UpdateCommentUseCase,
   UpdateCommentLikeStatusUseCase,
+  GetFullCommentUseCase,
+  GetAllFullCommentsUseCase,
 ];
 
 @Module({

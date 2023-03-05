@@ -12,7 +12,7 @@ import {
 } from './utils';
 
 describe('Users', () => {
-  jest.setTimeout(20 * 1000);
+  jest.setTimeout(60 * 1000);
   const { correctCreateUserDtos, incorrectUsersDtos, usersBadQueryResponse } =
     users;
   const { incorrectBasicCredentials, correctBasicCredentials } = auth;

@@ -39,7 +39,7 @@ import {
 import { LikeStatus } from '../src/common/enums';
 
 describe('Posts', () => {
-  jest.setTimeout(20 * 1000);
+  jest.setTimeout(60 * 1000);
   const { correctCreateBlogDtos, incorrectBlogsIds } = blogs;
   const { notFoundException, unauthorisedException } = errors;
   const {

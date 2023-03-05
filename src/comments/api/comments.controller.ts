@@ -9,9 +9,8 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { IFullCommentOutputModel } from './dto/comments-output-models.dto';
-import { getFullCommentOutputModel } from '../mappers/comments-mapper';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { LikeStatusDto } from '../../likes/dto/like-status.dto';
@@ -20,18 +19,18 @@ import { UserDocument } from '../../users/schemas/user.schema';
 import { DeleteCommentGuard } from '../../common/guards/delete-comment.guard';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
-import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 import { QueryCommentsRepository } from '../infrastructure/query-comments.repository';
 import { DeleteCommentCommand } from '../application/use-cases/delete-comment.useCase';
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.useCase';
 import { UpdateCommentLikeStatusCommand } from '../application/use-cases/update-comment-like-status.useCase';
+import { GetFullCommentQuery } from '../application/use-cases/get-full-comment.useCase';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
-    private queryLikesRepository: QueryLikesRepository,
     private queryCommentsRepository: QueryCommentsRepository,
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
   ) {}
 
   @Get(':id')
@@ -44,10 +43,8 @@ export class CommentsController {
     const commentOutputModel =
       await this.queryCommentsRepository.findCommentById(commentId);
 
-    return getFullCommentOutputModel(
-      commentOutputModel,
-      this.queryLikesRepository,
-      userId,
+    return this.queryBus.execute(
+      new GetFullCommentQuery(commentOutputModel, userId),
     );
   }
 

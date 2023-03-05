@@ -20,8 +20,6 @@ import {
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { IFullPostOutputModel } from '../../posts/api/dto/posts-output-models.dto';
-import { PostsService } from '../../posts/application/posts.service';
-import { LikesService } from '../../likes/application/likes.service';
 import { PostsQueryParamsDto } from '../../posts/api/dto/posts-query-params.dto';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
@@ -43,8 +41,6 @@ export class BlogsController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
-    private postsService: PostsService,
-    private likesService: LikesService,
     private queryBlogsRepository: QueryBlogsRepository,
     private queryPostsRepository: QueryPostsRepository,
   ) {}

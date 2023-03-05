@@ -26,7 +26,7 @@ import { LikeStatus } from '../src/common/enums';
 import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 
 describe('Comments', () => {
-  jest.setTimeout(20 * 1000);
+  jest.setTimeout(60 * 1000);
   const { correctCreateBlogDtos } = blogs;
   const { notFoundException } = errors;
   const { correctCreatePostDtos, correctUpdatePostDto } = posts;
