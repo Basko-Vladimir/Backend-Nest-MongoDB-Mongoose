@@ -64,6 +64,7 @@ import { QueryLikesRepository } from './likes/infrastructure/query-likes.reposit
 import { CreateLikeUseCase } from './likes/application/use-cases/create-like.useCase';
 import { UpdateLikeUseCase } from './likes/application/use-cases/update-like.useCase';
 import { UpdatePostLikeStatusUseCase } from './posts/application/use-cases/update-post-like-status.useCase';
+import { QueryDevicesSessionsRepository } from './devices-sessions/infrastructure/query-devices-sessions.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -134,6 +135,7 @@ const useCases = [
     JwtService,
     DevicesSessionsService,
     DevicesSessionsRepository,
+    QueryDevicesSessionsRepository,
     ClientsRequestsService,
     ClientsRequestsRepository,
     EmailManager,

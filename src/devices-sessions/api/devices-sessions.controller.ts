@@ -9,24 +9,28 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { DevicesSessionsService } from '../application/devices-sessions.service';
 import { User } from '../../common/decorators/user.decorator';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { DeviceSessionOutputModel } from './dto/devices-sessions-output-models.dto';
 import { RefreshTokenGuard } from '../../common/guards/refresh-token.guard';
 import { Session } from '../../common/decorators/session.decorator';
 import { DeviceSessionDocument } from '../schemas/device-session.schema';
+import { QueryDevicesSessionsRepository } from '../infrastructure/query-devices-sessions.repository';
+import { DevicesSessionsService } from '../application/devices-sessions.service';
 
 @Controller('security')
 export class DevicesSessionsController {
-  constructor(protected devicesSessionsService: DevicesSessionsService) {}
+  constructor(
+    private devicesSessionsService: DevicesSessionsService,
+    private queryDevicesSessionsRepository: QueryDevicesSessionsRepository,
+  ) {}
 
   @Get('devices')
   @UseGuards(RefreshTokenGuard)
   async getAllActiveDevicesSessions(
     @User() user: UserDocument,
   ): Promise<DeviceSessionOutputModel[]> {
-    return this.devicesSessionsService.getAllActiveDevicesSessions({
+    return this.queryDevicesSessionsRepository.getAllActiveDevicesSessions({
       userId: user._id,
     });
   }
