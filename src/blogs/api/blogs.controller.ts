@@ -21,32 +21,32 @@ import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { IFullPostOutputModel } from '../../posts/api/dto/posts-output-models.dto';
 import { PostsService } from '../../posts/application/posts.service';
-import { getFullPostOutputModel } from '../../posts/mappers/posts-mapper';
 import { LikesService } from '../../likes/application/likes.service';
 import { PostsQueryParamsDto } from '../../posts/api/dto/posts-query-params.dto';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { AddUserToRequestGuard } from '../../common/guards/add-user-to-request.guard';
 import { User } from '../../common/decorators/user.decorator';
-import { CommandBus } from '@nestjs/cqrs';
-import { CreateBlogUseCommand } from '../application/use-cases/create-blog.useCase';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateBlogCommand } from '../application/use-cases/create-blog.useCase';
 import { DeleteBlogCommand } from '../application/use-cases/delete-blog.useCase';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.useCase';
 import { QueryBlogsRepository } from '../infrastructure/query-blogs.repository';
 import { CreatePostForBlogDto } from './dto/create-post-for-blog.dto';
 import { CreatePostCommand } from '../../posts/application/use-cases/create-post.useCase';
 import { QueryPostsRepository } from '../../posts/infrastructure/query-posts.repository';
-import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
+import { GetFullPostQuery } from '../../posts/application/use-cases/get-full-post.useCase';
+import { GetAllFullPostsQuery } from '../../posts/application/use-cases/get-all-full-posts.useCase';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
     private postsService: PostsService,
     private likesService: LikesService,
     private queryBlogsRepository: QueryBlogsRepository,
     private queryPostsRepository: QueryPostsRepository,
-    private queryLikesRepository: QueryLikesRepository,
   ) {}
 
   @Get()
@@ -69,7 +69,7 @@ export class BlogsController {
     @Body() creatingData: CreateBlogDto,
   ): Promise<IBlogOutputModel> {
     const createdBlogId = await this.commandBus.execute(
-      new CreateBlogUseCommand(creatingData),
+      new CreateBlogCommand(creatingData),
     );
 
     return this.queryBlogsRepository.findBlogById(createdBlogId);
@@ -104,27 +104,14 @@ export class BlogsController {
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
-    const postsOutputModel = await this.queryPostsRepository.findAllPosts(
+    const allPostsOutputModel = await this.queryPostsRepository.findAllPosts(
       queryParams,
       blogId,
     );
-    const posts = postsOutputModel.items;
-    const fullPosts = [];
 
-    for (let i = 0; i < posts.length; i++) {
-      fullPosts.push(
-        await getFullPostOutputModel(
-          posts[i],
-          this.queryLikesRepository,
-          userId,
-        ),
-      );
-    }
-
-    return {
-      ...postsOutputModel,
-      items: fullPosts,
-    };
+    return this.queryBus.execute(
+      new GetAllFullPostsQuery(allPostsOutputModel, userId),
+    );
   }
 
   @Post(':blogId/posts')
@@ -144,10 +131,6 @@ export class BlogsController {
       createdPostId,
     );
 
-    return await getFullPostOutputModel(
-      postOutputModel,
-      this.queryLikesRepository,
-      userId,
-    );
+    return this.queryBus.execute(new GetFullPostQuery(postOutputModel, userId));
   }
 }

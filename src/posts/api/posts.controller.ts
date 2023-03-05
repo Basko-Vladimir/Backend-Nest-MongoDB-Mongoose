@@ -11,13 +11,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryParamsDto } from './dto/posts-query-params.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { IFullPostOutputModel } from './dto/posts-output-models.dto';
-import { getFullPostOutputModel } from '../mappers/posts-mapper';
 import { LikesService } from '../../likes/application/likes.service';
 import { BlogAllFullPostsOutputModel } from '../../blogs/api/dto/blogs-output-models.dto';
 import { CommentsService } from '../../comments/application/comments.service';
@@ -42,6 +41,8 @@ import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.rep
 import { UpdatePostLikeStatusCommand } from '../application/use-cases/update-post-like-status.useCase';
 import { QueryCommentsRepository } from '../../comments/infrastructure/query-comments.repository';
 import { CreateCommentCommand } from '../../comments/application/use-cases/create-comment.useCase';
+import { GetFullPostQuery } from '../application/use-cases/get-full-post.useCase';
+import { GetAllFullPostsQuery } from '../application/use-cases/get-all-full-posts.useCase';
 
 @Controller('posts')
 export class PostsController {
@@ -53,6 +54,7 @@ export class PostsController {
     private commentsService: CommentsService,
     private queryCommentsRepository: QueryCommentsRepository,
     private commandBus: CommandBus,
+    private queryBus: QueryBus,
   ) {}
 
   @Get()
@@ -62,26 +64,13 @@ export class PostsController {
     @User('_id') userId: string,
   ): Promise<BlogAllFullPostsOutputModel> {
     userId = userId ? String(userId) : null;
-    const postsOutputModel = await this.queryPostsRepository.findAllPosts(
+    const allPostsOutputModel = await this.queryPostsRepository.findAllPosts(
       queryParams,
     );
-    const posts = postsOutputModel.items;
-    const fullPosts = [];
 
-    for (let i = 0; i < posts.length; i++) {
-      fullPosts.push(
-        await getFullPostOutputModel(
-          posts[i],
-          this.queryLikesRepository,
-          userId,
-        ),
-      );
-    }
-
-    return {
-      ...postsOutputModel,
-      items: fullPosts,
-    };
+    return this.queryBus.execute(
+      new GetAllFullPostsQuery(allPostsOutputModel, userId),
+    );
   }
 
   @Get(':postId/comments')
@@ -124,11 +113,7 @@ export class PostsController {
       postId,
     );
 
-    return getFullPostOutputModel(
-      postOutputModel,
-      this.queryLikesRepository,
-      userId,
-    );
+    return this.queryBus.execute(new GetFullPostQuery(postOutputModel, userId));
   }
 
   @Post()
@@ -144,11 +129,7 @@ export class PostsController {
       createdPostId,
     );
 
-    return getFullPostOutputModel(
-      postOutputModel,
-      this.queryLikesRepository,
-      userId,
-    );
+    return this.queryBus.execute(new GetFullPostQuery(postOutputModel, userId));
   }
 
   @Delete(':id')

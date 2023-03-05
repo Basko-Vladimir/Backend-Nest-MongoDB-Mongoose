@@ -77,6 +77,8 @@ import { CreateCommentUseCase } from './comments/application/use-cases/create-co
 import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.useCase';
 import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.useCase';
 import { UpdateCommentLikeStatusUseCase } from './comments/application/use-cases/update-comment-like-status.useCase';
+import { GetFullPostUseCase } from './posts/application/use-cases/get-full-post.useCase';
+import { GetAllFullPostsUseCase } from './posts/application/use-cases/get-all-full-posts.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -95,6 +97,8 @@ const useCases = [
   DeletePostUseCase,
   UpdatePostUseCase,
   UpdatePostLikeStatusUseCase,
+  GetFullPostUseCase,
+  GetAllFullPostsUseCase,
   CreateLikeUseCase,
   UpdateLikeUseCase,
   CreateDeviceSessionUseCase,
