@@ -1,3 +1,4 @@
+import { CommandBus } from '@nestjs/cqrs';
 import {
   Controller,
   Get,
@@ -12,7 +13,6 @@ import { BlogsQueryParamsDto } from './dto/blogs-query-params.dto';
 import { AllBlogsForAdminOutputModel } from './dto/blogs-output-models.dto';
 import { QueryBlogsRepository } from '../infrastructure/query-blogs.repository';
 import { BindBlogWithUserGuard } from '../../common/guards/bind-blog-with-user.guard';
-import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogWithUserCommand } from '../application/use-cases/bind-blog-with-user.useCase';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { BlogDocument } from '../schemas/blog.schema';
@@ -20,6 +20,7 @@ import { Blog } from '../../common/decorators/blog.decorator';
 import { User } from '../../common/decorators/user.decorator';
 
 @Controller('sa/blogs')
+@UseGuards(AuthGuard)
 export class AdminBlogsController {
   constructor(
     private queryBlogsRepository: QueryBlogsRepository,
@@ -27,7 +28,6 @@ export class AdminBlogsController {
   ) {}
 
   @Get()
-  @UseGuards(AuthGuard)
   async findAllBlogsAsAdmin(
     @Query() query: BlogsQueryParamsDto,
   ): Promise<AllBlogsForAdminOutputModel> {
@@ -35,7 +35,7 @@ export class AdminBlogsController {
   }
 
   @Put(':id/bind-with-user/:userId')
-  @UseGuards(AuthGuard, BindBlogWithUserGuard)
+  @UseGuards(BindBlogWithUserGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async bindBlogWithUser(
     @User() user: UserDocument,
