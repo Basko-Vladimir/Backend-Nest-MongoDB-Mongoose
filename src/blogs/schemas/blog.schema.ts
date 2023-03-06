@@ -7,6 +7,8 @@ import {
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDto } from '../api/dto/create-blog.dto';
 import { UpdateBlogDto } from '../api/dto/update-blog.dto';
+import { UserDocument } from '../../users/schemas/user.schema';
+import { BlogOwnerInfo, BlogOwnerInfoSchema } from './blog-owner-info.schema';
 
 const {
   MAX_NAME_LENGTH,
@@ -68,6 +70,12 @@ export class Blog {
   })
   isMembership: boolean;
 
+  @Prop({
+    type: BlogOwnerInfoSchema,
+    required: true,
+  })
+  blogOwnerInfo: BlogOwnerInfo;
+
   @Prop()
   createdAt: Date;
 
@@ -90,8 +98,15 @@ export class Blog {
   static createBlogEntity(
     blogData: CreateBlogDto,
     BlogModel: BlogModelType,
+    user: UserDocument,
   ): BlogDocument {
-    return new BlogModel(blogData);
+    return new BlogModel({
+      ...blogData,
+      blogOwnerInfo: {
+        ownerId: user._id,
+        ownerLogin: user.login,
+      },
+    });
   }
 }
 
@@ -101,6 +116,7 @@ export interface IBlogsStaticMethods {
   createBlogEntity(
     blogData: CreateBlogDto,
     BlogModel: BlogModelType,
+    user: UserDocument,
   ): BlogDocument;
 }
 
