@@ -5,8 +5,10 @@ import {
   generateRegExpError,
 } from '../../common/error-messages';
 import { HydratedDocument, Model } from 'mongoose';
-import { CreateBlogDto } from '../dto/create-blog.dto';
-import { UpdateBlogDto } from '../dto/update-blog.dto';
+import { CreateBlogDto } from '../api/dto/create-blog.dto';
+import { UpdateBlogDto } from '../api/dto/update-blog.dto';
+import { UserDocument } from '../../users/schemas/user.schema';
+import { BlogOwnerInfo, BlogOwnerInfoSchema } from './blog-owner-info.schema';
 
 const {
   MAX_NAME_LENGTH,
@@ -68,6 +70,12 @@ export class Blog {
   })
   isMembership: boolean;
 
+  @Prop({
+    type: BlogOwnerInfoSchema,
+    default: null,
+  })
+  blogOwnerInfo: BlogOwnerInfo;
+
   @Prop()
   createdAt: Date;
 
@@ -85,6 +93,15 @@ export class Blog {
     currentBlog.description = description;
 
     return currentBlog;
+  }
+
+  bindBlogWithUser(blog: BlogDocument, user: UserDocument): BlogDocument {
+    blog.blogOwnerInfo = {
+      ownerId: user._id,
+      ownerLogin: user.login,
+    };
+
+    return blog;
   }
 
   static createBlogEntity(
@@ -108,5 +125,8 @@ export type BlogModelType = Model<Blog> & IBlogsStaticMethods;
 
 export const blogSchema = SchemaFactory.createForClass(Blog);
 
-blogSchema.method('updateBlog', Blog.prototype.updateBlog);
+blogSchema.methods = {
+  updateBlog: Blog.prototype.updateBlog,
+  bindBlogWithUser: Blog.prototype.bindBlogWithUser,
+};
 blogSchema.static('createBlogEntity', Blog.createBlogEntity);

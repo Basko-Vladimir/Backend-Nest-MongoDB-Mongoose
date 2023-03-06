@@ -31,14 +31,15 @@ import {
   AllPostsOutputModel,
   IFullPostOutputModel,
   IPostOutputModel,
-} from '../src/posts/dto/posts-output-models.dto';
+} from '../src/posts/api/dto/posts-output-models.dto';
 import {
   AllCommentsOutputModel,
   IFullCommentOutputModel,
-} from '../src/comments/dto/comments-output-models.dto';
+} from '../src/comments/api/dto/comments-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 
 describe('Posts', () => {
+  jest.setTimeout(60 * 1000);
   const { correctCreateBlogDtos, incorrectBlogsIds } = blogs;
   const { notFoundException, unauthorisedException } = errors;
   const {

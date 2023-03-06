@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../users/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { Request } from 'express';
 import { confirmationCodeErrorMessages } from '../error-messages';
 import { generateCustomBadRequestException } from '../utils';

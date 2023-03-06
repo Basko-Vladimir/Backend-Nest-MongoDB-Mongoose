@@ -6,8 +6,8 @@ import {
   ValidationOptions,
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
-import { BlogsRepository } from '../../blogs/blogs.repository';
-import { PostsRepository } from '../../posts/posts.repository';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { IdTypes } from '../enums';
 
 @ValidatorConstraint({ name: 'IsExistEntity', async: true })

@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
-import { DbSortDirection, SortDirection } from './enums';
-import { SortSetting } from './types';
-import { validateOrReject } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
+import { validateOrReject } from 'class-validator';
+import { BanStatus, DbSortDirection, SortDirection } from './enums';
+import { SortSetting } from './types';
 
 export const getFilterByDbId = (id: string): { _id: Types.ObjectId } => ({
   _id: new Types.ObjectId(id),
@@ -25,6 +25,17 @@ export const setSortValue = (
         ? DbSortDirection.ASC
         : DbSortDirection.DESC,
   };
+};
+
+export const setBanFilter = (value: BanStatus) => {
+  switch (value) {
+    case BanStatus.BANNED:
+      return { ['banInfo.isBanned']: true };
+    case BanStatus.NOT_BANNED:
+      return { ['banInfo.isBanned']: false };
+    default:
+      return {};
+  }
 };
 
 export const validateOrRejectInputDto = async (

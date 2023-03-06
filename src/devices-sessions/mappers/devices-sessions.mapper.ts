@@ -1,5 +1,5 @@
 import { DeviceSessionDocument } from '../schemas/device-session.schema';
-import { DeviceSessionOutputModel } from '../dto/devices-sessions-output-models.dto';
+import { DeviceSessionOutputModel } from '../api/dto/devices-sessions-output-models.dto';
 
 export const mapDbDeviceSessionToDeviceSessionOutputModel = (
   deviceSession: DeviceSessionDocument,

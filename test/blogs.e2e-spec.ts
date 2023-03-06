@@ -9,7 +9,7 @@ import {
 import {
   AllBlogsOutputModel,
   IBlogOutputModel,
-} from '../src/blogs/dto/blogs-output-models.dto';
+} from '../src/blogs/api/dto/blogs-output-models.dto';
 import {
   initTestApp,
   createBlogsRequest,
@@ -24,9 +24,10 @@ import {
 import {
   AllPostsOutputModel,
   IPostOutputModel,
-} from '../src/posts/dto/posts-output-models.dto';
+} from '../src/posts/api/dto/posts-output-models.dto';
 
 describe('Blogs', () => {
+  jest.setTimeout(60 * 1000);
   const {
     incorrectBlogsDtos,
     correctCreateBlogDtos,

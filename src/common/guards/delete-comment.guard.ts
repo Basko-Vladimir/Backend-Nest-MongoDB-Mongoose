@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { CommentsRepository } from '../../comments/comments.repository';
+import { CommentsRepository } from '../../comments/infrastructure/comments.repository';
 import { Types } from 'mongoose';
 import { generateCustomBadRequestException } from '../utils';
 

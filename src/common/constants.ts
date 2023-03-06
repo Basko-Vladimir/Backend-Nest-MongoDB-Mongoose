@@ -3,8 +3,8 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const EMPTY_SEARCH_VALUE = '';
 export const MIN_STRINGS_LENGTH = 1;
 
-export const ACCESS_TOKEN_LIFE_TIME = '10s';
-export const REFRESH_TOKEN_LIFE_TIME = '20s';
+export const ACCESS_TOKEN_LIFE_TIME = '10m';
+export const REFRESH_TOKEN_LIFE_TIME = '1h';
 
 export const blogsConstants = {
   MAX_NAME_LENGTH: 15,
@@ -28,6 +28,7 @@ export const usersConstants = {
   MIN_PASSWORD_LENGTH: 6,
   MAX_PASSWORD_LENGTH: 20,
   EMAIL_REG_EXP: new RegExp('^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$'),
+  MIN_BAN_REASON_LENGTH: 20,
 };
 
 export const commentsConstants = {

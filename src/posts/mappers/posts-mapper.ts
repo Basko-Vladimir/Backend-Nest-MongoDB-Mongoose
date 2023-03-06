@@ -1,9 +1,5 @@
-import {
-  IFullPostOutputModel,
-  IPostOutputModel,
-} from '../dto/posts-output-models.dto';
+import { IPostOutputModel } from '../api/dto/posts-output-models.dto';
 import { PostDocument } from '../schemas/post.schema';
-import { LikesService } from '../../likes/likes.service';
 
 export const mapDbPostToPostOutputModel = (
   post: PostDocument,
@@ -17,17 +13,4 @@ export const mapDbPostToPostOutputModel = (
     blogName: post.blogName,
     createdAt: post.createdAt.toISOString(),
   };
-};
-
-export const getFullPostOutputModel = async (
-  post: IPostOutputModel,
-  likesService: LikesService,
-  userId: string = null,
-): Promise<IFullPostOutputModel> => {
-  const extendedLikesInfo = await likesService.getExtendedLikesInfo(
-    userId,
-    post.id,
-  );
-
-  return { ...post, extendedLikesInfo };
 };

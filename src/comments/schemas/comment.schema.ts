@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { commentsConstants } from '../../common/constants';
 import { generateLengthErrorMessage } from '../../common/error-messages';
-import { CreateCommentDto } from '../dto/create-comment.dto';
+import { CreateCommentDto } from '../api/dto/create-comment.dto';
 
 @Schema({ timestamps: true })
 export class Comment {

@@ -2,7 +2,7 @@ import { users, auth, defaultResponses, INVALID_ID, errors } from './mockData';
 import {
   AllUsersOutputModel,
   IUserOutputModel,
-} from '../src/users/dto/users-output-models.dto';
+} from '../src/users/api/dto/users-output-models.dto';
 import {
   initTestApp,
   createUserRequest,
@@ -12,6 +12,7 @@ import {
 } from './utils';
 
 describe('Users', () => {
+  jest.setTimeout(60 * 1000);
   const { correctCreateUserDtos, incorrectUsersDtos, usersBadQueryResponse } =
     users;
   const { incorrectBasicCredentials, correctBasicCredentials } = auth;

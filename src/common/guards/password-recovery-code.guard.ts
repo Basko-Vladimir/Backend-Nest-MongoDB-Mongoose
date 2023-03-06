@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { UsersRepository } from '../../users/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { generateCustomBadRequestException } from '../utils';
 
 @Injectable()

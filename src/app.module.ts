@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User, userSchema } from './users/schemas/user.schema';
@@ -8,39 +9,120 @@ import { Blog, blogSchema } from './blogs/schemas/blog.schema';
 import { Post, postSchema } from './posts/schemas/post.schema';
 import { Like, likeSchema } from './likes/schemas/like.schema';
 import { Comment, commentSchema } from './comments/schemas/comment.schema';
-import { BlogsController } from './blogs/blogs.controller';
-import { PostsController } from './posts/posts.controller';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
-import { BlogsService } from './blogs/blogs.service';
-import { PostsService } from './posts/posts.service';
-import { LikesService } from './likes/likes.service';
-import { UsersRepository } from './users/users.repository';
-import { BlogsRepository } from './blogs/blogs.repository';
-import { PostsRepository } from './posts/posts.repository';
-import { LikesRepository } from './likes/likes.repository';
-import { CommentsController } from './comments/comments.controller';
-import { CommentsService } from './comments/comments.service';
-import { CommentsRepository } from './comments/comments.repository';
-import { JwtService } from './auth/jwt.service';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
+import { BlogsController } from './blogs/api/blogs.controller';
+import { PostsController } from './posts/api/posts.controller';
+import { UsersController } from './users/api/users.controller';
+import { UsersService } from './users/application/users.service';
+import { BlogsService } from './blogs/application/blogs.service';
+import { PostsService } from './posts/application/posts.service';
+import { LikesService } from './likes/application/likes.service';
+import { UsersRepository } from './users/infrastructure/users.repository';
+import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
+import { PostsRepository } from './posts/infrastructure/posts.repository';
+import { LikesRepository } from './likes/infrastructure/likes.repository';
+import { CommentsController } from './comments/api/comments.controller';
+import { CommentsService } from './comments/application/comments.service';
+import { CommentsRepository } from './comments/infrastructure/comments.repository';
+import { JwtService } from './auth/infrastructure/jwt.service';
+import { AuthService } from './auth/application/auth.service';
+import { AuthController } from './auth/api/auth.controller';
 import { EmailManager } from './common/managers/email.manager';
 import { EmailAdapter } from './common/adapters/email.adapter';
 import { IsExistEntityValidator } from './common/validators/is-exist-entity.validator';
-import { DevicesSessionsController } from './devices-sessions/devices-sessions.controller';
-import { DevicesSessionsService } from './devices-sessions/devices-sessions.service';
-import { DevicesSessionsRepository } from './devices-sessions/devices-sessions.repository';
+import { DevicesSessionsController } from './devices-sessions/api/devices-sessions.controller';
+import { DevicesSessionsService } from './devices-sessions/application/devices-sessions.service';
+import { DevicesSessionsRepository } from './devices-sessions/infrastructure/devices-sessions.repository';
 import {
   DeviceSession,
   deviceSessionSchema,
 } from './devices-sessions/schemas/device-session.schema';
-import { ClientsRequestsRepository } from './clients-requests/clients-requests.repository';
-import { ClientsRequestsService } from './clients-requests/clients-requests.service';
+import { ClientsRequestsRepository } from './clients-requests/infrastructure/clients-requests.repository';
+import { ClientsRequestsService } from './clients-requests/application/clients-requests.service';
 import {
   ClientRequest,
   clientRequestSchema,
 } from './clients-requests/schemas/client-request.schema';
+import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.useCase';
+import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.useCase';
+import { UpdateBlogUseCase } from './blogs/application/use-cases/update-blog.useCase';
+import { QueryBlogsRepository } from './blogs/infrastructure/query-blogs.repository';
+import { RegisterUserUseCase } from './auth/application/use-cases/register-user.useCase';
+import { ResendRegistrationEmailUseCase } from './auth/application/use-cases/resend-registration-email.useCase';
+import { LoginUserUseCase } from './auth/application/use-cases/login-user.useCase';
+import { RecoverPasswordUseCase } from './auth/application/use-cases/recover-password.useCase';
+import { ChangePasswordUseCase } from './auth/application/use-cases/change-password.useCase';
+import { RefreshTokensUseCase } from './auth/application/use-cases/refresh-tokens.useCase';
+import { LogoutUseCase } from './auth/application/use-cases/logout.useCase';
+import { CreateUserUseCase } from './users/application/use-cases/create-user.useCase';
+import { DeleteUserUseCase } from './users/application/use-cases/delete-user.useCase';
+import { QueryUsersRepository } from './users/infrastructure/query-users.repository';
+import { CreatePostUseCase } from './posts/application/use-cases/create-post.useCase';
+import { QueryPostsRepository } from './posts/infrastructure/query-posts.repository';
+import { DeletePostUseCase } from './posts/application/use-cases/delete-post.useCase';
+import { UpdatePostUseCase } from './posts/application/use-cases/update-post.useCase';
+import { QueryLikesRepository } from './likes/infrastructure/query-likes.repository';
+import { CreateLikeUseCase } from './likes/application/use-cases/create-like.useCase';
+import { UpdateLikeUseCase } from './likes/application/use-cases/update-like.useCase';
+import { UpdatePostLikeStatusUseCase } from './posts/application/use-cases/update-post-like-status.useCase';
+import { QueryDevicesSessionsRepository } from './devices-sessions/infrastructure/query-devices-sessions.repository';
+import { CreateDeviceSessionUseCase } from './devices-sessions/application/use-cases/create-device-session.useCase';
+import { DeleteAllDevicesSessionsExceptCurrentUseCase } from './devices-sessions/application/use-cases/delete-all-devices-sessions-except-current.useCase';
+import { DeleteDeviceSessionUseCase } from './devices-sessions/application/use-cases/delete-device-session.useCase';
+import { UpdateDeviceSessionUseCase } from './devices-sessions/application/use-cases/update-device-session.useCase';
+import { CreateClientRequestUseCase } from './clients-requests/application/use-cases/create-client-request.useCase';
+import { UpdateClientRequestUseCase } from './clients-requests/application/use-cases/update-client-request.useCase';
+import { UpdateManyClientsRequestsUseCase } from './clients-requests/application/use-cases/update-many-clients-requests.useCase';
+import { QueryCommentsRepository } from './comments/infrastructure/query-comments.repository';
+import { CreateCommentUseCase } from './comments/application/use-cases/create-comment.useCase';
+import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.useCase';
+import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.useCase';
+import { UpdateCommentLikeStatusUseCase } from './comments/application/use-cases/update-comment-like-status.useCase';
+import { GetFullPostUseCase } from './posts/application/use-cases/get-full-post.useCase';
+import { GetAllFullPostsUseCase } from './posts/application/use-cases/get-all-full-posts.useCase';
+import { GetFullCommentUseCase } from './comments/application/use-cases/get-full-comment.useCase';
+import { GetAllFullCommentsUseCase } from './comments/application/use-cases/get-all-full-comments.useCase';
+import { UpdateUserBanStatusUseCase } from './users/application/use-cases/update-user-ban-status.useCase';
+import { AdminBlogsController } from './blogs/api/admin-blogs.controller';
+import { BindBlogWithUserUseCase } from './blogs/application/use-cases/bind-blog-with-user.useCase';
+import { BloggerBlogsController } from './blogs/api/blogger-blogs.controller';
+
+const useCases = [
+  CreateBlogUseCase,
+  DeleteBlogUseCase,
+  UpdateBlogUseCase,
+  RegisterUserUseCase,
+  ResendRegistrationEmailUseCase,
+  LoginUserUseCase,
+  RecoverPasswordUseCase,
+  ChangePasswordUseCase,
+  RefreshTokensUseCase,
+  LogoutUseCase,
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  CreatePostUseCase,
+  DeletePostUseCase,
+  UpdatePostUseCase,
+  UpdatePostLikeStatusUseCase,
+  GetFullPostUseCase,
+  GetAllFullPostsUseCase,
+  CreateLikeUseCase,
+  UpdateLikeUseCase,
+  CreateDeviceSessionUseCase,
+  DeleteAllDevicesSessionsExceptCurrentUseCase,
+  DeleteDeviceSessionUseCase,
+  UpdateDeviceSessionUseCase,
+  CreateClientRequestUseCase,
+  UpdateClientRequestUseCase,
+  UpdateManyClientsRequestsUseCase,
+  CreateCommentUseCase,
+  DeleteCommentUseCase,
+  UpdateCommentUseCase,
+  UpdateCommentLikeStatusUseCase,
+  GetFullCommentUseCase,
+  GetAllFullCommentsUseCase,
+  UpdateUserBanStatusUseCase,
+  BindBlogWithUserUseCase,
+];
 
 @Module({
   imports: [
@@ -59,11 +141,14 @@ import {
     MongooseModule.forFeature([
       { name: ClientRequest.name, schema: clientRequestSchema },
     ]),
+    CqrsModule,
   ],
   controllers: [
     AppController,
     UsersController,
     BlogsController,
+    AdminBlogsController,
+    BloggerBlogsController,
     PostsController,
     CommentsController,
     AuthController,
@@ -73,23 +158,30 @@ import {
     AppService,
     UsersService,
     UsersRepository,
+    QueryUsersRepository,
     BlogsService,
     BlogsRepository,
+    QueryBlogsRepository,
     PostsService,
     PostsRepository,
+    QueryPostsRepository,
     LikesService,
     LikesRepository,
+    QueryLikesRepository,
     CommentsService,
     CommentsRepository,
+    QueryCommentsRepository,
     AuthService,
     JwtService,
     DevicesSessionsService,
     DevicesSessionsRepository,
+    QueryDevicesSessionsRepository,
     ClientsRequestsService,
     ClientsRequestsRepository,
     EmailManager,
     EmailAdapter,
     IsExistEntityValidator,
+    ...useCases,
   ],
 })
 export class AppModule {}

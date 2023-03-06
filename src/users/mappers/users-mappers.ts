@@ -1,5 +1,5 @@
 import { UserDocument } from '../schemas/user.schema';
-import { IUserOutputModel } from '../dto/users-output-models.dto';
+import { IUserOutputModel } from '../api/dto/users-output-models.dto';
 
 export const mapDbUserToUserOutputModel = (
   user: UserDocument,
@@ -8,4 +8,9 @@ export const mapDbUserToUserOutputModel = (
   login: user.login,
   email: user.email,
   createdAt: user.createdAt.toISOString(),
+  banInfo: {
+    isBanned: user.banInfo.isBanned,
+    banDate: user.banInfo.banDate.toISOString(),
+    banReason: user.banInfo.banReason,
+  },
 });

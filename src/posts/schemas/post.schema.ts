@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { generateLengthErrorMessage } from '../../common/error-messages';
 import { postsConstants, MIN_STRINGS_LENGTH } from '../../common/constants';
-import { CreatePostDto } from '../dto/create-post.dto';
-import { UpdatePostDto } from '../dto/update-post.dto';
+import { CreatePostDto } from '../api/dto/create-post.dto';
+import { UpdatePostDto } from '../api/dto/update-post.dto';
 
 const { MAX_TITLE_LENGTH, MAX_SHORT_DESCRIPTION_LENGTH, MAX_CONTENT_LENGTH } =
   postsConstants;
