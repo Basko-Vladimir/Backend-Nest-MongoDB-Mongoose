@@ -10,6 +10,16 @@ export interface IBlogOutputModel {
   createdAt: string;
 }
 
+export interface IBlogForAdminOutputModel extends IBlogOutputModel {
+  blogOwnerInfo: {
+    userId: string;
+    userLogin: string;
+  };
+}
+
 export type AllBlogsOutputModel = AllEntitiesOutputModel<IBlogOutputModel>;
 export type BlogAllFullPostsOutputModel =
   AllEntitiesOutputModel<IPostOutputModel>;
+
+export type AllBlogsForAdminOutputModel =
+  AllEntitiesOutputModel<IBlogForAdminOutputModel>;

@@ -63,3 +63,9 @@ export enum BanStatus {
   BANNED = 'banned',
   NOT_BANNED = 'notBanned',
 }
+
+export enum Roles {
+  ADMIN = 'admin',
+  BLOGGER = 'blogger',
+  PUBLIC_USER = 'user',
+}

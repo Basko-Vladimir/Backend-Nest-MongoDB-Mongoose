@@ -1,5 +1,8 @@
 import { BlogDocument } from '../schemas/blog.schema';
-import { IBlogOutputModel } from '../api/dto/blogs-output-models.dto';
+import {
+  IBlogForAdminOutputModel,
+  IBlogOutputModel,
+} from '../api/dto/blogs-output-models.dto';
 
 export const mapDbBlogToBlogOutputModel = (
   blog: BlogDocument,
@@ -11,5 +14,22 @@ export const mapDbBlogToBlogOutputModel = (
     description: blog.description,
     isMembership: blog.isMembership,
     createdAt: blog.createdAt.toISOString(),
+  };
+};
+
+export const mapDbBlogToBlogForAdminOutputModel = (
+  blog: BlogDocument,
+): IBlogForAdminOutputModel => {
+  return {
+    id: String(blog._id),
+    name: blog.name,
+    websiteUrl: blog.websiteUrl,
+    description: blog.description,
+    isMembership: blog.isMembership,
+    createdAt: blog.createdAt.toISOString(),
+    blogOwnerInfo: {
+      userId: String(blog.blogOwnerInfo.ownerId),
+      userLogin: blog.blogOwnerInfo.ownerLogin,
+    },
   };
 };
