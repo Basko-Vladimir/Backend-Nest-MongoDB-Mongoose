@@ -57,3 +57,9 @@ export enum IdTypes {
   USER_ID = 'userId',
   COMMENT_ID = 'commentId',
 }
+
+export enum BanStatus {
+  ALL = 'all',
+  BANNED = 'banned',
+  NOT_BANNED = 'notBanned',
+}

@@ -28,6 +28,7 @@ export const usersConstants = {
   MIN_PASSWORD_LENGTH: 6,
   MAX_PASSWORD_LENGTH: 20,
   EMAIL_REG_EXP: new RegExp('^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$'),
+  MIN_BAN_REASON_LENGTH: 20,
 };
 
 export const commentsConstants = {

@@ -1,16 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelType } from '../schemas/user.schema';
-import {
-  countSkipValue,
-  getFilterByDbId,
-  setSortValue,
-} from '../../common/utils';
+import { User, UserModelType } from '../schemas/user.schema';
+import { countSkipValue, setBanFilter, setSortValue } from '../../common/utils';
 import { UsersQueryParamsDto } from '../api/dto/users-query-params.dto';
 import { mapDbUserToUserOutputModel } from '../mappers/users-mappers';
 import { AllUsersOutputModel } from '../api/dto/users-output-models.dto';
-import { SortDirection, UserSortByField } from '../../common/enums';
-import { UpdateOrFilterModel } from '../../common/types';
+import { BanStatus, SortDirection, UserSortByField } from '../../common/enums';
 
 @Injectable()
 export class QueryUsersRepository {
@@ -26,10 +21,11 @@ export class QueryUsersRepository {
       pageSize = 10,
       searchEmailTerm = '',
       searchLoginTerm = '',
+      banStatus = BanStatus.ALL,
     } = queryParams;
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
-    const filterItems = [];
+    const filterItems: object[] = [setBanFilter(banStatus)];
 
     if (searchLoginTerm) {
       filterItems.push({ login: new RegExp(searchLoginTerm, 'i') });

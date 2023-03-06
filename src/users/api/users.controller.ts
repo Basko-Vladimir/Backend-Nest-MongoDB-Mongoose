@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { mapDbUserToUserOutputModel } from '../mappers/users-mappers';
@@ -23,8 +24,10 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.useCase';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.useCase';
 import { QueryUsersRepository } from '../infrastructure/query-users.repository';
+import { UpdateUserBanStatusDto } from './dto/update-user-ban-status.dto';
+import { UpdateUserBanStatusCommand } from '../application/use-cases/update-user-ban-status.useCase';
 
-@Controller('users')
+@Controller('sa/users')
 export class UsersController {
   constructor(
     private queryUsersRepository: QueryUsersRepository,
@@ -58,5 +61,17 @@ export class UsersController {
     @Param('id', checkParamIdPipe) userId: string,
   ): Promise<void> {
     return this.commandBus.execute(new DeleteUserCommand(userId));
+  }
+
+  @Put(':id/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
+  async updateUserBanStatus(
+    @Param('id', checkParamIdPipe) userId: string,
+    @Body() updateUserBanStatusDto: UpdateUserBanStatusDto,
+  ): Promise<void> {
+    return this.commandBus.execute(
+      new UpdateUserBanStatusCommand(userId, updateUserBanStatusDto),
+    );
   }
 }

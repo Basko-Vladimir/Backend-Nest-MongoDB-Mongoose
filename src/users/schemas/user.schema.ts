@@ -13,6 +13,8 @@ import {
   EmailConfirmationSchema,
 } from './email-confirmation.schema';
 import { generateExistingFieldError } from '../../common/error-messages';
+import { BanInfo, BanInfoSchema } from './ban-info.schema';
+import { UpdateUserBanStatusDto } from '../api/dto/update-user-ban-status.dto';
 
 const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP, EMAIL_REG_EXP } =
   usersConstants;
@@ -62,6 +64,12 @@ export class User {
   })
   emailConfirmation: EmailConfirmation;
 
+  @Prop({
+    required: true,
+    type: BanInfoSchema,
+  })
+  banInfo: BanInfo;
+
   @Prop()
   createdAt: Date;
 
@@ -93,6 +101,22 @@ export class User {
     return user;
   }
 
+  updateUserBanStatus(
+    user: UserDocument,
+    updateUserBanStatusDto: UpdateUserBanStatusDto,
+  ): UserDocument {
+    const { isBanned, banReason } = updateUserBanStatusDto;
+
+    user.banInfo.isBanned = isBanned;
+    user.banInfo.banReason = banReason;
+
+    if (isBanned) {
+      user.banInfo.banDate = new Date();
+    }
+
+    return user;
+  }
+
   static async createUserEntity(
     createUserDto: CreateUserDto,
     passwordHash: string,
@@ -112,6 +136,12 @@ export class User {
       isConfirmed,
     };
 
+    const banInfo: BanInfo = {
+      isBanned: false,
+      banDate: new Date(),
+      banReason: null,
+    };
+
     return new UserModel({
       login,
       email,
@@ -119,6 +149,7 @@ export class User {
       passwordHash,
       isConfirmed,
       emailConfirmation,
+      banInfo,
     });
   }
 }
@@ -145,4 +176,5 @@ userSchema.methods = {
   updateConfirmationCode: User.prototype.updateConfirmationCode,
   updatePasswordRecoveryCode: User.prototype.updatePasswordRecoveryCode,
   updatePassword: User.prototype.updatePassword,
+  updateUserBanStatus: User.prototype.updateUserBanStatus,
 };

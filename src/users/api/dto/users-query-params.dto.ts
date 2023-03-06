@@ -1,6 +1,6 @@
-import { UserSortByField } from '../../../common/enums';
-import { CommonQueryParamsDto } from '../../../common/common.dto';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { BanStatus, UserSortByField } from '../../../common/enums';
+import { CommonQueryParamsDto } from '../../../common/common.dto';
 
 export class UsersQueryParamsDto extends CommonQueryParamsDto {
   @IsOptional()
@@ -14,4 +14,8 @@ export class UsersQueryParamsDto extends CommonQueryParamsDto {
   @IsOptional()
   @IsString()
   readonly searchEmailTerm: string = '';
+
+  @IsOptional()
+  @IsEnum(BanStatus)
+  readonly banStatus: BanStatus = BanStatus.ALL;
 }
