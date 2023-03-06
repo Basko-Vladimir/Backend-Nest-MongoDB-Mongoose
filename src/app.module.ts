@@ -84,6 +84,7 @@ import { GetAllFullCommentsUseCase } from './comments/application/use-cases/get-
 import { UpdateUserBanStatusUseCase } from './users/application/use-cases/update-user-ban-status.useCase';
 import { AdminBlogsController } from './blogs/api/admin-blogs.controller';
 import { BindBlogWithUserUseCase } from './blogs/application/use-cases/bind-blog-with-user.useCase';
+import { BloggerBlogsController } from './blogs/api/blogger-blogs.controller';
 
 const useCases = [
   CreateBlogUseCase,
@@ -147,6 +148,7 @@ const useCases = [
     UsersController,
     BlogsController,
     AdminBlogsController,
+    BloggerBlogsController,
     PostsController,
     CommentsController,
     AuthController,

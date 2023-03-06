@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BlogsQueryParamsDto } from '../api/dto/blogs-query-params.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -55,6 +56,22 @@ export class QueryBlogsRepository {
     };
   }
 
+  async findAllBlogsAsBlogger(
+    queryParams: BlogsQueryParamsDto,
+    userId: Types.ObjectId,
+  ): Promise<AllBlogsOutputModel> {
+    const { blogs, totalCount, pageNumber, pageSize } =
+      await this.getBlogsDataByQueryParams(queryParams, userId);
+
+    return {
+      pagesCount: Math.ceil(totalCount / pageSize),
+      page: Number(pageNumber),
+      pageSize: Number(pageSize),
+      totalCount,
+      items: blogs.map(mapDbBlogToBlogOutputModel),
+    };
+  }
+
   async findBlogById(blogId): Promise<IBlogOutputModel> {
     const targetBlog = await this.BlogModel.findById(blogId);
 
@@ -65,6 +82,7 @@ export class QueryBlogsRepository {
 
   private async getBlogsDataByQueryParams(
     queryParams: BlogsQueryParamsDto,
+    userId?: Types.ObjectId,
   ): Promise<IBlogsDataByQueryParams> {
     const {
       sortBy = BlogSortByField.createdAt,
@@ -75,13 +93,18 @@ export class QueryBlogsRepository {
     } = queryParams;
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
+    const filterItems: object[] = [];
 
-    const totalCount = await this.BlogModel.countDocuments().where(
-      'name',
-      new RegExp(searchNameTerm, 'i'),
-    );
-    const blogs = await this.BlogModel.find({})
-      .where('name', new RegExp(searchNameTerm, 'i'))
+    if (searchNameTerm) {
+      filterItems.push({ name: new RegExp(searchNameTerm, 'i') });
+    }
+    if (userId) {
+      filterItems.push({ ['blogOwnerInfo.ownerId']: userId });
+    }
+
+    const filter = { $or: filterItems };
+    const totalCount = await this.BlogModel.find(filter).countDocuments();
+    const blogs = await this.BlogModel.find(filter)
       .skip(skip)
       .limit(pageSize)
       .sort(sortSetting);
