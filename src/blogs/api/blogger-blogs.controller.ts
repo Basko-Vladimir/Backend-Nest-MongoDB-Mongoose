@@ -33,6 +33,7 @@ import { DeleteBlogCommand } from '../application/use-cases/delete-blog.useCase'
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.useCase';
 import { ActionsOnBlogGuard } from '../../common/guards/actions-on-blog.guard';
+import { DeletePostCommand } from '../../posts/application/use-cases/delete-post.useCase';
 
 @Controller('blogger/blogs')
 @UseGuards(AuthGuard)
@@ -90,6 +91,15 @@ export class BloggerBlogsController {
     @Param('id', checkParamIdPipe) blogId: string,
   ): Promise<void> {
     return this.commandBus.execute(new DeleteBlogCommand(blogId));
+  }
+
+  @Delete(':blogId/posts/:postId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(ActionsOnBlogGuard)
+  async deletePostSpecifiedBlog(
+    @Param('postId', checkParamIdPipe) postId: string,
+  ): Promise<void> {
+    return this.commandBus.execute(new DeletePostCommand(postId));
   }
 
   @Put(':id')

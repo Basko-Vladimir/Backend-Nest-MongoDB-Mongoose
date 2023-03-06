@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { AuthType } from '../enums';
 import { JwtService } from '../../auth/infrastructure/jwt.service';
-import { UsersService } from '../../users/application/users.service';
 import { authErrorsMessages } from '../error-messages';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 
