@@ -126,9 +126,11 @@ export class PostsController {
   @UseGuards(AuthGuard)
   async updatePost(
     @Param('id', checkParamIdPipe) postId: string,
-    @Body() body: UpdatePostDto,
+    @Body() updatePostDto: UpdatePostDto,
   ): Promise<void> {
-    return this.commandBus.execute(new UpdatePostCommand(postId, body));
+    return this.commandBus.execute(
+      new UpdatePostCommand(postId, updatePostDto),
+    );
   }
 
   @Post(':postId/comments')

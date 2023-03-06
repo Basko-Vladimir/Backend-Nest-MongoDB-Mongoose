@@ -34,6 +34,8 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.useCase';
 import { ActionsOnBlogGuard } from '../../common/guards/actions-on-blog.guard';
 import { DeletePostCommand } from '../../posts/application/use-cases/delete-post.useCase';
+import { UpdatePostCommand } from '../../posts/application/use-cases/update-post.useCase';
+import { UpdatePostForBlogDto } from './dto/update-post-for-blog.dto';
 
 @Controller('blogger/blogs')
 @UseGuards(AuthGuard)
@@ -111,6 +113,19 @@ export class BloggerBlogsController {
   ): Promise<void> {
     return this.commandBus.execute(
       new UpdateBlogCommand(blogId, updateBlogDto),
+    );
+  }
+
+  @Put(':blogId/posts/:postId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(ActionsOnBlogGuard)
+  async updatePostSpecifiedBlog(
+    @Param('postId', checkParamIdPipe) postId: string,
+    @Param('blogId', checkParamIdPipe) blogId: string,
+    @Body() updatePostForBlogDto: UpdatePostForBlogDto,
+  ): Promise<void> {
+    return this.commandBus.execute(
+      new UpdatePostCommand(postId, { ...updatePostForBlogDto, blogId }),
     );
   }
 }
