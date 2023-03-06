@@ -3,10 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogModelType } from '../../schemas/blog.schema';
 import { CreateBlogDto } from '../../api/dto/create-blog.dto';
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
-import { UserDocument } from '../../../users/schemas/user.schema';
 
 export class CreateBlogCommand {
-  constructor(public createBlogDto: CreateBlogDto, public user: UserDocument) {}
+  constructor(public createBlogDto: CreateBlogDto) {}
 }
 
 @CommandHandler(CreateBlogCommand)
@@ -17,11 +16,10 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   ) {}
 
   async execute(command: CreateBlogCommand): Promise<string> {
-    const { createBlogDto, user } = command;
+    const { createBlogDto } = command;
     const createdBlog = this.BlogModel.createBlogEntity(
       createBlogDto,
       this.BlogModel,
-      user,
     );
     const savedBlog = await this.blogsRepository.saveBlog(createdBlog);
 

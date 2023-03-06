@@ -20,6 +20,15 @@ export const mapDbBlogToBlogOutputModel = (
 export const mapDbBlogToBlogForAdminOutputModel = (
   blog: BlogDocument,
 ): IBlogForAdminOutputModel => {
+  let blogOwnerInfo = null;
+
+  if (blog.blogOwnerInfo) {
+    blogOwnerInfo = {
+      userId: String(blog.blogOwnerInfo.ownerId),
+      userLogin: blog.blogOwnerInfo.ownerLogin,
+    };
+  }
+
   return {
     id: String(blog._id),
     name: blog.name,
@@ -27,9 +36,6 @@ export const mapDbBlogToBlogForAdminOutputModel = (
     description: blog.description,
     isMembership: blog.isMembership,
     createdAt: blog.createdAt.toISOString(),
-    blogOwnerInfo: {
-      userId: String(blog.blogOwnerInfo.ownerId),
-      userLogin: blog.blogOwnerInfo.ownerLogin,
-    },
+    blogOwnerInfo,
   };
 };

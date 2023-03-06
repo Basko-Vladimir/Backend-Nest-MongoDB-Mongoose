@@ -35,7 +35,6 @@ import { CreatePostCommand } from '../../posts/application/use-cases/create-post
 import { QueryPostsRepository } from '../../posts/infrastructure/query-posts.repository';
 import { GetFullPostQuery } from '../../posts/application/use-cases/get-full-post.useCase';
 import { GetAllFullPostsQuery } from '../../posts/application/use-cases/get-all-full-posts.useCase';
-import { UserDocument } from '../../users/schemas/user.schema';
 
 @Controller('blogs')
 export class BlogsController {
@@ -64,10 +63,9 @@ export class BlogsController {
   @UseGuards(AuthGuard)
   async createBlog(
     @Body() creatingData: CreateBlogDto,
-    @User() user: UserDocument,
   ): Promise<IBlogOutputModel> {
     const createdBlogId = await this.commandBus.execute(
-      new CreateBlogCommand(creatingData, user),
+      new CreateBlogCommand(creatingData),
     );
 
     return this.queryBlogsRepository.findBlogById(createdBlogId);

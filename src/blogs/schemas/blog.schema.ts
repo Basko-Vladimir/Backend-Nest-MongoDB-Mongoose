@@ -72,7 +72,7 @@ export class Blog {
 
   @Prop({
     type: BlogOwnerInfoSchema,
-    required: true,
+    default: null,
   })
   blogOwnerInfo: BlogOwnerInfo;
 
@@ -95,18 +95,20 @@ export class Blog {
     return currentBlog;
   }
 
+  bindBlogWithUser(blog: BlogDocument, user: UserDocument): BlogDocument {
+    blog.blogOwnerInfo = {
+      ownerId: user._id,
+      ownerLogin: user.login,
+    };
+
+    return blog;
+  }
+
   static createBlogEntity(
     blogData: CreateBlogDto,
     BlogModel: BlogModelType,
-    user: UserDocument,
   ): BlogDocument {
-    return new BlogModel({
-      ...blogData,
-      blogOwnerInfo: {
-        ownerId: user._id,
-        ownerLogin: user.login,
-      },
-    });
+    return new BlogModel(blogData);
   }
 }
 
@@ -116,7 +118,6 @@ export interface IBlogsStaticMethods {
   createBlogEntity(
     blogData: CreateBlogDto,
     BlogModel: BlogModelType,
-    user: UserDocument,
   ): BlogDocument;
 }
 
@@ -124,5 +125,8 @@ export type BlogModelType = Model<Blog> & IBlogsStaticMethods;
 
 export const blogSchema = SchemaFactory.createForClass(Blog);
 
-blogSchema.method('updateBlog', Blog.prototype.updateBlog);
+blogSchema.methods = {
+  updateBlog: Blog.prototype.updateBlog,
+  bindBlogWithUser: Blog.prototype.bindBlogWithUser,
+};
 blogSchema.static('createBlogEntity', Blog.createBlogEntity);

@@ -83,6 +83,7 @@ import { GetFullCommentUseCase } from './comments/application/use-cases/get-full
 import { GetAllFullCommentsUseCase } from './comments/application/use-cases/get-all-full-comments.useCase';
 import { UpdateUserBanStatusUseCase } from './users/application/use-cases/update-user-ban-status.useCase';
 import { AdminBlogsController } from './blogs/api/admin-blogs.controller';
+import { BindBlogWithUserUseCase } from './blogs/application/use-cases/bind-blog-with-user.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -119,6 +120,7 @@ const useCases = [
   GetFullCommentUseCase,
   GetAllFullCommentsUseCase,
   UpdateUserBanStatusUseCase,
+  BindBlogWithUserUseCase,
 ];
 
 @Module({
