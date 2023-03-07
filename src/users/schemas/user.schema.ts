@@ -138,7 +138,7 @@ export class User {
 
     const banInfo: BanInfo = {
       isBanned: false,
-      banDate: new Date(),
+      banDate: null,
       banReason: null,
     };
 

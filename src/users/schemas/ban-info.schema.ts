@@ -20,6 +20,7 @@ export class BanInfo {
 
   @Prop({
     type: String,
+    required: true,
     minlength: [
       MIN_BAN_REASON_LENGTH,
       generateLengthErrorMessage('banReason', MIN_BAN_REASON_LENGTH, 'min'),
