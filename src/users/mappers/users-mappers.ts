@@ -10,7 +10,7 @@ export const mapDbUserToUserOutputModel = (
   createdAt: user.createdAt.toISOString(),
   banInfo: {
     isBanned: user.banInfo.isBanned,
-    banDate: user.banInfo.banDate?.toISOString(),
+    banDate: user.banInfo.banDate ? user.banInfo.banDate.toISOString() : null,
     banReason: user.banInfo.banReason,
   },
 });
