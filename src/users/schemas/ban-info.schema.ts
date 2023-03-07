@@ -14,13 +14,12 @@ export class BanInfo {
 
   @Prop({
     type: Date,
-    required: true,
+    default: null,
   })
   banDate: Date;
 
   @Prop({
     type: String,
-    required: true,
     minlength: [
       MIN_BAN_REASON_LENGTH,
       generateLengthErrorMessage('banReason', MIN_BAN_REASON_LENGTH, 'min'),
