@@ -108,11 +108,8 @@ export class User {
     const { isBanned, banReason } = updateUserBanStatusDto;
 
     user.banInfo.isBanned = isBanned;
-    user.banInfo.banReason = banReason;
-
-    if (isBanned) {
-      user.banInfo.banDate = new Date();
-    }
+    user.banInfo.banReason = isBanned ? banReason : null;
+    user.banInfo.banDate = isBanned ? new Date() : null;
 
     return user;
   }
