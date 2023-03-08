@@ -1,5 +1,4 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UnauthorizedException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { ITokensData } from '../../../common/types';
@@ -34,14 +33,11 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
   async execute(command: LoginUserCommand): Promise<ITokensData> {
     const { loginUserDto, userAgent, ip } = command;
     const { loginOrEmail, password } = loginUserDto;
+    const deviceId = uuidv4();
     const userId = await this.authService.checkCredentials(
       loginOrEmail,
       password,
     );
-
-    if (!userId) throw new UnauthorizedException();
-
-    const deviceId = uuidv4();
     const { accessToken, refreshToken } =
       await this.authService.createNewTokensPair(
         { userId },

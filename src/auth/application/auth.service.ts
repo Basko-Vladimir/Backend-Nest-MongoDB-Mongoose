@@ -2,7 +2,7 @@ import { CookieOptions } from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { JwtService } from '../infrastructure/jwt.service';
 
@@ -22,11 +22,15 @@ export class AuthService {
       email: loginOrEmail,
     });
 
-    if (!user) return null;
+    if (!user || user.banInfo.isBanned) {
+      throw new UnauthorizedException();
+    }
 
     const isMatchedUser = await bcrypt.compare(password, user.passwordHash);
 
-    return isMatchedUser ? String(user._id) : null;
+    if (!isMatchedUser) throw new UnauthorizedException();
+
+    return String(user._id);
   }
 
   async createNewTokensPair(
