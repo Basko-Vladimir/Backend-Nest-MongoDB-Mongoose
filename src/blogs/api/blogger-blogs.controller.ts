@@ -58,9 +58,10 @@ export class BloggerBlogsController {
   @Post()
   async createBlog(
     @Body() creatingData: CreateBlogDto,
+    @User() user: UserDocument,
   ): Promise<IBlogOutputModel> {
     const createdBlogId = await this.commandBus.execute(
-      new CreateBlogCommand(creatingData),
+      new CreateBlogCommand(creatingData, user),
     );
 
     return this.queryBlogsRepository.findBlogById(createdBlogId);

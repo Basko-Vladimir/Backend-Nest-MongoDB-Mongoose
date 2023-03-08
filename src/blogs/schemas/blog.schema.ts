@@ -72,7 +72,6 @@ export class Blog {
 
   @Prop({
     type: BlogOwnerInfoSchema,
-    default: null,
   })
   blogOwnerInfo: BlogOwnerInfo;
 
@@ -106,9 +105,16 @@ export class Blog {
 
   static createBlogEntity(
     blogData: CreateBlogDto,
+    user: UserDocument,
     BlogModel: BlogModelType,
   ): BlogDocument {
-    return new BlogModel(blogData);
+    return new BlogModel({
+      ...blogData,
+      blogOwnerInfo: {
+        ownerId: user._id,
+        ownerLogin: user.login,
+      },
+    });
   }
 }
 
@@ -117,6 +123,7 @@ export type BlogDocument = HydratedDocument<Blog>;
 export interface IBlogsStaticMethods {
   createBlogEntity(
     blogData: CreateBlogDto,
+    user: UserDocument,
     BlogModel: BlogModelType,
   ): BlogDocument;
 }
