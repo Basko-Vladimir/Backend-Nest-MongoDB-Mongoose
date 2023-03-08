@@ -45,7 +45,7 @@ export class AuthGuard implements CanActivate {
         tokenPayload.userId,
       );
 
-      if (!targetUser) {
+      if (!targetUser || targetUser.banInfo.isBanned) {
         throw new UnauthorizedException();
       }
 
