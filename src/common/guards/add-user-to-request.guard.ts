@@ -23,7 +23,7 @@ export class AddUserToRequestGuard implements CanActivate {
         const tokenPayload = await this.jwtService.getTokenPayload(authValue);
 
         const user = await this.usersRepository.findUserById(
-          tokenPayload?.userId,
+          tokenPayload.userId,
         );
         if (user) request.context = { user };
       }

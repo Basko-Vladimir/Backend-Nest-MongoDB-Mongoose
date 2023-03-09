@@ -24,7 +24,6 @@ import { DeleteCommentCommand } from '../application/use-cases/delete-comment.us
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.useCase';
 import { UpdateCommentLikeStatusCommand } from '../application/use-cases/update-comment-like-status.useCase';
 import { GetFullCommentQuery } from '../application/use-cases/get-full-comment.useCase';
-import { BannedUserGuard } from '../../common/guards/banned-user.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -35,7 +34,7 @@ export class CommentsController {
   ) {}
 
   @Get(':id')
-  @UseGuards(AddUserToRequestGuard, BannedUserGuard)
+  @UseGuards(AddUserToRequestGuard)
   async findCommentById(
     @Param('id') commentId: string,
     @User('_id') userId: string,
