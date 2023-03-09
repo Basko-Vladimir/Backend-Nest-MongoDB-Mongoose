@@ -52,7 +52,10 @@ export class BloggerBlogsController {
     @Query() query: BlogsQueryParamsDto,
     @User() user: UserDocument,
   ): Promise<AllBlogsOutputModel> {
-    return this.queryBlogsRepository.findAllBlogsAsBlogger(query, user._id);
+    return this.queryBlogsRepository.findAllBlogsAsBlogger(
+      query,
+      String(user._id),
+    );
   }
 
   @Post()

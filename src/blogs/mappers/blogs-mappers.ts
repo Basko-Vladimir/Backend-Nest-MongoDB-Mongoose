@@ -24,7 +24,7 @@ export const mapDbBlogToBlogForAdminOutputModel = (
 
   if (blog.blogOwnerInfo) {
     blogOwnerInfo = {
-      userId: String(blog.blogOwnerInfo.ownerId),
+      userId: blog.blogOwnerInfo.ownerId,
       userLogin: blog.blogOwnerInfo.ownerLogin,
     };
   }

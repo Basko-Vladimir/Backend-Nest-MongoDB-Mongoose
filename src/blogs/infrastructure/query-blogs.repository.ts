@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BlogsQueryParamsDto } from '../api/dto/blogs-query-params.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,6 +13,7 @@ import {
   mapDbBlogToBlogForAdminOutputModel,
   mapDbBlogToBlogOutputModel,
 } from '../mappers/blogs-mappers';
+import { UpdateOrFilterModel } from '../../common/types';
 
 interface IBlogsDataByQueryParams {
   blogs: BlogDocument[];
@@ -58,7 +58,7 @@ export class QueryBlogsRepository {
 
   async findAllBlogsAsBlogger(
     queryParams: BlogsQueryParamsDto,
-    userId: Types.ObjectId,
+    userId: string,
   ): Promise<AllBlogsOutputModel> {
     const { blogs, totalCount, pageNumber, pageSize } =
       await this.getBlogsDataByQueryParams(queryParams, userId);
@@ -82,7 +82,7 @@ export class QueryBlogsRepository {
 
   private async getBlogsDataByQueryParams(
     queryParams: BlogsQueryParamsDto,
-    userId?: Types.ObjectId,
+    userId?: string,
   ): Promise<IBlogsDataByQueryParams> {
     const {
       sortBy = BlogSortByField.createdAt,
@@ -93,17 +93,16 @@ export class QueryBlogsRepository {
     } = queryParams;
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
-    const filterItems: object[] = [];
+    const filter: UpdateOrFilterModel = {};
 
     if (searchNameTerm) {
-      filterItems.push({ name: new RegExp(searchNameTerm, 'i') });
+      filter.name = new RegExp(searchNameTerm, 'i');
     }
     if (userId) {
-      filterItems.push({ ['blogOwnerInfo.ownerId']: userId });
+      filter['blogOwnerInfo.ownerId'] = userId;
     }
 
-    const filter = { $or: filterItems };
-    const totalCount = await this.BlogModel.find(filter).countDocuments();
+    const totalCount = await this.BlogModel.countDocuments(filter);
     const blogs = await this.BlogModel.find(filter)
       .skip(skip)
       .limit(pageSize)

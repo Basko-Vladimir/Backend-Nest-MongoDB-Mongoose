@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
 import {
   generateLengthErrorMessage,
   generateRegExpError,
@@ -11,10 +10,10 @@ const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP } = usersConstants;
 @Schema()
 export class BlogOwnerInfo {
   @Prop({
-    type: Types.ObjectId,
+    type: String,
     required: true,
   })
-  ownerId: Types.ObjectId;
+  ownerId: string;
 
   @Prop({
     type: String,

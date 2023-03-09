@@ -96,7 +96,7 @@ export class Blog {
 
   bindBlogWithUser(blog: BlogDocument, user: UserDocument): BlogDocument {
     blog.blogOwnerInfo = {
-      ownerId: user._id,
+      ownerId: String(user._id),
       ownerLogin: user.login,
     };
 

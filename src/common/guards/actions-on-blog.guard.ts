@@ -17,7 +17,7 @@ export class ActionsOnBlogGuard implements CanActivate {
     const user = request.context.user;
     const blog = await this.blogsRepository.findBlogById(blogId || id);
 
-    if (String(blog.blogOwnerInfo?.ownerId) !== String(user._id)) {
+    if (blog.blogOwnerInfo?.ownerId !== String(user._id)) {
       throw new ForbiddenException();
     }
 
