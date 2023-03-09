@@ -40,6 +40,7 @@ import { GetFullPostQuery } from '../application/use-cases/get-full-post.useCase
 import { GetAllFullPostsQuery } from '../application/use-cases/get-all-full-posts.useCase';
 import { GetFullCommentQuery } from '../../comments/application/use-cases/get-full-comment.useCase';
 import { GetAllFullCommentsQuery } from '../../comments/application/use-cases/get-all-full-comments.useCase';
+import { BannedUserGuard } from '../../common/guards/banned-user.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -83,7 +84,7 @@ export class PostsController {
   }
 
   @Get(':id')
-  @UseGuards(AddUserToRequestGuard)
+  @UseGuards(AddUserToRequestGuard, BannedUserGuard)
   async findPostById(
     @Param('id', checkParamIdPipe) postId: string,
     @User('_id') userId: string,
