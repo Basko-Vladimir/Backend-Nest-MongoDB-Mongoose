@@ -56,15 +56,16 @@ export class QueryCommentsRepository {
 
   async findNotBannedUserCommentById(
     commentId: string,
-    userId: string,
   ): Promise<ICommentOutputModel> {
-    const user: UserDocument = await this.UserModel.findById(userId);
-
-    if (!user || user.banInfo.isBanned) throw new NotFoundException();
-
     const targetComment = await this.CommentModel.findById(commentId);
 
     if (!targetComment) throw new NotFoundException();
+
+    const user: UserDocument = await this.UserModel.findById(
+      String(targetComment.userId),
+    );
+
+    if (!user || user.banInfo.isBanned) throw new NotFoundException();
 
     return mapDbCommentToCommentOutputModel(targetComment);
   }

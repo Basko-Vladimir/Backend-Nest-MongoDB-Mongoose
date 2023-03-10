@@ -43,7 +43,6 @@ export class CommentsController {
     const commentOutputModel =
       await this.queryCommentsRepository.findNotBannedUserCommentById(
         commentId,
-        userId,
       );
 
     return this.queryBus.execute(
