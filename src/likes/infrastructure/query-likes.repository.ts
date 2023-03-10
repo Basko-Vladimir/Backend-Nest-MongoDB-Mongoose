@@ -45,21 +45,25 @@ export class QueryLikesRepository {
   async getExtendedLikesInfo(
     userId: string | null,
     postId: string,
+    notBannedUsersFilter: UpdateOrFilterModel[],
   ): Promise<ExtendedLikesInfoOutputModel> {
     const likesCount = await this.LikeModel.countDocuments({
       postId,
       commentId: null,
       status: LikeStatus.LIKE,
+      $or: notBannedUsersFilter,
     });
     const dislikesCount = await this.LikeModel.countDocuments({
       postId,
       commentId: null,
       status: LikeStatus.DISLIKE,
+      $or: notBannedUsersFilter,
     });
     const newestLikes = await this.LikeModel.find({
       commentId: null,
       postId,
       status: LikeStatus.LIKE,
+      $or: notBannedUsersFilter,
     })
       .sort('-updatedAt')
       .limit(3);

@@ -4,7 +4,7 @@ import {
   IFullCommentOutputModel,
 } from '../../api/dto/comments-output-models.dto';
 import { QueryLikesRepository } from '../../../likes/infrastructure/query-likes.repository';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { UsersService } from '../../../users/application/users.service';
 
 export class GetFullCommentQuery {
   constructor(public comment: ICommentOutputModel, public userId: string) {}
@@ -16,18 +16,13 @@ export class GetFullCommentUseCase
 {
   constructor(
     private queryLikesRepository: QueryLikesRepository,
-    private usersRepository: UsersRepository,
+    private usersService: UsersService,
   ) {}
 
   async execute(query: GetFullCommentQuery): Promise<IFullCommentOutputModel> {
     const { comment, userId } = query;
-    const notBannedUsers = await this.usersRepository.findManyUserByFilter({
-      ['banInfo.isBanned']: false,
-    });
-    const notBannedUsersFilter = notBannedUsers.map((user) => {
-      return { userId: String(user._id) };
-    });
-
+    const notBannedUsersFilter =
+      await this.usersService.getNotBannedUsersFilter();
     const likesInfo = await this.queryLikesRepository.getLikesInfo(
       userId,
       comment.id,
