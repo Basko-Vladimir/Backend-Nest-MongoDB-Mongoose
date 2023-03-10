@@ -22,6 +22,12 @@ export class UsersRepository {
     return this.UserModel.findOne({ $or: filter });
   }
 
+  async findManyUserByFilter(
+    filters: UpdateOrFilterModel,
+  ): Promise<UserDocument[]> {
+    return this.UserModel.find(filters);
+  }
+
   async saveUser(user: UserDocument): Promise<UserDocument> {
     return user.save();
   }

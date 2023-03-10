@@ -7,6 +7,7 @@ import {
 } from '../dto/likes-output-models.dto';
 import { LikeStatus } from '../../common/enums';
 import { mapDbLikeToLikeInfoOutputModel } from '../mappers/likes-mapper';
+import { UpdateOrFilterModel } from '../../common/types';
 
 @Injectable()
 export class QueryLikesRepository {
@@ -15,14 +16,17 @@ export class QueryLikesRepository {
   async getLikesInfo(
     userId: string | null,
     commentId: string,
+    notBannedUsersFilter: UpdateOrFilterModel[],
   ): Promise<LikesInfoOutputModel> {
     const likesCount = await this.LikeModel.countDocuments({
       commentId,
       status: LikeStatus.LIKE,
+      $or: notBannedUsersFilter,
     });
     const dislikesCount = await this.LikeModel.countDocuments({
       commentId,
       status: LikeStatus.DISLIKE,
+      $or: notBannedUsersFilter,
     });
     let myStatus = LikeStatus.NONE;
 
