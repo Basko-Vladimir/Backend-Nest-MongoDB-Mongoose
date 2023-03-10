@@ -41,7 +41,10 @@ export class CommentsController {
   ): Promise<IFullCommentOutputModel> {
     userId = userId ? String(userId) : null;
     const commentOutputModel =
-      await this.queryCommentsRepository.findCommentById(commentId);
+      await this.queryCommentsRepository.findNotBannedUserCommentById(
+        commentId,
+        userId,
+      );
 
     return this.queryBus.execute(
       new GetFullCommentQuery(commentOutputModel, userId),
