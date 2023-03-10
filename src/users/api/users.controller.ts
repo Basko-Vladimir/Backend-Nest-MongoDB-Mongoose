@@ -12,7 +12,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { mapDbUserToUserOutputModel } from '../mappers/users-mappers';
 import { UsersQueryParamsDto } from './dto/users-query-params.dto';
 import {
   AllUsersOutputModel,
@@ -51,7 +50,7 @@ export class UsersController {
       new CreateUserCommand(createUserDto),
     );
 
-    return mapDbUserToUserOutputModel(savedUser);
+    return this.queryUsersRepository.findUserById(String(savedUser._id));
   }
 
   @Delete(':id')

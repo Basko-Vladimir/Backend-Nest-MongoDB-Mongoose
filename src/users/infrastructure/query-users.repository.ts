@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserModelType } from '../schemas/user.schema';
 import { countSkipValue, setBanFilter, setSortValue } from '../../common/utils';
 import { UsersQueryParamsDto } from '../api/dto/users-query-params.dto';
 import { mapDbUserToUserOutputModel } from '../mappers/users-mappers';
-import { AllUsersOutputModel } from '../api/dto/users-output-models.dto';
+import {
+  AllUsersOutputModel,
+  IUserOutputModel,
+} from '../api/dto/users-output-models.dto';
 import { BanStatus, SortDirection, UserSortByField } from '../../common/enums';
 
 @Injectable()
@@ -48,5 +51,13 @@ export class QueryUsersRepository {
       totalCount,
       items: users.map(mapDbUserToUserOutputModel),
     };
+  }
+
+  async findUserById(userId: string): Promise<IUserOutputModel> {
+    const targetUser = await this.UserModel.findById(userId);
+
+    if (!targetUser) throw new NotFoundException();
+
+    return mapDbUserToUserOutputModel(targetUser);
   }
 }
