@@ -14,10 +14,8 @@ export class UpdateClientRequestUseCase
 
   async execute(command: UpdateClientRequestCommand): Promise<void> {
     const { clientRequest } = command;
-    const updatedClientRequest =
-      clientRequest.updateClientRequest(clientRequest);
-    await this.clientsRequestsRepository.saveClientRequest(
-      updatedClientRequest,
-    );
+
+    clientRequest.updateClientRequest();
+    await this.clientsRequestsRepository.saveClientRequest(clientRequest);
   }
 }

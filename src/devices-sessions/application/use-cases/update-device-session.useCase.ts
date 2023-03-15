@@ -14,13 +14,8 @@ export class UpdateDeviceSessionUseCase
 
   async execute(command: UpdateDeviceSessionCommand): Promise<void> {
     const { session, issuedAt } = command;
-    const updatedDeviceSession = await session.updateDeviceSessionData(
-      issuedAt,
-      session,
-    );
 
-    await this.devicesSessionsRepository.saveDeviceSession(
-      updatedDeviceSession,
-    );
+    session.updateDeviceSessionData(issuedAt);
+    await this.devicesSessionsRepository.saveDeviceSession(session);
   }
 }

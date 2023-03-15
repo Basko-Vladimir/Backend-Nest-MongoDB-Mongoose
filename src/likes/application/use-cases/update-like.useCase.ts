@@ -13,7 +13,8 @@ export class UpdateLikeUseCase implements ICommandHandler<UpdateLikeCommand> {
 
   async execute(command: UpdateLikeCommand): Promise<void> {
     const { like, status } = command;
-    const updatedLike = like.updateLikeStatus(status, like);
-    await this.likesRepository.saveLike(updatedLike);
+
+    like.updateLikeStatus(status);
+    await this.likesRepository.saveLike(like);
   }
 }

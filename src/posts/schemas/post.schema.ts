@@ -78,18 +78,13 @@ export class Post {
   @Prop()
   updatedAt: Date;
 
-  updatePost(
-    updatingData: UpdatePostDto,
-    currentPost: PostDocument,
-  ): PostDocument {
+  updatePost(updatingData: UpdatePostDto): void {
     const { title, content, shortDescription, blogId } = updatingData;
 
-    currentPost.title = title;
-    currentPost.content = content;
-    currentPost.shortDescription = shortDescription;
-    currentPost.blogId = new Types.ObjectId(blogId);
-
-    return currentPost;
+    this.title = title;
+    this.content = content;
+    this.shortDescription = shortDescription;
+    this.blogId = new Types.ObjectId(blogId);
   }
 
   static createPostEntity(

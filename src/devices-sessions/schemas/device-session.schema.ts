@@ -55,13 +55,8 @@ export class DeviceSession {
     return new DeviceSessionModel(deviceSessionData);
   }
 
-  updateDeviceSessionData(
-    issuedAt: number,
-    currentDeviceSession: DeviceSessionDocument,
-  ): DeviceSessionDocument {
-    currentDeviceSession.issuedAt = issuedAt;
-
-    return currentDeviceSession;
+  updateDeviceSessionData(issuedAt: number): void {
+    this.issuedAt = issuedAt;
   }
 }
 

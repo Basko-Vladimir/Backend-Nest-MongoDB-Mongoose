@@ -54,10 +54,8 @@ export class Comment {
   @Prop()
   updatedAt: Date;
 
-  updateComment(content: string, comment: CommentDocument): CommentDocument {
-    comment.content = content;
-
-    return comment;
+  updateComment(content: string): void {
+    this.content = content;
   }
 
   static createCommentEntity(

@@ -15,8 +15,8 @@ export class BindBlogWithUserUseCase
 
   async execute(command: BindBlogWithUserCommand): Promise<void> {
     const { blog, user } = command;
-    const updatedBlog = blog.bindBlogWithUser(blog, user);
 
-    await this.blogsRepository.saveBlog(updatedBlog);
+    blog.bindBlogWithUser(user);
+    await this.blogsRepository.saveBlog(blog);
   }
 }

@@ -81,26 +81,19 @@ export class Blog {
   @Prop()
   updatedAt: Date;
 
-  updateBlog(
-    updatingData: UpdateBlogDto,
-    currentBlog: BlogDocument,
-  ): BlogDocument {
+  updateBlog(updatingData: UpdateBlogDto): void {
     const { name, websiteUrl, description } = updatingData;
 
-    currentBlog.name = name;
-    currentBlog.websiteUrl = websiteUrl;
-    currentBlog.description = description;
-
-    return currentBlog;
+    this.name = name;
+    this.websiteUrl = websiteUrl;
+    this.description = description;
   }
 
-  bindBlogWithUser(blog: BlogDocument, user: UserDocument): BlogDocument {
-    blog.blogOwnerInfo = {
+  bindBlogWithUser(user: UserDocument): void {
+    this.blogOwnerInfo = {
       ownerId: String(user._id),
       ownerLogin: user.login,
     };
-
-    return blog;
   }
 
   static createBlogEntity(

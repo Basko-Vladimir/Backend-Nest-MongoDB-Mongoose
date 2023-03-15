@@ -37,12 +37,8 @@ export class ClientRequest {
     });
   }
 
-  updateClientRequest(
-    currentClientRequest: ClientRequestDocument,
-  ): ClientRequestDocument {
-    currentClientRequest.createTimeStamp = Date.now();
-
-    return currentClientRequest;
+  updateClientRequest(): void {
+    this.createTimeStamp = Date.now();
   }
 }
 

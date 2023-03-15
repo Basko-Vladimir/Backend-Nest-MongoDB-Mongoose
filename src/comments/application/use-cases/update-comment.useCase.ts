@@ -20,11 +20,8 @@ export class UpdateCommentUseCase
     const targetComment = await this.commentsRepository.findCommentById(
       commentId,
     );
-    const updatedComment = await targetComment.updateComment(
-      updateCommentDto.content,
-      targetComment,
-    );
 
-    await this.commentsRepository.saveComment(updatedComment);
+    targetComment.updateComment(updateCommentDto.content);
+    await this.commentsRepository.saveComment(targetComment);
   }
 }

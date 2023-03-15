@@ -52,10 +52,8 @@ export class Like {
     return new LikeModel({ userId, userLogin, postId, status, commentId });
   }
 
-  updateLikeStatus(status: LikeStatus, like: LikeDocument): LikeDocument {
-    like.status = status;
-
-    return like;
+  updateLikeStatus(status: LikeStatus): void {
+    this.status = status;
   }
 }
 
