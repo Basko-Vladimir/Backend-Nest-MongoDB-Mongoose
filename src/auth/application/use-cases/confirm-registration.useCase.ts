@@ -14,8 +14,8 @@ export class ConfirmRegistrationUseCase
 
   async execute(command: ConfirmRegistrationCommand): Promise<void> {
     const { user } = command;
-    const confirmedUser = user.confirmUserRegistration(user);
 
-    await this.usersRepository.saveUser(confirmedUser);
+    user.confirmUserRegistration();
+    await this.usersRepository.saveUser(user);
   }
 }

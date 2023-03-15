@@ -19,11 +19,12 @@ export class RecoverPasswordUseCase
   async execute(command: RecoverPasswordCommand): Promise<void> {
     const { email } = command.emailDto;
     const targetUser = await this.usersRepository.findUserByFilter({ email });
-    const updatedUser = targetUser.updatePasswordRecoveryCode(targetUser);
-    const savedUser = await this.usersRepository.saveUser(updatedUser);
 
+    targetUser.updatePasswordRecoveryCode();
+
+    const savedUser = await this.usersRepository.saveUser(targetUser);
     try {
-      return this.emailManager.recoverPassword(
+      return this.emailManager.formRecoverPasswordEmail(
         email,
         savedUser.passwordRecoveryCode,
       );

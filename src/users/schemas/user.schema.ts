@@ -76,29 +76,22 @@ export class User {
   @Prop()
   updatedAt: Date;
 
-  confirmUserRegistration(user: UserDocument): UserDocument {
-    user.emailConfirmation.isConfirmed = true;
-    return user;
+  confirmUserRegistration(): void {
+    this.emailConfirmation.isConfirmed = true;
   }
 
-  updateConfirmationCode(user: UserDocument): UserDocument {
-    user.emailConfirmation.confirmationCode = uuidv4();
-    user.emailConfirmation.expirationDate = add(new Date(), { hours: 1 });
-
-    return user;
+  updateConfirmationCode(): void {
+    this.emailConfirmation.confirmationCode = uuidv4();
+    this.emailConfirmation.expirationDate = add(new Date(), { hours: 1 });
   }
 
-  updatePasswordRecoveryCode(user: UserDocument): UserDocument {
-    user.passwordRecoveryCode = uuidv4();
-
-    return user;
+  updatePasswordRecoveryCode(): void {
+    this.passwordRecoveryCode = uuidv4();
   }
 
-  updatePassword(user: UserDocument, hash, code): UserDocument {
-    user.passwordHash = hash;
-    user.passwordRecoveryCode = code;
-
-    return user;
+  updatePassword(hash, code): void {
+    this.passwordHash = hash;
+    this.passwordRecoveryCode = code;
   }
 
   updateUserBanStatus(updateUserBanStatusDto: UpdateUserBanStatusDto): void {

@@ -22,7 +22,7 @@ export class ChangePasswordUseCase
     const { newPassword, recoveryCode } = setNewPasswordDto;
     const newHash = await AuthService.generatePasswordHash(newPassword);
 
-    const updatedUser = await user.updatePassword(user, newHash, recoveryCode);
-    await this.usersRepository.saveUser(updatedUser);
+    user.updatePassword(newHash, recoveryCode);
+    await this.usersRepository.saveUser(user);
   }
 }

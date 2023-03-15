@@ -37,7 +37,7 @@ export class RegisterUserUseCase
     const savedUserId = String(savedUser._id);
 
     try {
-      await this.emailManager.sendRegistrationEmail(createdUser);
+      await this.emailManager.formRegistrationEmail(createdUser);
       return savedUserId;
     } catch (error) {
       await this.usersRepository.deleteUser(savedUserId);

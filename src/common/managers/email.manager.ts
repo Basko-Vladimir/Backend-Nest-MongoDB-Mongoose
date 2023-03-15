@@ -7,7 +7,7 @@ import { UserDocument } from '../../users/schemas/user.schema';
 export class EmailManager {
   constructor(protected emailAdapter: EmailAdapter) {}
 
-  async sendRegistrationEmail(userData: UserDocument): Promise<void> {
+  async formRegistrationEmail(userData: UserDocument): Promise<void> {
     const messageInfo: IEmailInfoModel = {
       from: 'Test Backend Server <dev.test.vladimir@gmail.com>',
       to: userData.email,
@@ -23,7 +23,10 @@ export class EmailManager {
     return this.emailAdapter.sendEmail(messageInfo);
   }
 
-  async recoverPassword(email: string, recoveryCode: string): Promise<void> {
+  async formRecoverPasswordEmail(
+    email: string,
+    recoveryCode: string,
+  ): Promise<void> {
     const messageInfo: IEmailInfoModel = {
       from: 'Test Backend Server <dev.test.vladimir@gmail.com>',
       to: email,

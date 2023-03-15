@@ -18,9 +18,11 @@ export class ResendRegistrationEmailUseCase
 
   async execute(command: ResendRegistrationEmailCommand): Promise<void> {
     const { user } = command;
-    const changedUser = user.updateConfirmationCode(user);
-    const savedUser = await this.usersRepository.saveUser(changedUser);
 
-    await this.emailManager.sendRegistrationEmail(savedUser);
+    user.updateConfirmationCode();
+
+    const savedUser = await this.usersRepository.saveUser(user);
+
+    await this.emailManager.formRegistrationEmail(savedUser);
   }
 }
