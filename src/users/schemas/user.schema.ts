@@ -101,17 +101,12 @@ export class User {
     return user;
   }
 
-  updateUserBanStatus(
-    user: UserDocument,
-    updateUserBanStatusDto: UpdateUserBanStatusDto,
-  ): UserDocument {
+  updateUserBanStatus(updateUserBanStatusDto: UpdateUserBanStatusDto): void {
     const { isBanned, banReason } = updateUserBanStatusDto;
 
-    user.banInfo.isBanned = isBanned;
-    user.banInfo.banReason = isBanned ? banReason : null;
-    user.banInfo.banDate = isBanned ? new Date() : null;
-
-    return user;
+    this.banInfo.isBanned = isBanned;
+    this.banInfo.banReason = isBanned ? banReason : null;
+    this.banInfo.banDate = isBanned ? new Date() : null;
   }
 
   static async createUserEntity(

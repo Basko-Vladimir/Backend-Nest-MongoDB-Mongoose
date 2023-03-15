@@ -25,11 +25,7 @@ export class UpdateUserBanStatusUseCase
       throw new NotFoundException();
     }
 
-    const updatedUser = await targetUser.updateUserBanStatus(
-      targetUser,
-      updateUserBanStatusDto,
-    );
-
-    await this.usersRepository.saveUser(updatedUser);
+    await targetUser.updateUserBanStatus(updateUserBanStatusDto);
+    await this.usersRepository.saveUser(targetUser);
   }
 }
