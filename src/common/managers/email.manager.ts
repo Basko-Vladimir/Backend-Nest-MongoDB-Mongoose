@@ -5,7 +5,7 @@ import { UserDocument } from '../../users/schemas/user.schema';
 
 @Injectable()
 export class EmailManager {
-  constructor(protected emailAdapter: EmailAdapter) {}
+  constructor(private readonly emailAdapter: EmailAdapter) {}
 
   async formRegistrationEmail(userData: UserDocument): Promise<void> {
     const messageInfo: IEmailInfoModel = {

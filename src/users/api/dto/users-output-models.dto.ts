@@ -1,6 +1,6 @@
 import { AllEntitiesOutputModel } from '../../../common/types';
 
-interface IBanInfo {
+export interface IBanInfo {
   isBanned: boolean;
   banDate: string;
   banReason: string;

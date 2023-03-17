@@ -4,6 +4,9 @@ import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/api/dto/create-post.dto';
 import { IBlogOutputModel } from '../src/blogs/api/dto/blogs-output-models.dto';
 import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
+import { IUserOutputModel } from '../src/users/api/dto/users-output-models.dto';
+import { CreateUserDto } from '../src/users/api/dto/create-user.dto';
+import { EmailAdapter } from '../src/common/adapters/email.adapter';
 
 interface Exception {
   statusCode: number;
@@ -62,6 +65,17 @@ export const users = {
       { message: expect.any(String), field: 'email' },
     ],
   },
+  getCreatedBlogItem: (createUserDto: CreateUserDto): IUserOutputModel => ({
+    id: expect.any(String),
+    email: createUserDto.email,
+    login: createUserDto.login,
+    createdAt: expect.any(String),
+    banInfo: {
+      isBanned: false,
+      banDate: null,
+      banReason: null,
+    },
+  }),
 };
 
 export const blogs = {
@@ -281,3 +295,13 @@ export const defaultResponses = {
     } as O;
   },
 };
+
+export const emailAdapterMock: jest.Mocked<EmailAdapter> = {
+  sendEmail: jest.fn(),
+};
+
+export class EmailManagerMock {
+  formRegistrationEmail = jest.fn();
+  formRecoverPasswordEmail = jest.fn();
+  emailAdapter = emailAdapterMock;
+}
