@@ -18,7 +18,7 @@ import {
   getPostRequest,
   getPostsRequest,
   updatePostRequest,
-  getPostsByBlogIdRequest,
+  getPostsByBlogIdAsUserRequest,
   clearDataBase,
   deleteBlogRequest,
   loginRequest,
@@ -26,7 +26,7 @@ import {
   getCommentsByPostIdRequest,
   createUserRequest,
   updatePostLikeStatus,
-} from './utils';
+} from './utils/utils';
 import {
   AllPostsOutputModel,
   IFullPostOutputModel,
@@ -143,7 +143,10 @@ describe('Posts', () => {
       >(post2);
       expect(response1.body).toEqual(expectedResult);
 
-      const response2 = await getPostsByBlogIdRequest(app, blog1.id).query({
+      const response2 = await getPostsByBlogIdAsUserRequest(
+        app,
+        blog1.id,
+      ).query({
         sortBy: 'content',
         sortDirection: 'asc',
       });

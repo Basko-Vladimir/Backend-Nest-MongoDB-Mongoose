@@ -9,7 +9,7 @@ import {
   getUsersRequest,
   createBlogsRequest,
   deleteUserRequest,
-} from './utils';
+} from './utils/utils';
 
 describe('Users', () => {
   jest.setTimeout(60 * 1000);

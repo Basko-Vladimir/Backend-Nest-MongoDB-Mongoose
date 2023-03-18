@@ -15,12 +15,12 @@ import {
   createBlogsRequest,
   createPostByBlogIdRequest,
   deleteBlogRequest,
-  getBlogRequest,
-  getBlogsRequest,
-  getPostsByBlogIdRequest,
+  getBlogAsUserRequest,
+  getBlogsAsRequest,
+  getPostsByBlogIdAsUserRequest,
   updateBlogRequest,
   clearDataBase,
-} from './utils';
+} from './utils/utils';
 import {
   AllPostsOutputModel,
   IPostOutputModel,
@@ -103,14 +103,14 @@ describe('Blogs', () => {
       );
       blog3 = response3.body;
 
-      const response4 = await getBlogsRequest(app);
+      const response4 = await getBlogsAsRequest(app);
       expect(response4.body.items).toHaveLength(3);
     });
   });
 
   describe('/(GET ALL BLOGS) get all blogs', () => {
     it('with query Params', async () => {
-      const response1 = await getBlogsRequest(app).query({
+      const response1 = await getBlogsAsRequest(app).query({
         pageNumber: 2,
         pageSize: 1,
       });
@@ -120,14 +120,14 @@ describe('Blogs', () => {
       >(blog2);
       expect(response1.body).toEqual(expectedResult);
 
-      const response2 = await getBlogsRequest(app).query({
+      const response2 = await getBlogsAsRequest(app).query({
         searchNameTerm: '2',
       });
       expect(response2.body.items).toHaveLength(1);
       expect(response2.body.totalCount).toBe(1);
       expect(response2.body.items[0].id).toBe(blog2.id);
 
-      const response3 = await getBlogsRequest(app).query({
+      const response3 = await getBlogsAsRequest(app).query({
         sortBy: 'name',
         sortDirection: 'asc',
       });
@@ -140,7 +140,7 @@ describe('Blogs', () => {
     it('by default without created blogs', async () => {
       await clearDataBase(app);
 
-      const response = await getBlogsRequest(app);
+      const response = await getBlogsAsRequest(app);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(defaultGetAllResponse);
     });
@@ -148,7 +148,7 @@ describe('Blogs', () => {
 
   describe('/(GET ONE BLOG) get one blog', () => {
     it('by invalid id', async () => {
-      const response = await getBlogRequest(app, INVALID_ID);
+      const response = await getBlogAsUserRequest(app, INVALID_ID);
       expect(response.status).toBe(404);
       expect(response.body).toEqual(notFoundException);
     });
@@ -160,7 +160,7 @@ describe('Blogs', () => {
       expect(response1.status).toBe(201);
       blog1 = response1.body;
 
-      const response = await getBlogRequest(app, blog1.id);
+      const response = await getBlogAsUserRequest(app, blog1.id);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(blog1);
     });
@@ -203,7 +203,7 @@ describe('Blogs', () => {
         .send(correctUpdateBlogDto);
       expect(response.status).toBe(204);
 
-      const response2 = await getBlogRequest(app, blog1.id);
+      const response2 = await getBlogAsUserRequest(app, blog1.id);
       expect(response2.body).toEqual({
         id: expect.any(String),
         createdAt: expect.any(String),
@@ -240,7 +240,7 @@ describe('Blogs', () => {
       );
       expect(response.status).toBe(204);
 
-      const response2 = await getBlogRequest(app, blog1.id);
+      const response2 = await getBlogAsUserRequest(app, blog1.id);
       expect(response2.status).toBe(404);
       expect(response2.body).toEqual(notFoundException);
     });
@@ -306,13 +306,13 @@ describe('Blogs', () => {
 
   describe('/(GET ALL POSTS) get all posts', () => {
     it('by invalid blogId', async () => {
-      const response = await getPostsByBlogIdRequest(app, INVALID_ID);
+      const response = await getPostsByBlogIdAsUserRequest(app, INVALID_ID);
       expect(response.status).toBe(404);
       expect(response.body).toEqual(notFoundException);
     });
 
     it('by valid blogId without query params', async () => {
-      const response = await getPostsByBlogIdRequest(app, blog1.id);
+      const response = await getPostsByBlogIdAsUserRequest(app, blog1.id);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         page: 1,
@@ -324,7 +324,10 @@ describe('Blogs', () => {
     });
 
     it('by valid blogId with query params', async () => {
-      const response1 = await getPostsByBlogIdRequest(app, blog1.id).query({
+      const response1 = await getPostsByBlogIdAsUserRequest(
+        app,
+        blog1.id,
+      ).query({
         pageNumber: 2,
         pageSize: 1,
       });
@@ -338,7 +341,10 @@ describe('Blogs', () => {
         totalCount: 2,
       });
 
-      const response2 = await getPostsByBlogIdRequest(app, blog1.id).query({
+      const response2 = await getPostsByBlogIdAsUserRequest(
+        app,
+        blog1.id,
+      ).query({
         sortBy: 'title',
         sortDirection: 'asc',
       });

@@ -21,7 +21,7 @@ import {
   updateCommentLikeStatus,
   updateCommentRequest,
   updatePostLikeStatus,
-} from './utils';
+} from './utils/utils';
 import { LikeStatus } from '../src/common/enums';
 import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 
