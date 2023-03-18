@@ -3,10 +3,7 @@ import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from '../src/users/api/dto/users-output-models.dto';
-import {
-  adminUsersRequests,
-  bloggerUsersRequests,
-} from './utils/users-requests';
+import { adminUsersRequests } from './utils/users-requests';
 import { bloggerBlogsRequests } from './utils/blogs-requests';
 import { initTestApp } from './utils/common';
 
@@ -30,10 +27,6 @@ describe('USERS', () => {
     deleteUserRequest,
     updateUserBanStatusRequest,
   } = adminUsersRequests;
-  const {
-    getAllBannedUsersForBlogRequest,
-    updateUserBanStatusForBlogsRequest,
-  } = bloggerUsersRequests;
   const { createBlogsRequest } = bloggerBlogsRequests;
   let app;
   let user1, user2, user3;
