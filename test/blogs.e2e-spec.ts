@@ -1,5 +1,13 @@
-import { auth, blogs, posts, errors, INVALID_ID, users } from './mockData';
-import { initTestApp } from './utils/common';
+import {
+  auth,
+  blogs,
+  posts,
+  errors,
+  INVALID_ID,
+  users,
+  defaultResponses,
+} from './mockData';
+import { clearDataBase, initTestApp } from './utils/common';
 import {
   adminBlogsRequests,
   bloggerBlogsRequests,
@@ -8,6 +16,15 @@ import {
 import { adminUsersRequests } from './utils/users-requests';
 import { authRequests } from './utils/auth-requests';
 import { publicPostsRequests } from './utils/posts-requests';
+import {
+  AllBlogsOutputModel,
+  IBlogOutputModel,
+} from '../src/blogs/api/dto/blogs-output-models.dto';
+import {
+  AllPostsOutputModel,
+  IFullPostOutputModel,
+  IPostOutputModel,
+} from '../src/posts/api/dto/posts-output-models.dto';
 
 describe('BLOGS', () => {
   jest.setTimeout(20 * 1000);
@@ -27,6 +44,7 @@ describe('BLOGS', () => {
     getPostItem,
   } = posts;
   const { notFoundExceptionMock } = errors;
+  const { getAllItemsWithPage2Size1 } = defaultResponses;
   const { correctBasicCredentials, incorrectAccessToken, getBearerAuthHeader } =
     auth;
   const { createUserRequest } = adminUsersRequests;
@@ -301,13 +319,13 @@ describe('BLOGS', () => {
 
       it('incorrect auth credentials or without them', async () => {
         const response2 = await createPostByBlogIdRequest(app, blog1.id).send(
-          correctCreatePostDtos,
+          correctCreatePostDtos[0],
         );
         expect(response2.status).toBe(401);
 
         const response3 = await createPostByBlogIdRequest(app, blog1.id)
           .set(getBearerAuthHeader(incorrectAccessToken))
-          .send(correctCreatePostDtos);
+          .send(correctCreatePostDtos[0]);
         expect(response3.status).toBe(401);
       });
 
@@ -471,120 +489,156 @@ describe('BLOGS', () => {
     });
   });
 
+  describe('Public User API', () => {
+    beforeAll(async () => {
+      await clearDataBase(app);
+
+      const response1 = await createUserRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateUserDtos[0]);
+      user1 = response1.body;
+      user2 = null;
+
+      const response2 = await loginRequest(app).send({
+        loginOrEmail: correctCreateUserDtos[0].login,
+        password: correctCreateUserDtos[0].password,
+      });
+      user1Token = `Bearer ${response2.body.accessToken}`;
+      user2Token = null;
+
+      const createdBlogs = [blog1, blog2, blog3];
+      blog4 = null;
+
+      for (let i = 0; i <= correctCreateBlogDtos.length; i++) {
+        const res = await createBlogsRequest(app)
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctCreateBlogDtos[i]);
+        createdBlogs[i] = res.body;
+      }
+
+      [blog1, blog2, blog3] = createdBlogs;
+    });
+
+    describe('/(GET ALL BLOGS) get all blogs as public user', () => {
+      it('without query params', async () => {
+        const response = await getBlogsAsUserRequest(app);
+
+        expect(response.status).toBe(200);
+        expect(response.body.items.length).toBe(3);
+      });
+
+      it('with query Params', async () => {
+        const response1 = await getBlogsAsUserRequest(app).query({
+          pageNumber: 2,
+          pageSize: 1,
+        });
+        const expectedResult = getAllItemsWithPage2Size1<
+          IBlogOutputModel,
+          AllBlogsOutputModel
+        >(blog2);
+        expect(response1.body).toEqual(expectedResult);
+
+        const response2 = await getBlogsAsUserRequest(app).query({
+          searchNameTerm: '2',
+        });
+        expect(response2.body.items).toHaveLength(1);
+        expect(response2.body.totalCount).toBe(1);
+        expect(response2.body.items[0].id).toBe(blog2.id);
+
+        const response3 = await getBlogsAsUserRequest(app).query({
+          sortBy: 'name',
+          sortDirection: 'asc',
+        });
+        expect(response3.body.items[0].id).toBe(blog1.id);
+        expect(response3.body.items[response3.body.items.length - 1].id).toBe(
+          blog3.id,
+        );
+      });
+    });
+
+    describe('/(GET ONE BLOG) get one blog as public user', () => {
+      it('by invalid id', async () => {
+        const response = await getBlogAsUserRequest(app, INVALID_ID);
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual(notFoundExceptionMock);
+      });
+
+      it('by valid id', async () => {
+        const response = await getBlogAsUserRequest(app, blog1.id);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(blog1);
+      });
+    });
+
+    describe('/(GET ALL POSTS) get all posts', () => {
+      beforeAll(async () => {
+        const res1 = await createPostByBlogIdRequest(app, blog1.id)
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctCreatePostDtos[0]);
+        expect(res1.status).toBe(201);
+        post1 = res1.body;
+
+        const res2 = await createPostByBlogIdRequest(app, blog1.id)
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctCreatePostDtos[1]);
+        expect(res2.status).toBe(201);
+        post2 = res2.body;
+      });
+
+      it('by invalid blogId', async () => {
+        const response = await getPostsByBlogIdAsUserRequest(app, INVALID_ID);
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual(notFoundExceptionMock);
+      });
+
+      it('by valid blogId without query params', async () => {
+        const response = await getPostsByBlogIdAsUserRequest(app, blog1.id);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+          page: 1,
+          pageSize: 10,
+          pagesCount: 1,
+          totalCount: 2,
+          items: [post2, post1],
+        });
+      });
+
+      it('by valid blogId with query params', async () => {
+        const response1 = await getPostsByBlogIdAsUserRequest(
+          app,
+          blog1.id,
+        ).query({
+          pageNumber: 2,
+          pageSize: 1,
+        });
+        const expectedResult = getAllItemsWithPage2Size1<
+          IFullPostOutputModel,
+          AllPostsOutputModel
+        >(post1);
+        expect(response1.body).toEqual({
+          ...expectedResult,
+          pagesCount: 2,
+          totalCount: 2,
+        });
+
+        const response2 = await getPostsByBlogIdAsUserRequest(
+          app,
+          blog1.id,
+        ).query({
+          sortBy: 'title',
+          sortDirection: 'asc',
+        });
+        expect(response2.body.items[0].id).toBe(post1.id);
+        expect(response2.body.items[response2.body.items.length - 1].id).toBe(
+          post2.id,
+        );
+      });
+    });
+  });
+
   // describe('Admin API', () => {
   //TODO: bind user with blog
   //// });
-
-  // describe('Public user API', () => {
-  //   describe('/(GET ALL BLOGS) get all blogs as public user', () => {
-  //     it('with query Params', async () => {
-  //       const response1 = await getBlogsAsUserRequest(app).query({
-  //         pageNumber: 2,
-  //         pageSize: 1,
-  //       });
-  //       const expectedResult = getAllItemsWithPage2Size1<
-  //         IBlogOutputModel,
-  //         AllBlogsOutputModel
-  //       >(blog2);
-  //       expect(response1.body).toEqual(expectedResult);
-  //
-  //       const response2 = await getBlogsAsUserRequest(app).query({
-  //         searchNameTerm: '2',
-  //       });
-  //       expect(response2.body.items).toHaveLength(1);
-  //       expect(response2.body.totalCount).toBe(1);
-  //       expect(response2.body.items[0].id).toBe(blog2.id);
-  //
-  //       const response3 = await getBlogsAsUserRequest(app).query({
-  //         sortBy: 'name',
-  //         sortDirection: 'asc',
-  //       });
-  //       expect(response3.body.items[0].id).toBe(blog1.id);
-  //       expect(response3.body.items[response3.body.items.length - 1].id).toBe(
-  //         blog3.id,
-  //       );
-  //     });
-  //
-  //     it('by default without created blogs', async () => {
-  //       await clearDataBase(app);
-  //
-  //       const response = await getBlogsAsUserRequest(app);
-  //       expect(response.status).toBe(200);
-  //       expect(response.body).toEqual(defaultGetAllResponse);
-  //     });
-  //   });
-  //
-  //   describe('/(GET ONE BLOG) get one blog', () => {
-  //     it('by invalid id', async () => {
-  //       const response = await getBlogAsUserRequest(app, INVALID_ID);
-  //       expect(response.status).toBe(404);
-  //       expect(response.body).toEqual(notFoundException);
-  //     });
-  //
-  //     it('by valid id', async () => {
-  //       const response1 = await createBlogsRequest(app)
-  //         .set(correctBasicCredentials)
-  //         .send(correctCreateBlogDtos[0]);
-  //       expect(response1.status).toBe(201);
-  //       blog1 = response1.body;
-  //
-  //       const response = await getBlogAsUserRequest(app, blog1.id);
-  //       expect(response.status).toBe(200);
-  //       expect(response.body).toEqual(blog1);
-  //     });
-  //   });
-  //
-  //   describe('/(GET ALL POSTS) get all posts', () => {
-  //     it('by invalid blogId', async () => {
-  //       const response = await getPostsByBlogIdAsUserRequest(app, INVALID_ID);
-  //       expect(response.status).toBe(404);
-  //       expect(response.body).toEqual(notFoundException);
-  //     });
-  //
-  //     it('by valid blogId without query params', async () => {
-  //       const response = await getPostsByBlogIdAsUserRequest(app, blog1.id);
-  //       expect(response.status).toBe(200);
-  //       expect(response.body).toEqual({
-  //         page: 1,
-  //         pageSize: 10,
-  //         pagesCount: 1,
-  //         totalCount: 2,
-  //         items: [post2, post1],
-  //       });
-  //     });
-  //
-  //     it('by valid blogId with query params', async () => {
-  //       const response1 = await getPostsByBlogIdAsUserRequest(
-  //         app,
-  //         blog1.id,
-  //       ).query({
-  //         pageNumber: 2,
-  //         pageSize: 1,
-  //       });
-  //       const expectedResult = getAllItemsWithPage2Size1<
-  //         IPostOutputModel,
-  //         AllPostsOutputModel
-  //       >(post1);
-  //       expect(response1.body).toEqual({
-  //         ...expectedResult,
-  //         pagesCount: 2,
-  //         totalCount: 2,
-  //       });
-  //
-  //       const response2 = await getPostsByBlogIdAsUserRequest(
-  //         app,
-  //         blog1.id,
-  //       ).query({
-  //         sortBy: 'title',
-  //         sortDirection: 'asc',
-  //       });
-  //       expect(response2.body.items[0].id).toBe(post1.id);
-  //       expect(response2.body.items[response2.body.items.length - 1].id).toBe(
-  //         post2.id,
-  //       );
-  //     });
-  //   });
-  // });
 
   afterAll(async () => {
     await app.close();
