@@ -40,7 +40,7 @@ export const users = {
       email: 'user3@gmail.com',
     },
   ],
-  incorrectUsersDtos: [
+  incorrectCreateUsersDtos: [
     {},
     {
       login: '',
@@ -58,11 +58,36 @@ export const users = {
       email: 'aaaa@sdsds',
     },
   ],
-  usersBadQueryResponse: {
+  usersBadCreateQueryResponse: {
     errorsMessages: [
       { message: expect.any(String), field: 'login' },
       { message: expect.any(String), field: 'password' },
       { message: expect.any(String), field: 'email' },
+    ],
+  },
+  correctUpdateUserBanStatusDto: {
+    isBanned: true,
+    banReason: 'test ban reason length 20+',
+  },
+  incorrectUpdateUserBanStatusDtos: [
+    {},
+    {
+      isBanned: '',
+      banReason: '',
+    },
+    {
+      isBanned: 5,
+      banReason: '   ',
+    },
+    {
+      isBanned: {},
+      banReason: 'short test reason',
+    },
+  ],
+  usersBadUpdateQueryResponse: {
+    errorsMessages: [
+      { message: expect.any(String), field: 'isBanned' },
+      { message: expect.any(String), field: 'banReason' },
     ],
   },
   getCreatedBlogItem: (createUserDto: CreateUserDto): IUserOutputModel => ({
