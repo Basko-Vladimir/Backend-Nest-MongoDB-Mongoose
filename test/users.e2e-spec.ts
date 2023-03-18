@@ -20,7 +20,7 @@ describe('USERS', () => {
   } = users;
   const { incorrectBasicCredentials, correctBasicCredentials } = auth;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
-  const { notFoundException } = errors;
+  const { notFoundExceptionMock } = errors;
   const {
     createUserRequest,
     getUsersRequest,
@@ -35,7 +35,7 @@ describe('USERS', () => {
     app = await initTestApp();
   });
 
-  describe('ADMIN API', () => {
+  describe('Admin API', () => {
     describe('/(POST USERS) create user as Admin', () => {
       it('with incorrect auth credentials or without them', async () => {
         const response1 = await createUserRequest(app).send(
@@ -156,7 +156,7 @@ describe('USERS', () => {
           .set(correctBasicCredentials)
           .send(correctUpdateUserBanStatusDto);
         expect(response.status).toBe(404);
-        expect(response.body).toEqual(notFoundException);
+        expect(response.body).toEqual(notFoundExceptionMock);
       });
 
       it('correct auth credentials, userId but incorrect input data', async () => {
@@ -208,7 +208,7 @@ describe('USERS', () => {
           correctBasicCredentials,
         );
         expect(response.status).toBe(404);
-        expect(response.body).toEqual(notFoundException);
+        expect(response.body).toEqual(notFoundExceptionMock);
       });
 
       it('correct auth credentials and valid id', async () => {
