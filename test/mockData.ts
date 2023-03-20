@@ -2,7 +2,10 @@ import { CreateBlogDto } from '../src/blogs/api/dto/create-blog.dto';
 import { IFullPostOutputModel } from '../src/posts/api/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/api/dto/create-post.dto';
-import { IBlogOutputModel } from '../src/blogs/api/dto/blogs-output-models.dto';
+import {
+  IBlogForAdminOutputModel,
+  IBlogOutputModel,
+} from '../src/blogs/api/dto/blogs-output-models.dto';
 import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 import { IUserOutputModel } from '../src/users/api/dto/users-output-models.dto';
 import { CreateUserDto } from '../src/users/api/dto/create-user.dto';
@@ -92,7 +95,7 @@ export const users = {
       { message: expect.any(String), field: 'banReason' },
     ],
   },
-  getCreatedBlogItem: (createUserDto: CreateUserDto): IUserOutputModel => ({
+  getCreatedUserItem: (createUserDto: CreateUserDto): IUserOutputModel => ({
     id: expect.any(String),
     email: createUserDto.email,
     login: createUserDto.login,
@@ -155,6 +158,22 @@ export const blogs = {
     websiteUrl: blogDto.websiteUrl,
     isMembership: false,
     createdAt: expect.any(String),
+  }),
+  getBlogItemForAdmin: (
+    blogDto: CreateBlogDto,
+    userLogin: string,
+    // banInfo: IBanInfo,
+  ): IBlogForAdminOutputModel => ({
+    id: expect.any(String),
+    name: blogDto.name,
+    description: blogDto.description,
+    websiteUrl: blogDto.websiteUrl,
+    isMembership: false,
+    createdAt: expect.any(String),
+    blogOwnerInfo: {
+      userId: expect.any(String),
+      userLogin: userLogin,
+    },
   }),
   blogsBadQueryResponse: {
     errorsMessages: [

@@ -72,6 +72,7 @@ export class Blog {
 
   @Prop({
     type: BlogOwnerInfoSchema,
+    default: null,
   })
   blogOwnerInfo: BlogOwnerInfo;
 
@@ -103,10 +104,7 @@ export class Blog {
   ): BlogDocument {
     return new BlogModel({
       ...blogData,
-      blogOwnerInfo: {
-        ownerId: user._id,
-        ownerLogin: user.login,
-      },
+      blogOwnerInfo: null,
     });
   }
 }

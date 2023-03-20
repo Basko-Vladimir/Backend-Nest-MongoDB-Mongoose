@@ -7,7 +7,7 @@ import {
   users,
   defaultResponses,
 } from './mockData';
-import { clearDataBase, initTestApp } from './utils/common';
+import { initTestApp } from './utils/common';
 import {
   adminBlogsRequests,
   bloggerBlogsRequests,
@@ -18,12 +18,12 @@ import { authRequests } from './utils/auth-requests';
 import { publicPostsRequests } from './utils/posts-requests';
 import {
   AllBlogsOutputModel,
+  IBlogForAdminOutputModel,
   IBlogOutputModel,
 } from '../src/blogs/api/dto/blogs-output-models.dto';
 import {
   AllPostsOutputModel,
   IFullPostOutputModel,
-  IPostOutputModel,
 } from '../src/posts/api/dto/posts-output-models.dto';
 
 describe('BLOGS', () => {
@@ -34,6 +34,7 @@ describe('BLOGS', () => {
     correctCreateBlogDtos,
     correctUpdateBlogDto,
     getBlogItem,
+    getBlogItemForAdmin,
     blogsBadQueryResponse,
   } = blogs;
   const {
@@ -45,11 +46,15 @@ describe('BLOGS', () => {
   } = posts;
   const { notFoundExceptionMock } = errors;
   const { getAllItemsWithPage2Size1 } = defaultResponses;
-  const { correctBasicCredentials, incorrectAccessToken, getBearerAuthHeader } =
-    auth;
+  const {
+    incorrectBasicCredentials,
+    correctBasicCredentials,
+    incorrectAccessToken,
+    getBearerAuthHeader,
+  } = auth;
   const { createUserRequest } = adminUsersRequests;
   const { loginRequest } = authRequests;
-  const { bindBlogWithUser } = adminBlogsRequests;
+  const { bindBlogWithUser, getBlogsAsAdminRequest } = adminBlogsRequests;
   const {
     createBlogsRequest,
     createPostByBlogIdRequest,
@@ -161,6 +166,26 @@ describe('BLOGS', () => {
 
         const response5 = await getBlogsAsUserRequest(app);
         expect(response5.body.items).toHaveLength(4);
+
+        const response6 = await bindBlogWithUser(app, blog1.id, user1.id).set(
+          correctBasicCredentials,
+        );
+        expect(response6.status).toBe(204);
+
+        const response7 = await bindBlogWithUser(app, blog2.id, user1.id).set(
+          correctBasicCredentials,
+        );
+        expect(response7.status).toBe(204);
+
+        const response8 = await bindBlogWithUser(app, blog3.id, user1.id).set(
+          correctBasicCredentials,
+        );
+        expect(response8.status).toBe(204);
+
+        const response9 = await bindBlogWithUser(app, blog4.id, user2.id).set(
+          correctBasicCredentials,
+        );
+        expect(response9.status).toBe(204);
       });
     });
 
@@ -300,6 +325,7 @@ describe('BLOGS', () => {
         const response2 = await getBlogAsUserRequest(app, blog1.id);
         expect(response2.status).toBe(404);
         expect(response2.body).toEqual(notFoundExceptionMock);
+        blog1 = null;
 
         const response3 = await getBlogsAsBloggerRequest(app).set(
           getBearerAuthHeader(user1Token),
@@ -315,6 +341,11 @@ describe('BLOGS', () => {
           .send(correctCreateBlogDtos[1]);
         expect(response1.status).toBe(201);
         blog1 = response1.body;
+
+        const response2 = await bindBlogWithUser(app, blog1.id, user1.id).set(
+          correctBasicCredentials,
+        );
+        expect(response2.status).toBe(204);
       });
 
       it('incorrect auth credentials or without them', async () => {
@@ -491,32 +522,25 @@ describe('BLOGS', () => {
 
   describe('Public User API', () => {
     beforeAll(async () => {
-      await clearDataBase(app);
+      const existingBlogs = [blog1, blog2, blog3, blog4];
 
-      const response1 = await createUserRequest(app)
-        .set(correctBasicCredentials)
-        .send(correctCreateUserDtos[0]);
-      user1 = response1.body;
-      user2 = null;
+      for (let i = 0; i < existingBlogs.length; i++) {
+        const res = await deleteBlogRequest(app, existingBlogs[i].id).set(
+          getBearerAuthHeader(i !== 3 ? user1Token : user2Token),
+        );
+        expect(res.status).toBe(204);
+        existingBlogs[i] = null;
+      }
 
-      const response2 = await loginRequest(app).send({
-        loginOrEmail: correctCreateUserDtos[0].login,
-        password: correctCreateUserDtos[0].password,
-      });
-      user1Token = `Bearer ${response2.body.accessToken}`;
-      user2Token = null;
+      const blogs = [blog1, blog2, blog3];
 
-      const createdBlogs = [blog1, blog2, blog3];
-      blog4 = null;
-
-      for (let i = 0; i <= correctCreateBlogDtos.length; i++) {
+      for (let i = 0; i < correctCreateBlogDtos.length; i++) {
         const res = await createBlogsRequest(app)
           .set(getBearerAuthHeader(user1Token))
           .send(correctCreateBlogDtos[i]);
-        createdBlogs[i] = res.body;
+        blogs[i] = res.body;
       }
-
-      [blog1, blog2, blog3] = createdBlogs;
+      [blog1, blog2, blog3] = blogs;
     });
 
     describe('/(GET ALL BLOGS) get all blogs as public user', () => {
@@ -572,17 +596,22 @@ describe('BLOGS', () => {
 
     describe('/(GET ALL POSTS) get all posts', () => {
       beforeAll(async () => {
-        const res1 = await createPostByBlogIdRequest(app, blog1.id)
-          .set(getBearerAuthHeader(user1Token))
-          .send(correctCreatePostDtos[0]);
-        expect(res1.status).toBe(201);
-        post1 = res1.body;
+        const res1 = await bindBlogWithUser(app, blog1.id, user1.id).set(
+          correctBasicCredentials,
+        );
+        expect(res1.status).toBe(204);
 
         const res2 = await createPostByBlogIdRequest(app, blog1.id)
           .set(getBearerAuthHeader(user1Token))
-          .send(correctCreatePostDtos[1]);
+          .send(correctCreatePostDtos[0]);
         expect(res2.status).toBe(201);
-        post2 = res2.body;
+        post1 = res2.body;
+
+        const res3 = await createPostByBlogIdRequest(app, blog1.id)
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctCreatePostDtos[1]);
+        expect(res3.status).toBe(201);
+        post2 = res3.body;
       });
 
       it('by invalid blogId', async () => {
@@ -636,9 +665,109 @@ describe('BLOGS', () => {
     });
   });
 
-  // describe('Admin API', () => {
-  //TODO: bind user with blog
-  //// });
+  describe('Admin API', () => {
+    describe('/(GET ALL BLOGS) get all blogs as Admin', () => {
+      it('incorrect auth credentials or without them', async () => {
+        const response1 = await getBlogsAsAdminRequest(app);
+        expect(response1.status).toBe(401);
+
+        const response2 = await getBlogsAsAdminRequest(app).set(
+          incorrectBasicCredentials,
+        );
+        expect(response2.status).toBe(401);
+      });
+
+      it('without query params', async () => {
+        const response = await getBlogsAsAdminRequest(app).set(
+          correctBasicCredentials,
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body.items.length).toBe(3);
+        expect(response.body.items[2]).toEqual(
+          getBlogItemForAdmin(correctCreateBlogDtos[0], user1.login),
+        );
+      });
+
+      it('with query Params', async () => {
+        const response1 = await getBlogsAsUserRequest(app).query({
+          pageNumber: 2,
+          pageSize: 1,
+        });
+        const expectedResult = getAllItemsWithPage2Size1<
+          IBlogForAdminOutputModel,
+          AllBlogsOutputModel
+        >(blog2);
+        expect(response1.body).toEqual(expectedResult);
+
+        const response2 = await getBlogsAsUserRequest(app).query({
+          searchNameTerm: '2',
+        });
+        expect(response2.body.items).toHaveLength(1);
+        expect(response2.body.totalCount).toBe(1);
+        expect(response2.body.items[0].id).toBe(blog2.id);
+
+        const response3 = await getBlogsAsUserRequest(app).query({
+          sortBy: 'name',
+          sortDirection: 'asc',
+        });
+        expect(response3.body.items[0].id).toBe(blog1.id);
+        expect(response3.body.items[response3.body.items.length - 1].id).toBe(
+          blog3.id,
+        );
+      });
+    });
+
+    describe('/(UPDATE ONE BLOG) bind Blog with User as Admin', () => {
+      it('with incorrect auth credentials or without them', async () => {
+        const response1 = await bindBlogWithUser(app, blog1.id, user1.id);
+        expect(response1.status).toBe(401);
+
+        const response2 = await bindBlogWithUser(app, blog1.id, user1.id).set(
+          incorrectBasicCredentials,
+        );
+        expect(response2.status).toBe(401);
+      });
+
+      it('with correct auth credentials but incorrect invalid blogId or userId', async () => {
+        const response1 = await bindBlogWithUser(app, INVALID_ID, user1.id).set(
+          correctBasicCredentials,
+        );
+        expect(response1.status).toBe(400);
+
+        const response2 = await bindBlogWithUser(app, blog1.id, INVALID_ID).set(
+          correctBasicCredentials,
+        );
+        expect(response2.status).toBe(400);
+      });
+
+      it('with correct auth credentials, correct blogId and userId but try to bind the same user', async () => {
+        const response1 = await bindBlogWithUser(app, blog1.id, user1.id).set(
+          correctBasicCredentials,
+        );
+
+        expect(response1.status).toBe(400);
+        expect(response1.body).toEqual({
+          errorsMessages: [{ message: expect.any(String), field: 'blogId' }],
+        });
+      });
+
+      it('with all correct input data', async () => {
+        const response1 = await bindBlogWithUser(app, blog2.id, user2.id).set(
+          correctBasicCredentials,
+        );
+        expect(response1.status).toBe(204);
+
+        const response2 = await getBlogsAsAdminRequest(app).set(
+          correctBasicCredentials,
+        );
+        const testingBlog = await response2.body.items.find(
+          (item) => item.id === blog2.id,
+        );
+        expect(testingBlog.blogOwnerInfo.userId).toBe(user2.id);
+      });
+    });
+  });
 
   afterAll(async () => {
     await app.close();

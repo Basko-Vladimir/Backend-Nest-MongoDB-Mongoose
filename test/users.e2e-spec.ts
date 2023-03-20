@@ -16,7 +16,7 @@ describe('USERS', () => {
     usersBadUpdateQueryResponse,
     correctUpdateUserBanStatusDto,
     incorrectUpdateUserBanStatusDtos,
-    getCreatedBlogItem,
+    getCreatedUserItem,
   } = users;
   const { incorrectBasicCredentials, correctBasicCredentials } = auth;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
@@ -65,7 +65,7 @@ describe('USERS', () => {
           .send(correctCreateUserDtos[0]);
         expect(response1.status).toBe(201);
         expect(response1.body).toEqual(
-          getCreatedBlogItem(correctCreateUserDtos[0]),
+          getCreatedUserItem(correctCreateUserDtos[0]),
         );
         user1 = response1.body;
 
@@ -74,7 +74,7 @@ describe('USERS', () => {
           .send(correctCreateUserDtos[1]);
         expect(response2.status).toBe(201);
         expect(response2.body).toEqual(
-          getCreatedBlogItem(correctCreateUserDtos[1]),
+          getCreatedUserItem(correctCreateUserDtos[1]),
         );
         user2 = response2.body;
 
@@ -83,7 +83,7 @@ describe('USERS', () => {
           .send(correctCreateUserDtos[2]);
         expect(response3.status).toBe(201);
         expect(response3.body).toEqual(
-          getCreatedBlogItem(correctCreateUserDtos[2]),
+          getCreatedUserItem(correctCreateUserDtos[2]),
         );
         user3 = response3.body;
 
