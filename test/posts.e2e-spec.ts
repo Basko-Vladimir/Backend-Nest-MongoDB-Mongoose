@@ -10,23 +10,14 @@ import {
   comments,
   likes,
 } from './mockData';
+import { publicPostsRequests } from './utils/posts-requests';
+import { adminUsersRequests } from './utils/users-requests';
+import { authRequests } from './utils/auth-requests';
 import {
-  initTestApp,
-  createBlogsRequest,
-  createPostRequest,
-  deletePostRequest,
-  getPostRequest,
-  getPostsRequest,
-  updatePostRequest,
-  getPostsByBlogIdAsUserRequest,
-  clearDataBase,
-  deleteBlogRequest,
-  loginRequest,
-  createCommentByPostIdRequest,
-  getCommentsByPostIdRequest,
-  createUserRequest,
-  updatePostLikeStatus,
-} from './utils/utils';
+  bloggerBlogsRequests,
+  publicBlogsRequests,
+} from './utils/blogs-requests';
+import { clearDataBase, initTestApp } from './utils/common';
 import {
   AllPostsOutputModel,
   IFullPostOutputModel,
@@ -67,6 +58,20 @@ describe('Posts', () => {
   } = likes;
   const { correctCreateUserDtos } = users;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
+  const {
+    createCommentByPostIdRequest,
+    getCommentsByPostIdRequest,
+    createPostRequest,
+    deletePostRequest,
+    getPostRequest,
+    getPostsRequest,
+    updatePostRequest,
+    updatePostLikeStatus,
+  } = publicPostsRequests;
+  const { createBlogsRequest, deleteBlogRequest } = bloggerBlogsRequests;
+  const { getPostsByBlogIdAsUserRequest } = publicBlogsRequests;
+  const { loginRequest } = authRequests;
+  const { createUserRequest } = adminUsersRequests;
   let app: INestApplication;
   let post1, post2, post3;
   let comment1, comment2;
