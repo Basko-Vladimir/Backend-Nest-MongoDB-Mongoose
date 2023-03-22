@@ -8,15 +8,6 @@ export const publicPostsRequests = {
   getPostRequest: (app: INestApplication, id: string) => {
     return request(app.getHttpServer()).get(`/posts/${id}`);
   },
-  createPostRequest: (app: INestApplication) => {
-    return request(app.getHttpServer()).post('/posts');
-  },
-  deletePostRequest: (app: INestApplication, id: string) => {
-    return request(app.getHttpServer()).delete(`/posts/${id}`);
-  },
-  updatePostRequest: (app: INestApplication, id: string) => {
-    return request(app.getHttpServer()).put(`/posts/${id}`);
-  },
   createCommentByPostIdRequest: (app: INestApplication, id: string) => {
     return request(app.getHttpServer()).post(`/posts/${id}/comments`);
   },
