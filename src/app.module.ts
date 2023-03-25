@@ -55,7 +55,7 @@ import { RefreshTokensUseCase } from './auth/application/use-cases/refresh-token
 import { LogoutUseCase } from './auth/application/use-cases/logout.useCase';
 import { CreateUserUseCase } from './users/application/use-cases/create-user.useCase';
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.useCase';
-import { QueryUsersRepository } from './users/infrastructure/query-users.repository';
+import { QueryAdminUsersRepository } from './users/infrastructure/query-admin-users-repository.service';
 import { CreatePostUseCase } from './posts/application/use-cases/create-post.useCase';
 import { QueryPostsRepository } from './posts/infrastructure/query-posts.repository';
 import { DeletePostUseCase } from './posts/application/use-cases/delete-post.useCase';
@@ -87,6 +87,7 @@ import { BindBlogWithUserUseCase } from './blogs/application/use-cases/bind-blog
 import { BloggerBlogsController } from './blogs/api/blogger-blogs.controller';
 import { BloggerUsersController } from './users/api/blogger-users.controller';
 import { UpdateUserBanStatusForBlogUseCase } from './users/application/use-cases/update-user-ban-status-for-blog.useCase';
+import { QueryBloggerUsersRepositoryService } from './users/infrastructure/query-blogger-users-repository.service';
 
 const useCases = [
   CreateBlogUseCase,
@@ -162,7 +163,8 @@ const useCases = [
     AppService,
     UsersService,
     UsersRepository,
-    QueryUsersRepository,
+    QueryAdminUsersRepository,
+    QueryBloggerUsersRepositoryService,
     BlogsService,
     BlogsRepository,
     QueryBlogsRepository,

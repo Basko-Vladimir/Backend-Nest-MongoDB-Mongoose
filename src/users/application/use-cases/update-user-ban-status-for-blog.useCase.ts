@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateUserBanStatusForBlogDto } from '../../api/dto/update-user-ban-status-for-blog.dto';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { UsersRepository } from '../../infrastructure/users.repository';
 
 export class UpdateUserBanStatusForBlogCommand {
   constructor(
@@ -13,7 +14,10 @@ export class UpdateUserBanStatusForBlogCommand {
 export class UpdateUserBanStatusForBlogUseCase
   implements ICommandHandler<UpdateUserBanStatusForBlogCommand>
 {
-  constructor(private blogRepository: BlogsRepository) {}
+  constructor(
+    private blogsRepository: BlogsRepository,
+    private usersRepository: UsersRepository,
+  ) {}
 
   async execute(command: UpdateUserBanStatusForBlogCommand): Promise<void> {
     const {
@@ -21,9 +25,9 @@ export class UpdateUserBanStatusForBlogUseCase
       updateUserBanStatusForBlogDto: { blogId, banReason, isBanned },
     } = command;
 
-    const targetBlog = await this.blogRepository.findBlogById(blogId);
+    const targetUser = await this.usersRepository.findUserById(userId);
 
-    targetBlog.updateUserBanStatus(userId, banReason, isBanned);
-    await this.blogRepository.saveBlog(targetBlog);
+    targetUser.updateUserBanStatusForSpecificBlog(blogId, banReason, isBanned);
+    await this.usersRepository.saveUser(targetUser);
   }
 }

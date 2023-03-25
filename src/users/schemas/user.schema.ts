@@ -15,6 +15,7 @@ import {
 import { generateExistingFieldError } from '../../common/error-messages';
 import { BanInfo, BanInfoSchema } from './ban-info.schema';
 import { UpdateUserBanStatusDto } from '../api/dto/update-user-ban-status.dto';
+import { BannedForBlog, BannedForBlogSchema } from './banned-for-blog.schema';
 
 const { MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH, LOGIN_REG_EXP, EMAIL_REG_EXP } =
   usersConstants;
@@ -70,6 +71,12 @@ export class User {
   })
   banInfo: BanInfo;
 
+  @Prop({
+    type: [BannedForBlogSchema],
+    default: [],
+  })
+  bannedForBlogs: BannedForBlog[];
+
   @Prop()
   createdAt: Date;
 
@@ -100,6 +107,30 @@ export class User {
     this.banInfo.isBanned = isBanned;
     this.banInfo.banReason = isBanned ? banReason : null;
     this.banInfo.banDate = isBanned ? new Date() : null;
+  }
+
+  updateUserBanStatusForSpecificBlog(
+    blogId: string,
+    banReason: string,
+    isBanned: boolean,
+  ): void {
+    const currentBlogIndex = this.bannedForBlogs.findIndex(
+      (blog) => blog.blogId === blogId,
+    );
+    const currentBlog = this.bannedForBlogs[currentBlogIndex];
+
+    if (currentBlogIndex !== -1) {
+      currentBlog.isBanned = isBanned;
+      currentBlog.banDate = isBanned ? new Date() : null;
+      currentBlog.banReason = isBanned ? banReason : null;
+    } else {
+      this.bannedForBlogs.push({
+        blogId,
+        isBanned,
+        banReason: isBanned ? banReason : null,
+        banDate: isBanned ? new Date() : null,
+      });
+    }
   }
 
   static async createUserEntity(
@@ -162,4 +193,6 @@ userSchema.methods = {
   updatePasswordRecoveryCode: User.prototype.updatePasswordRecoveryCode,
   updatePassword: User.prototype.updatePassword,
   updateUserBanStatus: User.prototype.updateUserBanStatus,
+  updateUserBanStatusForSpecificBlog:
+    User.prototype.updateUserBanStatusForSpecificBlog,
 };
