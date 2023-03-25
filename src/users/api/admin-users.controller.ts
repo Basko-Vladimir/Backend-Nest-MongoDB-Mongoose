@@ -27,7 +27,7 @@ import { UpdateUserBanStatusDto } from './dto/update-user-ban-status.dto';
 import { UpdateUserBanStatusCommand } from '../application/use-cases/update-user-ban-status.useCase';
 
 @Controller('sa/users')
-export class UsersController {
+export class AdminUsersController {
   constructor(
     private queryUsersRepository: QueryUsersRepository,
     private commandBus: CommandBus,

@@ -5,22 +5,28 @@ import { usersConstants } from '../../common/constants';
 const { MIN_BAN_REASON_LENGTH } = usersConstants;
 
 @Schema()
-export class BanInfo {
+export class BannedUser {
+  @Prop({
+    type: String,
+    required: true,
+  })
+  userId: string;
+
   @Prop({
     type: Boolean,
-    required: true,
     default: false,
   })
   isBanned: boolean;
 
   @Prop({
     type: Date,
-    default: null,
+    required: true,
   })
   banDate: Date;
 
   @Prop({
     type: String,
+    required: true,
     minlength: [
       MIN_BAN_REASON_LENGTH,
       generateLengthErrorMessage('banReason', MIN_BAN_REASON_LENGTH, 'min'),
@@ -29,4 +35,4 @@ export class BanInfo {
   banReason: string;
 }
 
-export const BanInfoSchema = SchemaFactory.createForClass(BanInfo);
+export const BannedUserSchema = SchemaFactory.createForClass(BannedUser);

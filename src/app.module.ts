@@ -11,7 +11,7 @@ import { Like, likeSchema } from './likes/schemas/like.schema';
 import { Comment, commentSchema } from './comments/schemas/comment.schema';
 import { BlogsController } from './blogs/api/blogs.controller';
 import { PostsController } from './posts/api/posts.controller';
-import { UsersController } from './users/api/users.controller';
+import { AdminUsersController } from './users/api/admin-users.controller';
 import { UsersService } from './users/application/users.service';
 import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/application/posts.service';
@@ -85,6 +85,8 @@ import { UpdateUserBanStatusUseCase } from './users/application/use-cases/update
 import { AdminBlogsController } from './blogs/api/admin-blogs.controller';
 import { BindBlogWithUserUseCase } from './blogs/application/use-cases/bind-blog-with-user.useCase';
 import { BloggerBlogsController } from './blogs/api/blogger-blogs.controller';
+import { BloggerUsersController } from './users/api/blogger-users.controller';
+import { UpdateUserBanStatusForBlogUseCase } from './users/application/use-cases/update-user-ban-status-for-blog.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -121,6 +123,7 @@ const useCases = [
   GetFullCommentUseCase,
   GetAllFullCommentsUseCase,
   UpdateUserBanStatusUseCase,
+  UpdateUserBanStatusForBlogUseCase,
   BindBlogWithUserUseCase,
 ];
 
@@ -145,7 +148,8 @@ const useCases = [
   ],
   controllers: [
     AppController,
-    UsersController,
+    AdminUsersController,
+    BloggerUsersController,
     BlogsController,
     AdminBlogsController,
     BloggerBlogsController,

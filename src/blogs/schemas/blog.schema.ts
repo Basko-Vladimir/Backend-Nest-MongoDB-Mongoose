@@ -9,6 +9,7 @@ import { CreateBlogDto } from '../api/dto/create-blog.dto';
 import { UpdateBlogDto } from '../api/dto/update-blog.dto';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { BlogOwnerInfo, BlogOwnerInfoSchema } from './blog-owner-info.schema';
+import { BannedUser, BannedUserSchema } from './banned-user.schema';
 
 const {
   MAX_NAME_LENGTH,
@@ -71,6 +72,12 @@ export class Blog {
   isMembership: boolean;
 
   @Prop({
+    type: [BannedUserSchema],
+    default: [],
+  })
+  bannedUsers: BannedUser[];
+
+  @Prop({
     type: BlogOwnerInfoSchema,
     default: null,
   })
@@ -95,6 +102,30 @@ export class Blog {
       ownerId: String(user._id),
       ownerLogin: user.login,
     };
+  }
+
+  updateUserBanStatus(
+    userId: string,
+    banReason: string,
+    isBanned: boolean,
+  ): void {
+    const currentUserIndex = this.bannedUsers.findIndex(
+      (user) => user.userId === userId,
+    );
+    const currentUser = this.bannedUsers[currentUserIndex];
+
+    if (currentUserIndex !== -1) {
+      currentUser.isBanned = isBanned;
+      currentUser.banDate = isBanned ? new Date() : null;
+      currentUser.banReason = isBanned ? banReason : null;
+    } else {
+      this.bannedUsers.push({
+        userId,
+        isBanned,
+        banReason: isBanned ? banReason : null,
+        banDate: isBanned ? new Date() : null,
+      });
+    }
   }
 
   static createBlogEntity(
@@ -126,5 +157,6 @@ export const blogSchema = SchemaFactory.createForClass(Blog);
 blogSchema.methods = {
   updateBlog: Blog.prototype.updateBlog,
   bindBlogWithUser: Blog.prototype.bindBlogWithUser,
+  updateUserBanStatus: Blog.prototype.updateUserBanStatus,
 };
 blogSchema.static('createBlogEntity', Blog.createBlogEntity);
