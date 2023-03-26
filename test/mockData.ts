@@ -3,6 +3,7 @@ import { IFullPostOutputModel } from '../src/posts/api/dto/posts-output-models.d
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/api/dto/create-post.dto';
 import {
+  IBlogBanInfo,
   IBlogForAdminOutputModel,
   IBlogOutputModel,
 } from '../src/blogs/api/dto/blogs-output-models.dto';
@@ -162,7 +163,7 @@ export const blogs = {
   getBlogItemForAdmin: (
     blogDto: CreateBlogDto,
     userLogin: string,
-    // banInfo: IBanInfo,
+    banInfo: IBlogBanInfo = { isBanned: false, banDate: null },
   ): IBlogForAdminOutputModel => ({
     id: expect.any(String),
     name: blogDto.name,
@@ -174,6 +175,7 @@ export const blogs = {
       userId: expect.any(String),
       userLogin: userLogin,
     },
+    banInfo,
   }),
   blogsBadQueryResponse: {
     errorsMessages: [
