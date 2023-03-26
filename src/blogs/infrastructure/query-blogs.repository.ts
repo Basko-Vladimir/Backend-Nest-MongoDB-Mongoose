@@ -5,14 +5,10 @@ import { Blog, BlogDocument, BlogModelType } from '../schemas/blog.schema';
 import { BlogSortByField, SortDirection } from '../../common/enums';
 import { countSkipValue, setSortValue } from '../../common/utils';
 import {
-  AllBlogsForAdminOutputModel,
   AllBlogsOutputModel,
   IBlogOutputModel,
 } from '../api/dto/blogs-output-models.dto';
-import {
-  mapDbBlogToBlogForAdminOutputModel,
-  mapDbBlogToBlogOutputModel,
-} from '../mappers/blogs-mappers';
+import { mapDbBlogToBlogOutputModel } from '../mappers/blogs-mappers';
 import { UpdateOrFilterModel } from '../../common/types';
 
 interface IBlogsDataByQueryParams {
@@ -41,37 +37,6 @@ export class QueryBlogsRepository {
     };
   }
 
-  async findAllBlogsAsAdmin(
-    queryParams: BlogsQueryParamsDto,
-  ): Promise<AllBlogsForAdminOutputModel> {
-    const { blogs, totalCount, pageNumber, pageSize } =
-      await this.getBlogsDataByQueryParams(queryParams);
-
-    return {
-      pagesCount: Math.ceil(totalCount / pageSize),
-      page: Number(pageNumber),
-      pageSize: Number(pageSize),
-      totalCount,
-      items: blogs.map(mapDbBlogToBlogForAdminOutputModel),
-    };
-  }
-
-  async findAllBlogsAsBlogger(
-    queryParams: BlogsQueryParamsDto,
-    userId: string,
-  ): Promise<AllBlogsOutputModel> {
-    const { blogs, totalCount, pageNumber, pageSize } =
-      await this.getBlogsDataByQueryParams(queryParams, userId);
-
-    return {
-      pagesCount: Math.ceil(totalCount / pageSize),
-      page: Number(pageNumber),
-      pageSize: Number(pageSize),
-      totalCount,
-      items: blogs.map(mapDbBlogToBlogOutputModel),
-    };
-  }
-
   async findBlogById(blogId): Promise<IBlogOutputModel> {
     const targetBlog = await this.BlogModel.findById(blogId);
 
@@ -80,7 +45,7 @@ export class QueryBlogsRepository {
     return mapDbBlogToBlogOutputModel(targetBlog);
   }
 
-  private async getBlogsDataByQueryParams(
+  protected async getBlogsDataByQueryParams(
     queryParams: BlogsQueryParamsDto,
     userId?: string,
   ): Promise<IBlogsDataByQueryParams> {

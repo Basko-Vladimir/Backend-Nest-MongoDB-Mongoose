@@ -2,11 +2,16 @@ import { CreateBlogDto } from '../src/blogs/api/dto/create-blog.dto';
 import { IFullPostOutputModel } from '../src/posts/api/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/api/dto/create-post.dto';
-import { IBlogOutputModel } from '../src/blogs/api/dto/blogs-output-models.dto';
+import {
+  IBlogBanInfo,
+  IBlogForAdminOutputModel,
+  IBlogOutputModel,
+} from '../src/blogs/api/dto/blogs-output-models.dto';
 import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 import { IUserOutputModel } from '../src/users/api/dto/users-output-models.dto';
 import { CreateUserDto } from '../src/users/api/dto/create-user.dto';
 import { EmailAdapter } from '../src/common/adapters/email.adapter';
+import { UpdateBlogDto } from '../src/blogs/api/dto/update-blog.dto';
 
 interface Exception {
   statusCode: number;
@@ -20,6 +25,7 @@ export const auth = {
   correctBasicCredentials: { Authorization: 'Basic YWRtaW46cXdlcnR5' },
   incorrectAccessToken:
     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2VlNTE2MmMwZTNmM2IyNzYyYzQ1OTkiLCJpYXQiOjE2NzY1NjI3OTI0ODAsImV4cCI6MTY3NjU2Mjc5MzA4MH0.llZ9JpK1c6IyHHw49lArN27g1wk6wE_qPGrbTIcz8SA',
+  getBearerAuthHeader: (token: string) => ({ Authorization: token }),
 };
 
 export const users = {
@@ -40,7 +46,7 @@ export const users = {
       email: 'user3@gmail.com',
     },
   ],
-  incorrectUsersDtos: [
+  incorrectCreateUsersDtos: [
     {},
     {
       login: '',
@@ -58,14 +64,39 @@ export const users = {
       email: 'aaaa@sdsds',
     },
   ],
-  usersBadQueryResponse: {
+  usersBadCreateQueryResponse: {
     errorsMessages: [
       { message: expect.any(String), field: 'login' },
       { message: expect.any(String), field: 'password' },
       { message: expect.any(String), field: 'email' },
     ],
   },
-  getCreatedBlogItem: (createUserDto: CreateUserDto): IUserOutputModel => ({
+  correctUpdateUserBanStatusDto: {
+    isBanned: true,
+    banReason: 'test ban reason length 20+',
+  },
+  incorrectUpdateUserBanStatusDtos: [
+    {},
+    {
+      isBanned: '',
+      banReason: '',
+    },
+    {
+      isBanned: 5,
+      banReason: '   ',
+    },
+    {
+      isBanned: {},
+      banReason: 'short test reason',
+    },
+  ],
+  usersBadUpdateQueryResponse: {
+    errorsMessages: [
+      { message: expect.any(String), field: 'isBanned' },
+      { message: expect.any(String), field: 'banReason' },
+    ],
+  },
+  getCreatedUserItem: (createUserDto: CreateUserDto): IUserOutputModel => ({
     id: expect.any(String),
     email: createUserDto.email,
     login: createUserDto.login,
@@ -121,13 +152,30 @@ export const blogs = {
     },
   ],
   incorrectBlogsIds: ['', '   ', '2156165465', INVALID_ID],
-  getCreatedBlogItem: (createBlogDto: CreateBlogDto): IBlogOutputModel => ({
+  getBlogItem: (blogDto: CreateBlogDto | UpdateBlogDto): IBlogOutputModel => ({
     id: expect.any(String),
-    name: createBlogDto.name,
-    description: createBlogDto.description,
-    websiteUrl: createBlogDto.websiteUrl,
+    name: blogDto.name,
+    description: blogDto.description,
+    websiteUrl: blogDto.websiteUrl,
     isMembership: false,
     createdAt: expect.any(String),
+  }),
+  getBlogItemForAdmin: (
+    blogDto: CreateBlogDto,
+    userLogin: string,
+    banInfo: IBlogBanInfo = { isBanned: false, banDate: null },
+  ): IBlogForAdminOutputModel => ({
+    id: expect.any(String),
+    name: blogDto.name,
+    description: blogDto.description,
+    websiteUrl: blogDto.websiteUrl,
+    isMembership: false,
+    createdAt: expect.any(String),
+    blogOwnerInfo: {
+      userId: expect.any(String),
+      userLogin: userLogin,
+    },
+    banInfo,
   }),
   blogsBadQueryResponse: {
     errorsMessages: [
@@ -267,11 +315,11 @@ export const likes = {
 };
 
 export const errors: { [key: string]: Exception } = {
-  notFoundException: {
+  notFoundExceptionMock: {
     statusCode: 404,
     message: 'Not Found',
   },
-  unauthorisedException: {
+  unauthorisedExceptionMock: {
     statusCode: 401,
     message: 'Unauthorized',
   },

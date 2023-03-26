@@ -11,7 +11,7 @@ import {
 import { BanStatus, SortDirection, UserSortByField } from '../../common/enums';
 
 @Injectable()
-export class QueryUsersRepository {
+export class QueryAdminUsersRepository {
   constructor(@InjectModel(User.name) protected UserModel: UserModelType) {}
 
   async findAllUsers(

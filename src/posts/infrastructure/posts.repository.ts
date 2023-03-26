@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument, PostModelType } from '../schemas/post.schema';
 import { getFilterByDbId } from '../../common/utils';
+import { UpdateOrFilterModel } from '../../common/types';
 
 @Injectable()
 export class PostsRepository {
@@ -13,6 +14,12 @@ export class PostsRepository {
     if (!targetPost) throw new NotFoundException();
 
     return targetPost;
+  }
+
+  async findManyPostsByFilter(
+    filter: UpdateOrFilterModel,
+  ): Promise<PostDocument[]> {
+    return this.PostModel.find(filter);
   }
 
   async savePost(post: PostDocument): Promise<PostDocument> {

@@ -9,6 +9,7 @@ import { CreateBlogDto } from '../api/dto/create-blog.dto';
 import { UpdateBlogDto } from '../api/dto/update-blog.dto';
 import { UserDocument } from '../../users/schemas/user.schema';
 import { BlogOwnerInfo, BlogOwnerInfoSchema } from './blog-owner-info.schema';
+import { BlogBanInfo, BlogBanInfoSchema } from './blog-ban-info';
 
 const {
   MAX_NAME_LENGTH,
@@ -72,8 +73,15 @@ export class Blog {
 
   @Prop({
     type: BlogOwnerInfoSchema,
+    default: null,
   })
   blogOwnerInfo: BlogOwnerInfo;
+
+  @Prop({
+    required: true,
+    type: BlogBanInfoSchema,
+  })
+  banInfo: BlogBanInfo;
 
   @Prop()
   createdAt: Date;
@@ -96,6 +104,11 @@ export class Blog {
     };
   }
 
+  updateBlogBanStatus(isBanned: boolean): void {
+    this.banInfo.isBanned = isBanned;
+    this.banInfo.banDate = isBanned ? new Date() : null;
+  }
+
   static createBlogEntity(
     blogData: CreateBlogDto,
     user: UserDocument,
@@ -103,9 +116,10 @@ export class Blog {
   ): BlogDocument {
     return new BlogModel({
       ...blogData,
-      blogOwnerInfo: {
-        ownerId: user._id,
-        ownerLogin: user.login,
+      blogOwnerInfo: null,
+      banInfo: {
+        isBanned: false,
+        banDate: null,
       },
     });
   }
@@ -128,5 +142,6 @@ export const blogSchema = SchemaFactory.createForClass(Blog);
 blogSchema.methods = {
   updateBlog: Blog.prototype.updateBlog,
   bindBlogWithUser: Blog.prototype.bindBlogWithUser,
+  updateBlogBanStatus: Blog.prototype.updateBlogBanStatus,
 };
 blogSchema.static('createBlogEntity', Blog.createBlogEntity);

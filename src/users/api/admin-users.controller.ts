@@ -22,14 +22,14 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.useCase';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.useCase';
-import { QueryUsersRepository } from '../infrastructure/query-users.repository';
+import { QueryAdminUsersRepository } from '../infrastructure/query-admin-users-repository.service';
 import { UpdateUserBanStatusDto } from './dto/update-user-ban-status.dto';
 import { UpdateUserBanStatusCommand } from '../application/use-cases/update-user-ban-status.useCase';
 
 @Controller('sa/users')
-export class UsersController {
+export class AdminUsersController {
   constructor(
-    private queryUsersRepository: QueryUsersRepository,
+    private queryUsersRepository: QueryAdminUsersRepository,
     private commandBus: CommandBus,
   ) {}
 

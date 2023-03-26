@@ -10,23 +10,15 @@ import {
   comments,
   likes,
 } from './mockData';
+import { publicPostsRequests } from './utils/posts-requests';
+import { adminUsersRequests } from './utils/users-requests';
+import { authRequests } from './utils/auth-requests';
 import {
-  initTestApp,
-  createBlogsRequest,
-  createPostRequest,
-  deletePostRequest,
-  getPostRequest,
-  getPostsRequest,
-  updatePostRequest,
-  getPostsByBlogIdRequest,
-  clearDataBase,
-  deleteBlogRequest,
-  loginRequest,
-  createCommentByPostIdRequest,
-  getCommentsByPostIdRequest,
-  createUserRequest,
-  updatePostLikeStatus,
-} from './utils';
+  bloggerBlogsRequests,
+  publicBlogsRequests,
+  adminBlogsRequests,
+} from './utils/blogs-requests';
+import { clearDataBase, initTestApp } from './utils/common';
 import {
   AllPostsOutputModel,
   IFullPostOutputModel,
@@ -39,21 +31,12 @@ import {
 import { LikeStatus } from '../src/common/enums';
 
 describe('Posts', () => {
-  jest.setTimeout(60 * 1000);
-  const { correctCreateBlogDtos, incorrectBlogsIds } = blogs;
-  const { notFoundException, unauthorisedException } = errors;
-  const {
-    correctCreatePostDtos,
-    incorrectPostsDtos,
-    postsBadQueryResponse,
-    getPostItem,
-    correctUpdatePostDto,
-  } = posts;
-  const {
-    correctBasicCredentials,
-    incorrectBasicCredentials,
-    incorrectAccessToken,
-  } = auth;
+  jest.setTimeout(20 * 1000);
+  const { correctCreateBlogDtos } = blogs;
+  const { notFoundExceptionMock, unauthorisedExceptionMock } = errors;
+  const { correctCreatePostDtos, postsBadQueryResponse } = posts;
+  const { correctBasicCredentials, incorrectAccessToken, getBearerAuthHeader } =
+    auth;
   const {
     correctCreateCommentDtos,
     commentsBadQueryResponse,
@@ -67,6 +50,19 @@ describe('Posts', () => {
   } = likes;
   const { correctCreateUserDtos } = users;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
+  const {
+    createCommentByPostIdRequest,
+    getCommentsByPostIdRequest,
+    getPostRequest,
+    getPostsRequest,
+    updatePostLikeStatus,
+  } = publicPostsRequests;
+  const { createBlogsRequest, createPostByBlogIdRequest } =
+    bloggerBlogsRequests;
+  const { getPostsByBlogIdAsUserRequest } = publicBlogsRequests;
+  const { bindBlogWithUser } = adminBlogsRequests;
+  const { loginRequest } = authRequests;
+  const { createUserRequest } = adminUsersRequests;
   let app: INestApplication;
   let post1, post2, post3;
   let comment1, comment2;
@@ -82,52 +78,67 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(CREATE POST)', () => {
-    it('incorrect auth credentials or without them', async () => {
-      const response1 = await createPostRequest(app).send(
-        correctCreatePostDtos[0],
-      );
-      expect(response1.status).toBe(401);
+  describe('/(GET All POSTS)', () => {
+    it('by default without created posts', async () => {
+      await clearDataBase(app);
 
-      const response2 = await createPostRequest(app)
-        .set(incorrectBasicCredentials)
-        .send(correctCreatePostDtos[0]);
-      expect(response2.status).toBe(401);
+      const response = await getPostsRequest(app);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(defaultGetAllResponse);
+    });
+  });
+
+  describe('Preparing data', () => {
+    it('User creating', async () => {
+      const response1 = await createUserRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateUserDtos[0]);
+      expect(response1.status).toBe(201);
+      user1 = response1.body;
     });
 
-    it('correct auth credentials and incorrect input data', async () => {
-      for (let i = 0; i <= incorrectPostsDtos.length; i++) {
-        const response = await createPostRequest(app)
-          .set(correctBasicCredentials)
-          .send({ ...incorrectPostsDtos[i], blogId: incorrectBlogsIds[i] });
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual(postsBadQueryResponse);
-      }
+    it('User login', async () => {
+      const response1 = await loginRequest(app).send({
+        loginOrEmail: correctCreateUserDtos[0].login,
+        password: correctCreateUserDtos[0].password,
+      });
+      expect(response1.status).toBe(200);
+      user1Token = `Bearer ${response1.body.accessToken}`;
     });
 
-    it('correct auth credentials and correct input data', async () => {
-      const response1 = await createBlogsRequest(app)
+    it('Blog creating', async () => {
+      const response = await createBlogsRequest(app)
         .set(correctBasicCredentials)
         .send(correctCreateBlogDtos[0]);
+      expect(response.status).toBe(201);
+      blog1 = response.body;
+    });
+
+    it('binding of blog with user', async () => {
+      const response = await bindBlogWithUser(app, blog1.id, user1.id).set(
+        correctBasicCredentials,
+      );
+      expect(response.status).toBe(204);
+    });
+
+    it('Posts creating', async () => {
+      const response1 = await createPostByBlogIdRequest(app, blog1.id)
+        .set(getBearerAuthHeader(user1Token))
+        .send(correctCreatePostDtos[0]);
       expect(response1.status).toBe(201);
-      blog1 = response1.body;
-      const blogId = blog1.id;
-      const savedPosts = [post1, post2, post3];
+      post1 = response1.body;
 
-      for (let i = 0; i < correctCreatePostDtos.length; i++) {
-        const result = await createPostRequest(app)
-          .set(correctBasicCredentials)
-          .send({ ...correctCreatePostDtos[i], blogId });
-        expect(result.status).toBe(201);
-        expect(result.body).toEqual(
-          getPostItem(correctCreatePostDtos[i], blog1),
-        );
-        savedPosts[i] = result.body;
-      }
-      [post1, post2, post3] = savedPosts;
+      const response2 = await createPostByBlogIdRequest(app, blog1.id)
+        .set(getBearerAuthHeader(user1Token))
+        .send(correctCreatePostDtos[1]);
+      expect(response2.status).toBe(201);
+      post2 = response2.body;
 
-      const response2 = await getPostsRequest(app);
-      expect(response2.body.items).toHaveLength(3);
+      const response3 = await createPostByBlogIdRequest(app, blog1.id)
+        .set(getBearerAuthHeader(user1Token))
+        .send(correctCreatePostDtos[2]);
+      expect(response3.status).toBe(201);
+      post3 = response3.body;
     });
   });
 
@@ -143,7 +154,10 @@ describe('Posts', () => {
       >(post2);
       expect(response1.body).toEqual(expectedResult);
 
-      const response2 = await getPostsByBlogIdRequest(app, blog1.id).query({
+      const response2 = await getPostsByBlogIdAsUserRequest(
+        app,
+        blog1.id,
+      ).query({
         sortBy: 'content',
         sortDirection: 'asc',
       });
@@ -152,32 +166,12 @@ describe('Posts', () => {
         post3.id,
       );
     });
-
-    it('by default without created posts', async () => {
-      await clearDataBase(app);
-
-      const response = await getPostsRequest(app);
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(defaultGetAllResponse);
-    });
   });
 
   describe('/(GET ONE POST)', () => {
     it('by invalid id', async () => {
-      const response1 = await createBlogsRequest(app)
-        .set(correctBasicCredentials)
-        .send(correctCreateBlogDtos[0]);
-      expect(response1.status).toBe(201);
-      blog1 = response1.body;
-
-      const response2 = await createPostRequest(app)
-        .set(correctBasicCredentials)
-        .send({ ...correctCreatePostDtos[0], blogId: blog1.id });
-      expect(response2.status).toBe(201);
-      post1 = response2.body;
-
-      const response3 = await getPostRequest(app, INVALID_ID);
-      expect(response3.status).toBe(404);
+      const response = await getPostRequest(app, INVALID_ID);
+      expect(response.status).toBe(404);
     });
 
     it('by valid id', async () => {
@@ -187,93 +181,33 @@ describe('Posts', () => {
     });
   });
 
-  describe('/(UPDATE ONE POST)', () => {
-    it('incorrect auth credentials or without them', async () => {
-      const response1 = await updatePostRequest(app, post1.id).send(
-        correctUpdatePostDto,
-      );
-      expect(response1.status).toBe(401);
-
-      const response2 = await updatePostRequest(app, post1.id)
-        .set(incorrectBasicCredentials)
-        .send({ ...correctUpdatePostDto, blogId: blog1.id });
-      expect(response2.status).toBe(401);
-    });
-
-    it('correct auth credentials but invalid id', async () => {
-      const response = await updatePostRequest(app, INVALID_ID)
-        .set(correctBasicCredentials)
-        .send({ ...correctUpdatePostDto, blogId: blog1.id });
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual(notFoundException);
-    });
-
-    it('correct auth credentials, valid id but incorrect input data', async () => {
-      for (let i = 0; i < incorrectPostsDtos.length; i++) {
-        const response = await updatePostRequest(app, post1.id)
-          .set(correctBasicCredentials)
-          .send({ ...incorrectPostsDtos[i], blogId: incorrectBlogsIds[i] });
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual(postsBadQueryResponse);
-      }
-    });
-
-    it('correct all (auth credentials, id, input data)', async () => {
-      const response1 = await updatePostRequest(app, post1.id)
-        .set(correctBasicCredentials)
-        .send({ ...correctUpdatePostDto, blogId: blog1.id });
-      expect(response1.status).toBe(204);
-
-      const response2 = await getPostRequest(app, post1.id);
-      expect(response2.body).toEqual({
-        ...post1,
-        ...correctUpdatePostDto,
-      });
-    });
-  });
-
   describe('/(POST COMMENTS)', () => {
-    beforeAll(async () => {
-      const response1 = await createUserRequest(app)
-        .set(correctBasicCredentials)
-        .send(correctCreateUserDtos[0]);
-      expect(response1.status).toBe(201);
-      user1 = response1.body;
-
-      const response2 = await loginRequest(app).send({
-        loginOrEmail: correctCreateUserDtos[0].login,
-        password: correctCreateUserDtos[0].password,
-      });
-      expect(response2.status).toBe(200);
-      user1Token = `Bearer ${response2.body.accessToken}`;
-    });
-
     it('without token or with incorrect token', async () => {
       const response1 = await createCommentByPostIdRequest(app, post1.id).send(
         correctCreateCommentDtos[0],
       );
       expect(response1.status).toBe(401);
-      expect(response1.body).toEqual(unauthorisedException);
+      expect(response1.body).toEqual(unauthorisedExceptionMock);
 
       const response2 = await createCommentByPostIdRequest(app, post1.id)
-        .set({ Authorization: incorrectAccessToken })
+        .set(getBearerAuthHeader(incorrectAccessToken))
         .send(correctCreateCommentDtos[0]);
       expect(response2.status).toBe(401);
-      expect(response2.body).toEqual(unauthorisedException);
+      expect(response2.body).toEqual(unauthorisedExceptionMock);
     });
 
     it('correct token but invalid id', async () => {
       const response = await createCommentByPostIdRequest(app, INVALID_ID)
-        .set({ Authorization: user1Token })
+        .set(getBearerAuthHeader(user1Token))
         .send(correctCreateCommentDtos[0]);
       expect(response.status).toBe(404);
-      expect(response.body).toEqual(notFoundException);
+      expect(response.body).toEqual(notFoundExceptionMock);
     });
 
     it('correct token, valid postId but incorrect input data', async () => {
       for (let i = 0; i <= incorrectCommentsDtos.length; i++) {
         const response = await createCommentByPostIdRequest(app, post1.id)
-          .set({ Authorization: user1Token })
+          .set(getBearerAuthHeader(user1Token))
           .send(incorrectCommentsDtos[i]);
         expect(response.status).toBe(400);
         expect(response.body).toEqual(commentsBadQueryResponse);
@@ -282,7 +216,7 @@ describe('Posts', () => {
 
     it('everything is correct (token, id, input data)', async () => {
       const response1 = await createCommentByPostIdRequest(app, post1.id)
-        .set({ Authorization: user1Token })
+        .set(getBearerAuthHeader(user1Token))
         .send(correctCreateCommentDtos[0]);
       expect(response1.status).toBe(201);
       expect(response1.body).toEqual(
@@ -292,22 +226,26 @@ describe('Posts', () => {
         ),
       );
       comment1 = response1.body;
+
+      const response2 = await createCommentByPostIdRequest(app, post1.id)
+        .set(getBearerAuthHeader(user1Token))
+        .send(correctCreateCommentDtos[1]);
+      expect(response2.status).toBe(201);
+      expect(response2.body).toEqual(
+        getCommentItem(
+          correctCreateCommentDtos[1].content,
+          correctCreateUserDtos[0].login,
+        ),
+      );
+      comment2 = response2.body;
     });
   });
 
   describe('/(GET All COMMENTS)', () => {
-    beforeAll(async () => {
-      const response1 = await createCommentByPostIdRequest(app, post1.id)
-        .set({ Authorization: user1Token })
-        .send(correctCreateCommentDtos[1]);
-      expect(response1.status).toBe(201);
-      comment2 = response1.body;
-    });
-
     it('by invalid id', async () => {
       const response = await getCommentsByPostIdRequest(app, INVALID_ID);
       expect(response.status).toBe(404);
-      expect(response.body).toEqual(notFoundException);
+      expect(response.body).toEqual(notFoundExceptionMock);
     });
 
     it('by valid postId without query params', async () => {
@@ -363,16 +301,16 @@ describe('Posts', () => {
 
     it('correct token but invalid id', async () => {
       const response = await updatePostLikeStatus(app, INVALID_ID)
-        .set({ Authorization: user1Token })
+        .set(getBearerAuthHeader(user1Token))
         .send(correctUpdateLikeStatusDto[0]);
       expect(response.status).toBe(404);
-      expect(response.body).toEqual(notFoundException);
+      expect(response.body).toEqual(notFoundExceptionMock);
     });
 
     it('correct token, valid id but incorrect input data', async () => {
       for (let i = 0; i < incorrectLikeStatusDto.length; i++) {
         const response = await updatePostLikeStatus(app, post1.id)
-          .set({ Authorization: user1Token })
+          .set(getBearerAuthHeader(user1Token))
           .send(incorrectLikeStatusDto[i]);
         expect(response.status).toBe(400);
         expect(response.body).toEqual(likeBadQueryResponse);
@@ -387,17 +325,17 @@ describe('Posts', () => {
           correctUpdateLikeStatusDto[i].likeStatus === LikeStatus.DISLIKE;
 
         const response1 = await updatePostLikeStatus(app, post1.id)
-          .set({ Authorization: user1Token })
+          .set(getBearerAuthHeader(user1Token))
           .send(correctUpdateLikeStatusDto[i]);
         expect(response1.status).toBe(204);
 
-        const response2 = await getPostRequest(app, post1.id).set({
-          Authorization: user1Token,
-        });
+        const response2 = await getPostRequest(app, post1.id).set(
+          getBearerAuthHeader(user1Token),
+        );
         expect(response2.status).toBe(200);
         expect(response2.body).toEqual({
           ...post1,
-          ...correctUpdatePostDto,
+          ...correctCreatePostDtos[0],
           extendedLikesInfo: {
             likesCount: isLike ? 1 : 0,
             dislikesCount: isDislike ? 1 : 0,
@@ -414,37 +352,6 @@ describe('Posts', () => {
           },
         } as IFullPostOutputModel);
       }
-    });
-  });
-
-  describe('/(DELETE ONE POST) delete blog', () => {
-    it('incorrect auth credentials or without them', async () => {
-      const response1 = await deletePostRequest(app, post1.id);
-      expect(response1.status).toBe(401);
-
-      const response2 = await deleteBlogRequest(app, blog1.id).set(
-        incorrectBasicCredentials,
-      );
-      expect(response2.status).toBe(401);
-    });
-
-    it('correct auth credentials but invalid id', async () => {
-      const response = await deletePostRequest(app, INVALID_ID).set(
-        correctBasicCredentials,
-      );
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual(notFoundException);
-    });
-
-    it('correct auth credentials and valid id', async () => {
-      const response = await deletePostRequest(app, post1.id).set(
-        correctBasicCredentials,
-      );
-      expect(response.status).toBe(204);
-
-      const response2 = await getPostRequest(app, post1.id);
-      expect(response2.status).toBe(404);
-      expect(response2.body).toEqual(notFoundException);
     });
   });
 

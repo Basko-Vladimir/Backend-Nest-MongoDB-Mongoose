@@ -10,7 +10,7 @@ import { UsersRepository } from '../../../users/infrastructure/users.repository'
 import { User, userSchema } from '../../../users/schemas/user.schema';
 import { EmailManager } from '../../../common/managers/email.manager';
 import { EmailAdapter } from '../../../common/adapters/email.adapter';
-import { QueryUsersRepository } from '../../../users/infrastructure/query-users.repository';
+import { QueryAdminUsersRepository } from '../../../users/infrastructure/query-admin-users-repository.service';
 import {
   EmailManagerMock,
   emailAdapterMock,
@@ -36,11 +36,11 @@ describe('Register user useCase', () => {
         CqrsModule,
       ],
       providers: [
-        UsersRepository,
         { provide: EmailManager, useClass: EmailManagerMock },
         { provide: EmailAdapter, useValue: emailAdapterMock },
+        UsersRepository,
         RegisterUserUseCase,
-        QueryUsersRepository,
+        QueryAdminUsersRepository,
         UsersRepository,
       ],
     }).compile();

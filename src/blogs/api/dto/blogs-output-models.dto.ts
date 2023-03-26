@@ -10,11 +10,17 @@ export interface IBlogOutputModel {
   createdAt: string;
 }
 
+export interface IBlogBanInfo {
+  isBanned: boolean;
+  banDate: string;
+}
+
 export interface IBlogForAdminOutputModel extends IBlogOutputModel {
   blogOwnerInfo: {
     userId: string;
     userLogin: string;
   };
+  banInfo: IBlogBanInfo;
 }
 
 export type AllBlogsOutputModel = AllEntitiesOutputModel<IBlogOutputModel>;

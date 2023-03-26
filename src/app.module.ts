@@ -11,7 +11,7 @@ import { Like, likeSchema } from './likes/schemas/like.schema';
 import { Comment, commentSchema } from './comments/schemas/comment.schema';
 import { BlogsController } from './blogs/api/blogs.controller';
 import { PostsController } from './posts/api/posts.controller';
-import { UsersController } from './users/api/users.controller';
+import { AdminUsersController } from './users/api/admin-users.controller';
 import { UsersService } from './users/application/users.service';
 import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/application/posts.service';
@@ -55,7 +55,7 @@ import { RefreshTokensUseCase } from './auth/application/use-cases/refresh-token
 import { LogoutUseCase } from './auth/application/use-cases/logout.useCase';
 import { CreateUserUseCase } from './users/application/use-cases/create-user.useCase';
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.useCase';
-import { QueryUsersRepository } from './users/infrastructure/query-users.repository';
+import { QueryAdminUsersRepository } from './users/infrastructure/query-admin-users-repository.service';
 import { CreatePostUseCase } from './posts/application/use-cases/create-post.useCase';
 import { QueryPostsRepository } from './posts/infrastructure/query-posts.repository';
 import { DeletePostUseCase } from './posts/application/use-cases/delete-post.useCase';
@@ -85,6 +85,13 @@ import { UpdateUserBanStatusUseCase } from './users/application/use-cases/update
 import { AdminBlogsController } from './blogs/api/admin-blogs.controller';
 import { BindBlogWithUserUseCase } from './blogs/application/use-cases/bind-blog-with-user.useCase';
 import { BloggerBlogsController } from './blogs/api/blogger-blogs.controller';
+import { BloggerUsersController } from './users/api/blogger-users.controller';
+import { UpdateUserBanStatusForBlogUseCase } from './users/application/use-cases/update-user-ban-status-for-blog.useCase';
+import { QueryBloggerUsersRepositoryService } from './users/infrastructure/query-blogger-users-repository.service';
+import { QueryAdminBlogsRepository } from './blogs/infrastructure/query-admin-blogs.repository';
+import { QueryBloggerBlogsRepository } from './blogs/infrastructure/query-blogger-blogs.repository';
+import { GetAllBloggerCommentsUseCase } from './comments/application/use-cases/get-all-blogger-comments.useCase';
+import { UpdateBlogBanStatusUseCase } from './blogs/application/use-cases/update-blog-ban-status.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -120,7 +127,10 @@ const useCases = [
   UpdateCommentLikeStatusUseCase,
   GetFullCommentUseCase,
   GetAllFullCommentsUseCase,
+  GetAllBloggerCommentsUseCase,
   UpdateUserBanStatusUseCase,
+  UpdateUserBanStatusForBlogUseCase,
+  UpdateBlogBanStatusUseCase,
   BindBlogWithUserUseCase,
 ];
 
@@ -145,7 +155,8 @@ const useCases = [
   ],
   controllers: [
     AppController,
-    UsersController,
+    AdminUsersController,
+    BloggerUsersController,
     BlogsController,
     AdminBlogsController,
     BloggerBlogsController,
@@ -158,10 +169,13 @@ const useCases = [
     AppService,
     UsersService,
     UsersRepository,
-    QueryUsersRepository,
+    QueryAdminUsersRepository,
+    QueryBloggerUsersRepositoryService,
     BlogsService,
     BlogsRepository,
     QueryBlogsRepository,
+    QueryAdminBlogsRepository,
+    QueryBloggerBlogsRepository,
     PostsService,
     PostsRepository,
     QueryPostsRepository,

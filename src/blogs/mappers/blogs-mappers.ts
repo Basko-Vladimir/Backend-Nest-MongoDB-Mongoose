@@ -37,5 +37,9 @@ export const mapDbBlogToBlogForAdminOutputModel = (
     isMembership: blog.isMembership,
     createdAt: blog.createdAt.toISOString(),
     blogOwnerInfo,
+    banInfo: {
+      isBanned: blog.banInfo.isBanned,
+      banDate: blog.banInfo.banDate ? blog.banInfo.banDate.toISOString() : null,
+    },
   };
 };

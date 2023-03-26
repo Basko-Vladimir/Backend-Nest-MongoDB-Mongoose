@@ -14,8 +14,7 @@ export class EmailAdapter {
     });
 
     try {
-      const info = await transport.sendMail(messageInfo);
-      console.log(info);
+      await transport.sendMail(messageInfo);
     } catch (e) {
       console.log(e);
       throw new Error(`Email server error! : ${e}`);
