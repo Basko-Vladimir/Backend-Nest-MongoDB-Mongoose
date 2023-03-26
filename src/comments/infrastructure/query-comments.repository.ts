@@ -1,15 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Comment, CommentModelType } from '../schemas/comment.schema';
 import {
+  Comment,
+  CommentDocument,
+  CommentModelType,
+} from '../schemas/comment.schema';
+import {
+  AllBloggerCommentsOutputModel,
   AllCommentsOutputModel,
   ICommentOutputModel,
 } from '../api/dto/comments-output-models.dto';
+import {
+  mapDbCommentToCommentOutputModel,
+  mapDbCommentToBloggerCommentOutputModel,
+} from '../mappers/comments-mapper';
 import { countSkipValue, setSortValue } from '../../common/utils';
 import { CommentSortByField, SortDirection } from '../../common/enums';
-import { mapDbCommentToCommentOutputModel } from '../mappers/comments-mapper';
 import { CommentsQueryParamsDto } from '../api/dto/comments-query-params.dto';
 import { User, UserDocument } from '../../users/schemas/user.schema';
+import { UpdateOrFilterModel } from '../../common/types';
+import { PostDocument } from '../../posts/schemas/post.schema';
+
+interface ICommentsDataByFilters {
+  comments: CommentDocument[];
+  totalCount: number;
+  pageSize: number;
+  pageNumber: number;
+}
 
 @Injectable()
 export class QueryCommentsRepository {
@@ -22,20 +39,11 @@ export class QueryCommentsRepository {
     queryParams: CommentsQueryParamsDto,
     postId?: string,
   ): Promise<AllCommentsOutputModel> {
-    const {
-      sortBy = CommentSortByField.createdAt,
-      sortDirection = SortDirection.desc,
-      pageNumber = 1,
-      pageSize = 10,
-    } = queryParams;
-    const filter = postId ? { postId } : {};
-    const skip = countSkipValue(pageNumber, pageSize);
-    const sortSetting = setSortValue(sortBy, sortDirection);
-    const totalCount = await this.CommentModel.find(filter).countDocuments();
-    const comments = await this.CommentModel.find(filter)
-      .skip(skip)
-      .limit(pageSize)
-      .sort(sortSetting);
+    const { pageSize, pageNumber, comments, totalCount } =
+      await this.getCommentsDataByFilters(
+        queryParams,
+        postId ? { postId } : {},
+      );
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
@@ -43,6 +51,32 @@ export class QueryCommentsRepository {
       pageSize: pageSize,
       totalCount: totalCount,
       items: comments.map(mapDbCommentToCommentOutputModel),
+    };
+  }
+
+  async findAllBloggerComments(
+    queryParams: CommentsQueryParamsDto,
+    posts: PostDocument[],
+  ): Promise<AllBloggerCommentsOutputModel> {
+    const postsIds = posts.map((post) => String(post._id));
+    const { pageSize, pageNumber, comments, totalCount } =
+      await this.getCommentsDataByFilters(
+        queryParams,
+        postsIds.length ? { postId: { $in: postsIds } } : {},
+      );
+
+    return {
+      pagesCount: Math.ceil(totalCount / pageSize),
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      items: comments.map((comment) => {
+        const currentPost = posts.find(
+          (post) => String(post._id) === String(comment.postId),
+        );
+
+        return mapDbCommentToBloggerCommentOutputModel(comment, currentPost);
+      }),
     };
   }
 
@@ -68,5 +102,32 @@ export class QueryCommentsRepository {
     if (!user || user.banInfo.isBanned) throw new NotFoundException();
 
     return mapDbCommentToCommentOutputModel(targetComment);
+  }
+
+  private async getCommentsDataByFilters(
+    queryParams: CommentsQueryParamsDto,
+    filter: UpdateOrFilterModel,
+  ): Promise<ICommentsDataByFilters> {
+    const {
+      sortBy = CommentSortByField.createdAt,
+      sortDirection = SortDirection.desc,
+      pageNumber = 1,
+      pageSize = 10,
+    } = queryParams;
+
+    const skip = countSkipValue(pageNumber, pageSize);
+    const sortSetting = setSortValue(sortBy, sortDirection);
+    const totalCount = await this.CommentModel.find(filter).countDocuments();
+    const comments = await this.CommentModel.find(filter)
+      .skip(skip)
+      .limit(pageSize)
+      .sort(sortSetting);
+
+    return {
+      comments,
+      totalCount,
+      pageNumber,
+      pageSize,
+    };
   }
 }

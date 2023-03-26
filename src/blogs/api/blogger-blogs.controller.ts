@@ -37,6 +37,9 @@ import { DeletePostCommand } from '../../posts/application/use-cases/delete-post
 import { UpdatePostCommand } from '../../posts/application/use-cases/update-post.useCase';
 import { UpdatePostForBlogDto } from './dto/update-post-for-blog.dto';
 import { QueryBloggerBlogsRepository } from '../infrastructure/query-blogger-blogs.repository';
+import { CommentsQueryParamsDto } from '../../comments/api/dto/comments-query-params.dto';
+import { AllBloggerCommentsOutputModel } from '../../comments/api/dto/comments-output-models.dto';
+import { GetAllBloggerCommentsQuery } from '../../comments/application/use-cases/get-all-blogger-comments.useCase';
 
 @Controller('blogger/blogs')
 @UseGuards(AuthGuard)
@@ -57,6 +60,16 @@ export class BloggerBlogsController {
     return this.queryBloggerBlogsRepository.findAllBlogsAsBlogger(
       query,
       String(user._id),
+    );
+  }
+
+  @Get('comments')
+  async findAllBloggerComments(
+    @Query() queryParams: CommentsQueryParamsDto,
+    @User() user: UserDocument,
+  ): Promise<AllBloggerCommentsOutputModel> {
+    return this.queryBus.execute(
+      new GetAllBloggerCommentsQuery(queryParams, String(user.id)),
     );
   }
 

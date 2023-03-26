@@ -90,6 +90,7 @@ import { UpdateUserBanStatusForBlogUseCase } from './users/application/use-cases
 import { QueryBloggerUsersRepositoryService } from './users/infrastructure/query-blogger-users-repository.service';
 import { QueryAdminBlogsRepository } from './blogs/infrastructure/query-admin-blogs.repository';
 import { QueryBloggerBlogsRepository } from './blogs/infrastructure/query-blogger-blogs.repository';
+import { GetAllBloggerCommentsUseCase } from './comments/application/use-cases/get-all-blogger-comments.useCase';
 
 const useCases = [
   CreateBlogUseCase,
@@ -125,6 +126,7 @@ const useCases = [
   UpdateCommentLikeStatusUseCase,
   GetFullCommentUseCase,
   GetAllFullCommentsUseCase,
+  GetAllBloggerCommentsUseCase,
   UpdateUserBanStatusUseCase,
   UpdateUserBanStatusForBlogUseCase,
   BindBlogWithUserUseCase,
