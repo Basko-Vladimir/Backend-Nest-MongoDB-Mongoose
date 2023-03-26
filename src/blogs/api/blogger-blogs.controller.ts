@@ -36,12 +36,14 @@ import { ActionsOnBlogGuard } from '../../common/guards/actions-on-blog.guard';
 import { DeletePostCommand } from '../../posts/application/use-cases/delete-post.useCase';
 import { UpdatePostCommand } from '../../posts/application/use-cases/update-post.useCase';
 import { UpdatePostForBlogDto } from './dto/update-post-for-blog.dto';
+import { QueryBloggerBlogsRepository } from '../infrastructure/query-blogger-blogs.repository';
 
 @Controller('blogger/blogs')
 @UseGuards(AuthGuard)
 export class BloggerBlogsController {
   constructor(
     private queryBlogsRepository: QueryBlogsRepository,
+    private queryBloggerBlogsRepository: QueryBloggerBlogsRepository,
     private queryPostsRepository: QueryPostsRepository,
     private commandBus: CommandBus,
     private queryBus: QueryBus,
@@ -52,7 +54,7 @@ export class BloggerBlogsController {
     @Query() query: BlogsQueryParamsDto,
     @User() user: UserDocument,
   ): Promise<AllBlogsOutputModel> {
-    return this.queryBlogsRepository.findAllBlogsAsBlogger(
+    return this.queryBloggerBlogsRepository.findAllBlogsAsBlogger(
       query,
       String(user._id),
     );

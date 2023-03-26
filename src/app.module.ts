@@ -88,6 +88,8 @@ import { BloggerBlogsController } from './blogs/api/blogger-blogs.controller';
 import { BloggerUsersController } from './users/api/blogger-users.controller';
 import { UpdateUserBanStatusForBlogUseCase } from './users/application/use-cases/update-user-ban-status-for-blog.useCase';
 import { QueryBloggerUsersRepositoryService } from './users/infrastructure/query-blogger-users-repository.service';
+import { QueryAdminBlogsRepository } from './blogs/infrastructure/query-admin-blogs.repository';
+import { QueryBloggerBlogsRepository } from './blogs/infrastructure/query-blogger-blogs.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -168,6 +170,8 @@ const useCases = [
     BlogsService,
     BlogsRepository,
     QueryBlogsRepository,
+    QueryAdminBlogsRepository,
+    QueryBloggerBlogsRepository,
     PostsService,
     PostsRepository,
     QueryPostsRepository,

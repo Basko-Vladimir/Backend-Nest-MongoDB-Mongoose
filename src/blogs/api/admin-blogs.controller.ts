@@ -18,12 +18,14 @@ import { UserDocument } from '../../users/schemas/user.schema';
 import { BlogDocument } from '../schemas/blog.schema';
 import { Blog } from '../../common/decorators/blog.decorator';
 import { User } from '../../common/decorators/user.decorator';
+import { QueryAdminBlogsRepository } from '../infrastructure/query-admin-blogs.repository';
 
 @Controller('sa/blogs')
 @UseGuards(AuthGuard)
 export class AdminBlogsController {
   constructor(
     private queryBlogsRepository: QueryBlogsRepository,
+    private queryAdminBlogsRepository: QueryAdminBlogsRepository,
     private commandBus: CommandBus,
   ) {}
 
@@ -31,7 +33,7 @@ export class AdminBlogsController {
   async findAllBlogsAsAdmin(
     @Query() query: BlogsQueryParamsDto,
   ): Promise<AllBlogsForAdminOutputModel> {
-    return this.queryBlogsRepository.findAllBlogsAsAdmin(query);
+    return this.queryAdminBlogsRepository.findAllBlogsAsAdmin(query);
   }
 
   @Put(':id/bind-with-user/:userId')
