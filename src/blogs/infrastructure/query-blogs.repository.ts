@@ -58,7 +58,9 @@ export class QueryBlogsRepository {
     } = queryParams;
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
-    const filter: UpdateOrFilterModel = {};
+    const filter: UpdateOrFilterModel = {
+      ['banInfo.isBanned']: false,
+    };
 
     if (searchNameTerm) {
       filter.name = new RegExp(searchNameTerm, 'i');
