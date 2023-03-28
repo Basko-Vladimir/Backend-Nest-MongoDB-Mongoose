@@ -86,7 +86,7 @@ export class BloggerBlogsController {
   }
 
   @Post(':blogId/posts')
-  @UseGuards(ActionsOnBlogGuard)
+  // @UseGuards(ActionsOnBlogGuard)
   async createPostForBlog(
     @Param('blogId', checkParamIdPipe) blogId: string,
     @Body() createPostForBlogDto: CreatePostForBlogDto,
