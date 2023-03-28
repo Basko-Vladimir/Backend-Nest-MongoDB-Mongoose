@@ -11,7 +11,7 @@ export class QueryBloggerBlogsRepository extends QueryBlogsRepository {
     userId: string,
   ): Promise<AllBlogsOutputModel> {
     const { blogs, totalCount, pageNumber, pageSize } =
-      await this.getBlogsDataByQueryParams(queryParams, userId);
+      await this.getBlogsDataByQueryParams({ queryParams, userId });
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),

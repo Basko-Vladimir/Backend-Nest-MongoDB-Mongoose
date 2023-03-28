@@ -11,7 +11,7 @@ export class QueryAdminBlogsRepository extends QueryBlogsRepository {
     queryParams: BlogsQueryParamsDto,
   ): Promise<AllBlogsForAdminOutputModel> {
     const { blogs, totalCount, pageNumber, pageSize } =
-      await this.getBlogsDataByQueryParams(queryParams);
+      await this.getBlogsDataByQueryParams({ queryParams });
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),

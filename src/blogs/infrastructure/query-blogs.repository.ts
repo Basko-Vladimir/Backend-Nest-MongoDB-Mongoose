@@ -18,6 +18,12 @@ interface IBlogsDataByQueryParams {
   pageNumber: number;
 }
 
+interface BlogsDataFilter {
+  queryParams: BlogsQueryParamsDto;
+  userId?: string;
+  additionalFilter?: UpdateOrFilterModel;
+}
+
 @Injectable()
 export class QueryBlogsRepository {
   constructor(@InjectModel(Blog.name) protected BlogModel: BlogModelType) {}
@@ -26,7 +32,10 @@ export class QueryBlogsRepository {
     queryParams: BlogsQueryParamsDto,
   ): Promise<AllBlogsOutputModel> {
     const { blogs, totalCount, pageNumber, pageSize } =
-      await this.getBlogsDataByQueryParams(queryParams);
+      await this.getBlogsDataByQueryParams({
+        queryParams,
+        additionalFilter: { ['banInfo.isBanned']: false },
+      });
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
@@ -48,9 +57,9 @@ export class QueryBlogsRepository {
   }
 
   protected async getBlogsDataByQueryParams(
-    queryParams: BlogsQueryParamsDto,
-    userId?: string,
+    blogsDataFilter: BlogsDataFilter,
   ): Promise<IBlogsDataByQueryParams> {
+    const { queryParams, additionalFilter, userId } = blogsDataFilter;
     const {
       sortBy = BlogSortByField.createdAt,
       sortDirection = SortDirection.desc,
@@ -60,10 +69,11 @@ export class QueryBlogsRepository {
     } = queryParams;
     const skip = countSkipValue(pageNumber, pageSize);
     const sortSetting = setSortValue(sortBy, sortDirection);
-    const filter: UpdateOrFilterModel = {
-      ['banInfo.isBanned']: false,
-    };
+    let filter: UpdateOrFilterModel = {};
 
+    if (additionalFilter) {
+      filter = { ...additionalFilter };
+    }
     if (searchNameTerm) {
       filter.name = new RegExp(searchNameTerm, 'i');
     }
