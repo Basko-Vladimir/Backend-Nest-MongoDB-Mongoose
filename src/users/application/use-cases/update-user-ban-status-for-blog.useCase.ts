@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateUserBanStatusForBlogDto } from '../../api/dto/update-user-ban-status-for-blog.dto';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
@@ -26,6 +27,8 @@ export class UpdateUserBanStatusForBlogUseCase
     } = command;
 
     const targetUser = await this.usersRepository.findUserById(userId);
+
+    if (!targetUser) throw new NotFoundException();
 
     targetUser.updateUserBanStatusForSpecificBlog(blogId, banReason, isBanned);
     await this.usersRepository.saveUser(targetUser);

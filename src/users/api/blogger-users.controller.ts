@@ -41,7 +41,7 @@ export class BloggerUsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateUserBanStatusForBlog(
-    @Param('id', checkParamIdPipe) userId: string,
+    @Param('id') userId: string,
     @Body() updateUserBanStatusForBlogDto: UpdateUserBanStatusForBlogDto,
   ): Promise<void> {
     return this.commandBus.execute(
