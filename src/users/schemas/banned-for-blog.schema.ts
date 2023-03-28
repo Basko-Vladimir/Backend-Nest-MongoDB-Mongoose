@@ -20,7 +20,7 @@ export class BannedForBlog {
 
   @Prop({
     type: Date,
-    required: true,
+    default: null,
   })
   banDate: Date;
 

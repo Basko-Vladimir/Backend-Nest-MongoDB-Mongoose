@@ -8,7 +8,6 @@ const { MIN_BAN_REASON_LENGTH } = usersConstants;
 export class BanInfo {
   @Prop({
     type: Boolean,
-    required: true,
     default: false,
   })
   isBanned: boolean;
