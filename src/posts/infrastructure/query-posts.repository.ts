@@ -9,10 +9,14 @@ import {
 import { countSkipValue, setSortValue } from '../../common/utils';
 import { PostSortByField, SortDirection } from '../../common/enums';
 import { mapDbPostToPostOutputModel } from '../mappers/posts-mapper';
+import { Blog, BlogModelType } from '../../blogs/schemas/blog.schema';
 
 @Injectable()
 export class QueryPostsRepository {
-  constructor(@InjectModel(Post.name) protected PostModel: PostModelType) {}
+  constructor(
+    @InjectModel(Post.name) protected PostModel: PostModelType,
+    @InjectModel(Blog.name) protected BlogModel: BlogModelType,
+  ) {}
 
   async findAllPosts(
     queryParams: PostsQueryParamsDto,
@@ -44,8 +48,11 @@ export class QueryPostsRepository {
 
   async findPostById(id: string): Promise<IPostOutputModel> {
     const targetPost = await this.PostModel.findById(id);
+    const relatedBlog = await this.BlogModel.findById(String(targetPost._id));
 
-    if (!targetPost) throw new NotFoundException();
+    if (!targetPost || relatedBlog.banInfo.isBanned) {
+      throw new NotFoundException();
+    }
 
     return mapDbPostToPostOutputModel(targetPost);
   }
