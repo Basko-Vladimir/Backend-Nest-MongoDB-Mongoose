@@ -122,12 +122,12 @@ export class User {
     if (currentBlogIndex !== -1) {
       currentBlog.isBanned = isBanned;
       currentBlog.banDate = isBanned ? new Date() : null;
-      currentBlog.banReason = isBanned ? banReason : null;
+      currentBlog.banReason = banReason;
     } else {
       this.bannedForBlogs.push({
         blogId,
         isBanned,
-        banReason: isBanned ? banReason : null,
+        banReason: banReason,
         banDate: isBanned ? new Date() : null,
       });
     }
