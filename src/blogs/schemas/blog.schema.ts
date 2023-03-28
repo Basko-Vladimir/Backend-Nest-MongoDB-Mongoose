@@ -116,7 +116,10 @@ export class Blog {
   ): BlogDocument {
     return new BlogModel({
       ...blogData,
-      blogOwnerInfo: null,
+      blogOwnerInfo: {
+        ownerId: String(user._id),
+        ownerLogin: user.login,
+      },
       banInfo: {
         isBanned: false,
         banDate: null,
