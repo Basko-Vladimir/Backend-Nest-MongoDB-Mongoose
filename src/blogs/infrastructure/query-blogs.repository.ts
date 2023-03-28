@@ -40,7 +40,9 @@ export class QueryBlogsRepository {
   async findBlogById(blogId): Promise<IBlogOutputModel> {
     const targetBlog = await this.BlogModel.findById(blogId);
 
-    if (!targetBlog) throw new NotFoundException();
+    if (!targetBlog || targetBlog.banInfo.isBanned) {
+      throw new NotFoundException();
+    }
 
     return mapDbBlogToBlogOutputModel(targetBlog);
   }
