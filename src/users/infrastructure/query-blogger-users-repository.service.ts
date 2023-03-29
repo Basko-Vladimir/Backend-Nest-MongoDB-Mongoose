@@ -22,7 +22,7 @@ export class QueryBloggerUsersRepositoryService {
   ): Promise<AllBannedUsersForSpecificBlogOutputModel> {
     const targetBlog = await this.BlogModel.findById(blogId);
 
-    if (targetBlog) throw new NotFoundException();
+    if (!targetBlog) throw new NotFoundException();
 
     const {
       sortBy = UserSortByField.createdAt,
