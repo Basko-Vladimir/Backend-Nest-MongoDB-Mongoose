@@ -1,21 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { AllBannedUsersForSpecificBlogOutputModel } from '../api/dto/banned-users-for-specific-blog-output-model.dto';
 import { BannedUsersForSpecificBlogQueryParamsDto } from '../api/dto/banned-users-for-specific-blog-query-params.dto';
+import { mapDbUserToBannedUserForSpecificBlogOutputModel } from '../mappers/users-mappers';
 import { User, UserModelType } from '../schemas/user.schema';
 import { SortDirection, UserSortByField } from '../../common/enums';
 import { countSkipValue, setSortValue } from '../../common/utils';
 import { UpdateOrFilterModel } from '../../common/types';
-import { mapDbUserToBannedUserForSpecificBlogOutputModel } from '../mappers/users-mappers';
+import { Blog } from '../../blogs/schemas/blog.schema';
 
 @Injectable()
 export class QueryBloggerUsersRepositoryService {
-  constructor(@InjectModel(User.name) protected UserModel: UserModelType) {}
+  constructor(
+    @InjectModel(User.name) protected UserModel: UserModelType,
+    @InjectModel(Blog.name) protected BlogModel: UserModelType,
+  ) {}
 
   async findAllBannedUsersForSpecificBlog(
     blogId: string,
     queryParams: BannedUsersForSpecificBlogQueryParamsDto,
   ): Promise<AllBannedUsersForSpecificBlogOutputModel> {
+    const targetBlog = await this.BlogModel.findById(blogId);
+
+    if (targetBlog) throw new NotFoundException();
+
     const {
       sortBy = UserSortByField.createdAt,
       sortDirection = SortDirection.desc,
