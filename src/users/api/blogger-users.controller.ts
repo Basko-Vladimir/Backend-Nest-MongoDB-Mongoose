@@ -9,9 +9,9 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
-import { CommandBus } from '@nestjs/cqrs';
 import { UpdateUserBanStatusForBlogDto } from './dto/update-user-ban-status-for-blog.dto';
 import { UpdateUserBanStatusForBlogCommand } from '../application/use-cases/update-user-ban-status-for-blog.useCase';
 import { AllBannedUsersForSpecificBlogOutputModel } from './dto/banned-users-for-specific-blog-output-model.dto';
@@ -41,7 +41,7 @@ export class BloggerUsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateUserBanStatusForBlog(
-    @Param('id') userId: string,
+    @Param('id', checkParamIdPipe) userId: string,
     @Body() updateUserBanStatusForBlogDto: UpdateUserBanStatusForBlogDto,
   ): Promise<void> {
     return this.commandBus.execute(
