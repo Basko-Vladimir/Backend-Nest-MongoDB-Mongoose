@@ -16,6 +16,8 @@ import { UpdateUserBanStatusForBlogCommand } from '../application/use-cases/upda
 import { AllBannedUsersForSpecificBlogOutputModel } from './dto/banned-users-for-specific-blog-output-model.dto';
 import { BannedUsersForSpecificBlogQueryParamsDto } from './dto/banned-users-for-specific-blog-query-params.dto';
 import { QueryBloggerUsersRepositoryService } from '../infrastructure/query-blogger-users-repository.service';
+import { User } from '../../common/decorators/user.decorator';
+import { UserDocument } from '../schemas/user.schema';
 
 @Controller('blogger/users')
 export class BloggerUsersController {
@@ -40,13 +42,15 @@ export class BloggerUsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
   async updateUserBanStatusForBlog(
-    @Param('id') userId: string,
+    @Param('id') blockedUserId: string,
     @Body() updateUserBanStatusForBlogDto: UpdateUserBanStatusForBlogDto,
+    @User() user: UserDocument,
   ): Promise<void> {
     return this.commandBus.execute(
       new UpdateUserBanStatusForBlogCommand(
-        userId,
+        blockedUserId,
         updateUserBanStatusForBlogDto,
+        user,
       ),
     );
   }
