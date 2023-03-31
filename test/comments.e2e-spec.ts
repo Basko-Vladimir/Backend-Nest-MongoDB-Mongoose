@@ -18,7 +18,7 @@ import {
 } from './utils/blogs-requests';
 import { authRequests } from './utils/auth-requests';
 import { LikeStatus } from '../src/common/enums';
-import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
+import { ICommentWithLikeInfoOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 import { initTestApp } from './utils/common';
 
 describe('Comments', () => {
@@ -234,7 +234,7 @@ describe('Comments', () => {
             dislikesCount: isDislike ? 1 : 0,
             myStatus: correctUpdateLikeStatusDto[i].likeStatus,
           },
-        } as IFullCommentOutputModel);
+        } as ICommentWithLikeInfoOutputModel);
       }
     });
   });

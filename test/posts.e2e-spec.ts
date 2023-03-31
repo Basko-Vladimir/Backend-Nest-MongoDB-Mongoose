@@ -26,7 +26,7 @@ import {
 } from '../src/posts/api/dto/posts-output-models.dto';
 import {
   AllCommentsOutputModel,
-  IFullCommentOutputModel,
+  ICommentWithLikeInfoOutputModel,
 } from '../src/comments/api/dto/comments-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 
@@ -266,7 +266,7 @@ describe('Posts', () => {
         pageSize: 1,
       });
       const expectedResult = getAllItemsWithPage2Size1<
-        IFullCommentOutputModel,
+        ICommentWithLikeInfoOutputModel,
         AllCommentsOutputModel
       >(comment1);
       expect(response1.body).toEqual({

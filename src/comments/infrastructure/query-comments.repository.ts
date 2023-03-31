@@ -8,6 +8,7 @@ import {
 import {
   AllBloggerCommentsOutputModel,
   AllCommentsOutputModel,
+  IBloggerCommentOutputModel,
   ICommentOutputModel,
 } from '../api/dto/comments-output-models.dto';
 import {
@@ -20,6 +21,7 @@ import { CommentsQueryParamsDto } from '../api/dto/comments-query-params.dto';
 import { User, UserDocument } from '../../users/schemas/user.schema';
 import { UpdateOrFilterModel } from '../../common/types';
 import { PostDocument } from '../../posts/schemas/post.schema';
+import { QueryLikesRepository } from '../../likes/infrastructure/query-likes.repository';
 
 interface ICommentsDataByFilters {
   comments: CommentDocument[];
@@ -33,6 +35,7 @@ export class QueryCommentsRepository {
   constructor(
     @InjectModel(Comment.name) protected CommentModel: CommentModelType,
     @InjectModel(User.name) protected UserModel: CommentModelType,
+    protected queryLikesRepository: QueryLikesRepository,
   ) {}
 
   async findAllComments(
@@ -57,6 +60,7 @@ export class QueryCommentsRepository {
   async findAllBloggerComments(
     queryParams: CommentsQueryParamsDto,
     posts: PostDocument[],
+    userId: string,
   ): Promise<AllBloggerCommentsOutputModel> {
     const postsIds = posts.map((post) => String(post._id));
     const { pageSize, pageNumber, comments, totalCount } =
@@ -65,18 +69,33 @@ export class QueryCommentsRepository {
         postsIds.length ? { postId: { $in: postsIds } } : {},
       );
 
+    const bloggerComments: IBloggerCommentOutputModel[] = [];
+
+    for (let i = 0; i < comments.length; i++) {
+      const currentComment = mapDbCommentToCommentOutputModel(comments[i]);
+      const likesInfo = await this.queryLikesRepository.getLikesInfo(
+        userId,
+        String(comments[i]._id),
+      );
+      const currentPost = posts.find(
+        (post) => String(post._id) === String(comments[i].postId),
+      );
+
+      bloggerComments.push(
+        mapDbCommentToBloggerCommentOutputModel(
+          currentComment,
+          currentPost,
+          likesInfo,
+        ),
+      );
+    }
+
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: comments.map((comment) => {
-        const currentPost = posts.find(
-          (post) => String(post._id) === String(comment.postId),
-        );
-
-        return mapDbCommentToBloggerCommentOutputModel(comment, currentPost);
-      }),
+      items: bloggerComments,
     };
   }
 

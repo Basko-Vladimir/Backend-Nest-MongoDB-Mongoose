@@ -20,7 +20,7 @@ import { BlogAllFullPostsOutputModel } from '../../blogs/api/dto/blogs-output-mo
 import { CommentsQueryParamsDto } from '../../comments/api/dto/comments-query-params.dto';
 import {
   AllCommentsOutputModel,
-  IFullCommentOutputModel,
+  ICommentWithLikeInfoOutputModel,
 } from '../../comments/api/dto/comments-output-models.dto';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
@@ -139,7 +139,7 @@ export class PostsController {
     @Param('postId', checkParamIdPipe) postId: string,
     @Body() createCommentForPostDto: CreateCommentForPostDto,
     @User() user: UserDocument,
-  ): Promise<IFullCommentOutputModel> {
+  ): Promise<ICommentWithLikeInfoOutputModel> {
     const createdCommentId = await this.commandBus.execute(
       new CreateCommentCommand({
         postId,

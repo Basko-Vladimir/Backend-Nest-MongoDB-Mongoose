@@ -7,7 +7,7 @@ import {
   IBlogForAdminOutputModel,
   IBlogOutputModel,
 } from '../src/blogs/api/dto/blogs-output-models.dto';
-import { IFullCommentOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
+import { ICommentWithLikeInfoOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 import { IUserOutputModel } from '../src/users/api/dto/users-output-models.dto';
 import { CreateUserDto } from '../src/users/api/dto/create-user.dto';
 import { EmailAdapter } from '../src/common/adapters/email.adapter';
@@ -281,7 +281,7 @@ export const comments = {
     content: string,
     userLogin: string,
     likeStatus: LikeStatus = LikeStatus.NONE,
-  ): IFullCommentOutputModel => ({
+  ): ICommentWithLikeInfoOutputModel => ({
     id: expect.any(String),
     content,
     commentatorInfo: {

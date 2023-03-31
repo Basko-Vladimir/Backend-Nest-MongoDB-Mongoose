@@ -28,7 +28,6 @@ export class GetAllBloggerCommentsUseCase
     query: GetAllBloggerCommentsQuery,
   ): Promise<AllBloggerCommentsOutputModel> {
     const { queryParams, userId } = query;
-
     const blogs = await this.blogsRepository.findManyBlogsByFilter({
       ['blogOwnerInfo.ownerId']: userId,
     });
@@ -41,6 +40,7 @@ export class GetAllBloggerCommentsUseCase
     return this.queryCommentsRepository.findAllBloggerComments(
       queryParams,
       posts,
+      userId,
     );
   }
 }

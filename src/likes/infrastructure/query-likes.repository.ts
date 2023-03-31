@@ -16,18 +16,26 @@ export class QueryLikesRepository {
   async getLikesInfo(
     userId: string | null,
     commentId: string,
-    notBannedUsersFilter: UpdateOrFilterModel[],
+    notBannedUsersFilter?: UpdateOrFilterModel[],
   ): Promise<LikesInfoOutputModel> {
-    const likesCount = await this.LikeModel.countDocuments({
+    const likesCountFilter = {
       commentId,
       status: LikeStatus.LIKE,
-      $or: notBannedUsersFilter,
-    });
-    const dislikesCount = await this.LikeModel.countDocuments({
+    };
+    const dislikesCountFilter = {
       commentId,
       status: LikeStatus.DISLIKE,
-      $or: notBannedUsersFilter,
-    });
+    };
+
+    if (notBannedUsersFilter) {
+      likesCountFilter['$or'] = notBannedUsersFilter;
+      dislikesCountFilter['$or'] = notBannedUsersFilter;
+    }
+
+    const likesCount = await this.LikeModel.countDocuments(likesCountFilter);
+    const dislikesCount = await this.LikeModel.countDocuments(
+      dislikesCountFilter,
+    );
     let myStatus = LikeStatus.NONE;
 
     if (userId) {

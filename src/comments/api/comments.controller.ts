@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { IFullCommentOutputModel } from './dto/comments-output-models.dto';
+import { ICommentWithLikeInfoOutputModel } from './dto/comments-output-models.dto';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { checkParamIdPipe } from '../../common/pipes/check-param-id-pipe.service';
 import { LikeStatusDto } from '../../likes/dto/like-status.dto';
@@ -38,7 +38,7 @@ export class CommentsController {
   async findCommentById(
     @Param('id') commentId: string,
     @User('_id') userId: string,
-  ): Promise<IFullCommentOutputModel> {
+  ): Promise<ICommentWithLikeInfoOutputModel> {
     userId = userId ? String(userId) : null;
     const commentOutputModel =
       await this.queryCommentsRepository.findNotBannedUserCommentById(
