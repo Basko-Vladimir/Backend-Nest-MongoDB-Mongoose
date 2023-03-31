@@ -22,5 +22,4 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   await app.listen(process.env.PORT);
 }
-
-bootstrap();
+export default bootstrap();
