@@ -16,8 +16,9 @@ import { UpdateUserBanStatusForBlogCommand } from '../application/use-cases/upda
 import { AllBannedUsersForSpecificBlogOutputModel } from './dto/banned-users-for-specific-blog-output-model.dto';
 import { BannedUsersForSpecificBlogQueryParamsDto } from './dto/banned-users-for-specific-blog-query-params.dto';
 import { QueryBloggerUsersRepositoryService } from '../infrastructure/query-blogger-users-repository.service';
-import { User } from '../../common/decorators/user.decorator';
 import { UserDocument } from '../schemas/user.schema';
+import { User } from '../../common/decorators/user.decorator';
+import { ActionsOnBlogGuard } from '../../common/guards/actions-on-blog.guard';
 
 @Controller('blogger/users')
 export class BloggerUsersController {
@@ -27,7 +28,7 @@ export class BloggerUsersController {
   ) {}
 
   @Get('blog/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, ActionsOnBlogGuard)
   async findBannedUsersForSpecificBlog(
     @Param('id') blogId: string,
     @Query() queryParams: BannedUsersForSpecificBlogQueryParamsDto,
