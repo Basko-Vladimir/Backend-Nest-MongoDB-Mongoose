@@ -509,6 +509,25 @@ describe('BLOGS', () => {
           getCommentItemAsBlogger(comment2, user1, post2),
         );
       });
+
+      it('with query Params', async () => {
+        const response1 = await getAllPostsCommentsInsideBlogRequest(app)
+          .set(getBearerAuthHeader(user1Token))
+          .query({ pageNumber: 2, pageSize: 1 });
+        expect(response1.body.page).toBe(2);
+        expect(response1.body.pageSize).toBe(1);
+        expect(response1.body.pagesCount).toBe(2);
+        expect(response1.body.totalCount).toBe(2);
+        expect(response1.body.items.length).toBe(1);
+
+        const response3 = await getAllPostsCommentsInsideBlogRequest(app)
+          .set(getBearerAuthHeader(user1Token))
+          .query({ sortBy: 'content', sortDirection: 'asc' });
+        expect(response3.body.items[0].id).toBe(comment1.id);
+        expect(response3.body.items[response3.body.items.length - 1].id).toBe(
+          comment2.id,
+        );
+      });
     });
 
     describe('/(DELETE POST) delete post of blog as blogger', () => {
