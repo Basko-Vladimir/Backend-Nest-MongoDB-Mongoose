@@ -54,7 +54,11 @@ describe('BLOGS', () => {
   } = auth;
   const { createUserRequest } = adminUsersRequests;
   const { loginRequest } = authRequests;
-  const { bindBlogWithUser, getBlogsAsAdminRequest } = adminBlogsRequests;
+  const {
+    bindBlogWithUser,
+    getBlogsAsAdminRequest,
+    updateBlogBanStatusRequest,
+  } = adminBlogsRequests;
   const {
     createBlogsRequest,
     createPostByBlogIdRequest,
@@ -112,7 +116,7 @@ describe('BLOGS', () => {
   });
 
   describe('Blogger API', () => {
-    describe('/(POST BLOGS) create blog as blogger', () => {
+    describe('/(CREATE BLOG) create blog as blogger', () => {
       it('incorrect auth credentials or without them', async () => {
         const response1 = await createBlogsRequest(app).send(
           correctCreateBlogDtos[0],
@@ -773,6 +777,50 @@ describe('BLOGS', () => {
         //   (item) => item.id === blog2.id,
         // );
         // expect(testingBlog.blogOwnerInfo.userId).toBe(user2.id);
+      });
+    });
+
+    describe('/(UPDATE BLOG) update blog ban status', () => {
+      it('with incorrect auth credentials or without them', async () => {
+        const response1 = await updateBlogBanStatusRequest(app, blog1.id);
+        expect(response1.status).toBe(401);
+
+        const response2 = await updateBlogBanStatusRequest(app, blog1.id)
+          .set(incorrectBasicCredentials)
+          .send({ isBanned: true });
+        expect(response2.status).toBe(401);
+      });
+
+      it('with correct auth credentials but incorrect invalid blogId', async () => {
+        const response1 = await updateBlogBanStatusRequest(app, INVALID_ID)
+          .set(correctBasicCredentials)
+          .send({ isBanned: true });
+        expect(response1.status).toBe(404);
+      });
+
+      it('with correct auth credentials, correct blogId but incorrect input data', async () => {
+        const response1 = await updateBlogBanStatusRequest(app, blog1.id)
+          .set(correctBasicCredentials)
+          .send({ isBanned: '' });
+
+        expect(response1.status).toBe(400);
+        expect(response1.body).toEqual({
+          errorsMessages: [{ message: expect.any(String), field: 'isBanned' }],
+        });
+      });
+
+      it('with all correct data', async () => {
+        const response1 = await updateBlogBanStatusRequest(app, blog1.id)
+          .set(correctBasicCredentials)
+          .send({ isBanned: true });
+        expect(response1.status).toBe(204);
+        const response2 = await getBlogsAsAdminRequest(app).set(
+          correctBasicCredentials,
+        );
+        const testingBlog = await response2.body.items.find(
+          (item) => item.id === blog1.id,
+        );
+        expect(testingBlog.banInfo.isBanned).toBe(true);
       });
     });
   });
