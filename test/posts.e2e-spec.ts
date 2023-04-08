@@ -110,7 +110,6 @@ describe('Posts', () => {
       const response = await createBlogsRequest(app)
         .set(getBearerAuthHeader(user1Token))
         .send(correctCreateBlogDtos[0]);
-      console.log(response.body);
       expect(response.status).toBe(201);
       blog1 = response.body;
     });
