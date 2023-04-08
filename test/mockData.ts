@@ -1,5 +1,8 @@
 import { CreateBlogDto } from '../src/blogs/api/dto/create-blog.dto';
-import { IFullPostOutputModel } from '../src/posts/api/dto/posts-output-models.dto';
+import {
+  IFullPostOutputModel,
+  IPostOutputModel,
+} from '../src/posts/api/dto/posts-output-models.dto';
 import { LikeStatus } from '../src/common/enums';
 import { CreatePostDto } from '../src/posts/api/dto/create-post.dto';
 import {
@@ -7,7 +10,11 @@ import {
   IBlogForAdminOutputModel,
   IBlogOutputModel,
 } from '../src/blogs/api/dto/blogs-output-models.dto';
-import { ICommentWithLikeInfoOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
+import {
+  IBloggerCommentOutputModel,
+  ICommentOutputModel,
+  ICommentWithLikeInfoOutputModel,
+} from '../src/comments/api/dto/comments-output-models.dto';
 import { IUserOutputModel } from '../src/users/api/dto/users-output-models.dto';
 import { CreateUserDto } from '../src/users/api/dto/create-user.dto';
 import { EmailAdapter } from '../src/common/adapters/email.adapter';
@@ -293,6 +300,30 @@ export const comments = {
       likesCount: 0,
       dislikesCount: 0,
       myStatus: likeStatus,
+    },
+  }),
+  getCommentItemAsBlogger: (
+    comment: ICommentOutputModel,
+    user: IUserOutputModel,
+    post: IPostOutputModel,
+  ): IBloggerCommentOutputModel => ({
+    id: expect.any(String),
+    content: comment.content,
+    commentatorInfo: {
+      userId: user.id,
+      userLogin: user.login,
+    },
+    createdAt: expect.any(String),
+    likesInfo: {
+      likesCount: expect.any(Number),
+      dislikesCount: expect.any(Number),
+      myStatus: expect.any(String),
+    },
+    postInfo: {
+      id: post.id,
+      blogName: post.blogName,
+      blogId: post.blogId,
+      title: post.title,
     },
   }),
 };

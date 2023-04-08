@@ -81,13 +81,15 @@ export class QueryCommentsRepository {
         (post) => String(post._id) === String(comments[i].postId),
       );
 
-      bloggerComments.push(
-        mapDbCommentToBloggerCommentOutputModel(
-          currentComment,
-          currentPost,
-          likesInfo,
-        ),
-      );
+      if (currentPost) {
+        bloggerComments.push(
+          mapDbCommentToBloggerCommentOutputModel(
+            currentComment,
+            currentPost,
+            likesInfo,
+          ),
+        );
+      }
     }
 
     return {

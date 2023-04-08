@@ -69,7 +69,7 @@ export class BloggerBlogsController {
     @User() user: UserDocument,
   ): Promise<AllBloggerCommentsOutputModel> {
     return this.queryBus.execute(
-      new GetAllBloggerCommentsQuery(queryParams, String(user.id)),
+      new GetAllBloggerCommentsQuery(queryParams, String(user._id)),
     );
   }
 

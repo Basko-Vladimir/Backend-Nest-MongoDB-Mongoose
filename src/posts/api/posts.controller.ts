@@ -144,7 +144,7 @@ export class PostsController {
       new CreateCommentCommand({
         postId,
         content: createCommentForPostDto.content,
-        userId: user.id,
+        userId: String(user._id),
         userLogin: user.login,
       }),
     );

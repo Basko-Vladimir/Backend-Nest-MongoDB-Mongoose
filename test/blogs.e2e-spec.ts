@@ -6,6 +6,7 @@ import {
   INVALID_ID,
   users,
   defaultResponses,
+  comments,
 } from './mockData';
 import { initTestApp } from './utils/common';
 import {
@@ -52,7 +53,9 @@ describe('BLOGS', () => {
     incorrectAccessToken,
     getBearerAuthHeader,
   } = auth;
+  const { correctCreateCommentDtos, getCommentItemAsBlogger } = comments;
   const { createUserRequest } = adminUsersRequests;
+  const { createCommentByPostIdRequest } = publicPostsRequests;
   const { loginRequest } = authRequests;
   const {
     bindBlogWithUser,
@@ -67,6 +70,7 @@ describe('BLOGS', () => {
     updateBlogRequest,
     getBlogsAsBloggerRequest,
     updatePostByBlogIdRequest,
+    getAllPostsCommentsInsideBlogRequest,
   } = bloggerBlogsRequests;
   const {
     getBlogAsUserRequest,
@@ -76,8 +80,9 @@ describe('BLOGS', () => {
   const { getPostRequest } = publicPostsRequests;
   let app;
   let user1, user2, user1Token, user2Token;
-  let blog1, blog2, blog3, blog4;
+  let blog1, blog2, blog3;
   let post1, post2;
+  let comment1, comment2;
 
   beforeAll(async () => {
     app = await initTestApp();
@@ -155,21 +160,14 @@ describe('BLOGS', () => {
         blog2 = response2.body;
 
         const response3 = await createBlogsRequest(app)
-          .set(getBearerAuthHeader(user1Token))
+          .set(getBearerAuthHeader(user2Token))
           .send(correctCreateBlogDtos[2]);
         expect(response3.status).toBe(201);
         expect(response3.body).toEqual(getBlogItem(correctCreateBlogDtos[2]));
         blog3 = response3.body;
 
-        const response4 = await createBlogsRequest(app)
-          .set(getBearerAuthHeader(user2Token))
-          .send(correctCreateBlogDtos[2]);
-        expect(response4.status).toBe(201);
-        expect(response4.body).toEqual(getBlogItem(correctCreateBlogDtos[2]));
-        blog4 = response4.body;
-
         const response5 = await getBlogsAsUserRequest(app);
-        expect(response5.body.items).toHaveLength(4);
+        expect(response5.body.items).toHaveLength(3);
 
         //TODO need to investigate
         // expect(response1.body.blogOwnerInfo.ownerId).toBe(user1.id);
@@ -231,7 +229,7 @@ describe('BLOGS', () => {
       });
 
       it('correct all (auth credentials, id, input data) but blog is someone else', async () => {
-        const response = await updateBlogRequest(app, blog4.id)
+        const response = await updateBlogRequest(app, blog3.id)
           .set(getBearerAuthHeader(user1Token))
           .send(correctUpdateBlogDto);
         expect(response.status).toBe(403);
@@ -264,7 +262,7 @@ describe('BLOGS', () => {
           getBearerAuthHeader(user1Token),
         );
         expect(response1.status).toBe(200);
-        expect(response1.body.items.length).toBe(3);
+        expect(response1.body.items.length).toBe(2);
 
         const response2 = await getBlogsAsBloggerRequest(app).set(
           getBearerAuthHeader(user2Token),
@@ -279,8 +277,8 @@ describe('BLOGS', () => {
           .query({ pageNumber: 2, pageSize: 1 });
         expect(response1.body.page).toBe(2);
         expect(response1.body.pageSize).toBe(1);
-        expect(response1.body.pagesCount).toBe(3);
-        expect(response1.body.totalCount).toBe(3);
+        expect(response1.body.pagesCount).toBe(2);
+        expect(response1.body.totalCount).toBe(2);
         expect(response1.body.items.length).toBe(1);
 
         const response2 = await getBlogsAsBloggerRequest(app)
@@ -320,7 +318,7 @@ describe('BLOGS', () => {
       });
 
       it('correct all (auth credentials, id, input data) but blog is someone else', async () => {
-        const response = await deleteBlogRequest(app, blog4.id).set(
+        const response = await deleteBlogRequest(app, blog3.id).set(
           getBearerAuthHeader(user1Token),
         );
         expect(response.status).toBe(403);
@@ -340,7 +338,7 @@ describe('BLOGS', () => {
         const response3 = await getBlogsAsBloggerRequest(app).set(
           getBearerAuthHeader(user1Token),
         );
-        expect(response3.body.items.length).toBe(2);
+        expect(response3.body.items.length).toBe(1);
       });
     });
 
@@ -348,7 +346,7 @@ describe('BLOGS', () => {
       beforeAll(async () => {
         const response1 = await createBlogsRequest(app)
           .set(getBearerAuthHeader(user1Token))
-          .send(correctCreateBlogDtos[1]);
+          .send(correctCreateBlogDtos[0]);
         expect(response1.status).toBe(201);
         blog1 = response1.body;
 
@@ -390,7 +388,7 @@ describe('BLOGS', () => {
       });
 
       it('correct all (auth credentials, id, input data) but blog is someone else', async () => {
-        const response = await createPostByBlogIdRequest(app, blog4.id)
+        const response = await createPostByBlogIdRequest(app, blog3.id)
           .set(getBearerAuthHeader(user1Token))
           .send(correctCreatePostDtos[0]);
         expect(response.status).toBe(403);
@@ -455,7 +453,7 @@ describe('BLOGS', () => {
       });
 
       it('correct all (auth credentials, id, input data) but blog is someone else', async () => {
-        const res = await updatePostByBlogIdRequest(app, blog4.id, post1.id)
+        const res = await updatePostByBlogIdRequest(app, blog3.id, post1.id)
           .set(getBearerAuthHeader(user1Token))
           .send(correctUpdatePostDto);
         expect(res.status).toBe(403);
@@ -472,6 +470,43 @@ describe('BLOGS', () => {
         expect(testingPost.body.content).toBe(correctUpdatePostDto.content);
         expect(testingPost.body.shortDescription).toBe(
           correctUpdatePostDto.shortDescription,
+        );
+      });
+    });
+
+    describe('/(GET COMMENTS) get all blogger comments', () => {
+      beforeAll(async () => {
+        const response1 = await createCommentByPostIdRequest(app, post1.id)
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctCreateCommentDtos[0]);
+        expect(response1.status).toBe(201);
+        comment1 = response1.body;
+
+        const response2 = await createCommentByPostIdRequest(app, post2.id)
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctCreateCommentDtos[1]);
+        expect(response2.status).toBe(201);
+        comment2 = response2.body;
+      });
+
+      it('incorrect auth credentials or without them', async () => {
+        const response1 = await getAllPostsCommentsInsideBlogRequest(app);
+        expect(response1.status).toBe(401);
+
+        const response2 = await getAllPostsCommentsInsideBlogRequest(app).set(
+          getBearerAuthHeader(incorrectAccessToken),
+        );
+        expect(response2.status).toBe(401);
+      });
+
+      it('correct auth credentials', async () => {
+        const response1 = await getAllPostsCommentsInsideBlogRequest(app).set(
+          getBearerAuthHeader(user1Token),
+        );
+        expect(response1.status).toBe(200);
+        expect(response1.body.items.length).toBe(2);
+        expect(response1.body.items[0]).toEqual(
+          getCommentItemAsBlogger(comment2, user1, post2),
         );
       });
     });
@@ -510,7 +545,7 @@ describe('BLOGS', () => {
       it('correct all (auth credentials, id, input data) but blog is someone else', async () => {
         const res = await deletePostByBlogIdRequest(
           app,
-          blog4.id,
+          blog3.id,
           post1.id,
         ).set(getBearerAuthHeader(user1Token));
         expect(res.status).toBe(403);
@@ -533,11 +568,11 @@ describe('BLOGS', () => {
 
   describe('Public User API', () => {
     beforeAll(async () => {
-      const existingBlogs = [blog1, blog2, blog3, blog4];
+      const existingBlogs = [blog1, blog2, blog3];
 
       for (let i = 0; i < existingBlogs.length; i++) {
         const res = await deleteBlogRequest(app, existingBlogs[i].id).set(
-          getBearerAuthHeader(i !== 3 ? user1Token : user2Token),
+          getBearerAuthHeader(i !== 2 ? user1Token : user2Token),
         );
         expect(res.status).toBe(204);
         existingBlogs[i] = null;

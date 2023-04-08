@@ -259,6 +259,7 @@ describe('Comments', () => {
       expect(response.body).toEqual(notFoundExceptionMock);
     });
 
+    //TODO need to investigate
     // it('correct all (auth credentials, id, input data) but blog is someone else', async () => {
     //   const response = await updateBlogRequest(app, blog4.id)
     //     .set(getBearerAuthHeader(user1Token))

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model, Types } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { generateLengthErrorMessage } from '../../common/error-messages';
 import { postsConstants, MIN_STRINGS_LENGTH } from '../../common/constants';
 import { CreatePostDto } from '../api/dto/create-post.dto';
@@ -67,10 +67,10 @@ export class Post {
   blogName: string;
 
   @Prop({
-    type: Types.ObjectId,
+    type: String,
     required: true,
   })
-  blogId: Types.ObjectId;
+  blogId: string;
 
   @Prop()
   createdAt: Date;
@@ -84,7 +84,7 @@ export class Post {
     this.title = title;
     this.content = content;
     this.shortDescription = shortDescription;
-    this.blogId = new Types.ObjectId(blogId);
+    this.blogId = blogId;
   }
 
   static createPostEntity(
