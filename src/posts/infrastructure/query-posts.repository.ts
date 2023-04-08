@@ -48,11 +48,14 @@ export class QueryPostsRepository {
 
   async findPostById(id: string): Promise<IPostOutputModel> {
     const targetPost = await this.PostModel.findById(id);
+
+    if (!targetPost) throw new NotFoundException();
+
     const relatedBlog = await this.BlogModel.findById(
       String(targetPost.blogId),
     );
 
-    if (!targetPost || !relatedBlog || relatedBlog.banInfo.isBanned) {
+    if (!relatedBlog || relatedBlog.banInfo.isBanned) {
       throw new NotFoundException();
     }
 
