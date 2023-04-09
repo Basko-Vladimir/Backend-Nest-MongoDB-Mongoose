@@ -56,7 +56,7 @@ describe('USERS', () => {
   let app;
   let user1, user2, user3;
   let blog1;
-  let user1Token;
+  let user1Token, user2Token;
 
   beforeAll(async () => {
     app = await initTestApp();
@@ -287,12 +287,6 @@ describe('USERS', () => {
       expect(response3.status).toBe(200);
       user1Token = `Bearer ${response3.body.accessToken}`;
 
-      const response4 = await loginRequest(app).send({
-        loginOrEmail: correctCreateUserDtos[1].login,
-        password: correctCreateUserDtos[1].password,
-      });
-      expect(response4.status).toBe(200);
-
       const response5 = await createBlogsRequest(app)
         .set(getBearerAuthHeader(user1Token))
         .send(correctCreateBlogDtos[0]);
@@ -352,6 +346,36 @@ describe('USERS', () => {
           .set(getBearerAuthHeader(user1Token))
           .send(correctUpdateUserBanStatusForSpecificBlogDto(blog1.id));
         expect(response1.status).toBe(204);
+      });
+    });
+
+    describe('/(GET USERS) get all users for specific blog', () => {
+      it('incorrect auth credentials or without them', async () => {
+        const response1 = await getAllBannedUsersForBlogRequest(app, blog1.id);
+        expect(response1.status).toBe(401);
+
+        const response2 = await updateUserBanStatusForBlogsRequest(
+          app,
+          blog1.id,
+        ).set(getBearerAuthHeader(incorrectAccessToken));
+        expect(response2.status).toBe(401);
+      });
+
+      it('correct auth credentials but incorrect blogId', async () => {
+        const response1 = await getAllBannedUsersForBlogRequest(
+          app,
+          INVALID_ID,
+        ).set(getBearerAuthHeader(user1Token));
+        expect(response1.status).toBe(404);
+      });
+
+      it('correct auth credentials and correct blogId', async () => {
+        const response1 = await getAllBannedUsersForBlogRequest(
+          app,
+          blog1.id,
+        ).set(getBearerAuthHeader(user1Token));
+        expect(response1.status).toBe(200);
+        expect(response1.body.items[0].id).toBe(user2.id);
       });
     });
   });
