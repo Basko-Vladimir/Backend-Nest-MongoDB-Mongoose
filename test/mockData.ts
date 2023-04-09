@@ -82,6 +82,11 @@ export const users = {
     isBanned: true,
     banReason: 'test ban reason length 20+',
   },
+  correctUpdateUserBanStatusForSpecificBlogDto: (blogId: string) => ({
+    isBanned: true,
+    banReason: 'test ban reason user for specific blog',
+    blogId,
+  }),
   incorrectUpdateUserBanStatusDtos: [
     {},
     {
@@ -97,8 +102,33 @@ export const users = {
       banReason: 'short test reason',
     },
   ],
+  incorrectUpdateUserBanStatusForSpecificBlogDtos: [
+    {},
+    {
+      isBanned: '',
+      banReason: '',
+      blogId: '',
+    },
+    {
+      isBanned: 5,
+      banReason: '   ',
+      blogId: '   ',
+    },
+    {
+      isBanned: {},
+      banReason: 'short test reason',
+      blogId: true,
+    },
+  ],
   usersBadUpdateQueryResponse: {
     errorsMessages: [
+      { message: expect.any(String), field: 'isBanned' },
+      { message: expect.any(String), field: 'banReason' },
+    ],
+  },
+  usersUpdateUserBanStatusForBlogBadQueryResponse: {
+    errorsMessages: [
+      { message: expect.any(String), field: 'blogId' },
       { message: expect.any(String), field: 'isBanned' },
       { message: expect.any(String), field: 'banReason' },
     ],

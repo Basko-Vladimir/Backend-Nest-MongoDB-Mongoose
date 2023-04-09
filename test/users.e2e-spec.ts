@@ -1,11 +1,22 @@
-import { users, auth, defaultResponses, INVALID_ID, errors } from './mockData';
+import {
+  users,
+  auth,
+  defaultResponses,
+  INVALID_ID,
+  errors,
+  blogs,
+} from './mockData';
 import {
   AllUsersOutputModel,
   IUserOutputModel,
 } from '../src/users/api/dto/users-output-models.dto';
-import { adminUsersRequests } from './utils/users-requests';
+import {
+  adminUsersRequests,
+  bloggerUsersRequests,
+} from './utils/users-requests';
 import { bloggerBlogsRequests } from './utils/blogs-requests';
 import { initTestApp } from './utils/common';
+import { authRequests } from './utils/auth-requests';
 
 describe('USERS', () => {
   jest.setTimeout(20 * 1000);
@@ -16,9 +27,17 @@ describe('USERS', () => {
     usersBadUpdateQueryResponse,
     correctUpdateUserBanStatusDto,
     incorrectUpdateUserBanStatusDtos,
+    incorrectUpdateUserBanStatusForSpecificBlogDtos,
+    correctUpdateUserBanStatusForSpecificBlogDto,
+    usersUpdateUserBanStatusForBlogBadQueryResponse,
     getCreatedUserItem,
   } = users;
-  const { incorrectBasicCredentials, correctBasicCredentials } = auth;
+  const {
+    incorrectBasicCredentials,
+    correctBasicCredentials,
+    incorrectAccessToken,
+    getBearerAuthHeader,
+  } = auth;
   const { getAllItemsWithPage2Size1, defaultGetAllResponse } = defaultResponses;
   const { notFoundExceptionMock } = errors;
   const {
@@ -27,9 +46,17 @@ describe('USERS', () => {
     deleteUserRequest,
     updateUserBanStatusRequest,
   } = adminUsersRequests;
+  const {
+    updateUserBanStatusForBlogsRequest,
+    getAllBannedUsersForBlogRequest,
+  } = bloggerUsersRequests;
+  const { correctCreateBlogDtos, getBlogItem } = blogs;
+  const { loginRequest } = authRequests;
   const { createBlogsRequest } = bloggerBlogsRequests;
   let app;
   let user1, user2, user3;
+  let blog1;
+  let user1Token;
 
   beforeAll(async () => {
     app = await initTestApp();
@@ -226,12 +253,105 @@ describe('USERS', () => {
           correctBasicCredentials,
         );
         expect(response3.status).toBe(204);
+        user1 = null;
+        user2 = null;
+        user3 = null;
 
         const response4 = await getUsersRequest(app).set(
           correctBasicCredentials,
         );
         expect(response4.status).toBe(200);
         expect(response4.body).toEqual(defaultGetAllResponse);
+      });
+    });
+  });
+
+  describe('Blogger API', () => {
+    beforeAll(async () => {
+      const response1 = await createUserRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateUserDtos[0]);
+      expect(response1.status).toBe(201);
+      user1 = response1.body;
+
+      const response2 = await createUserRequest(app)
+        .set(correctBasicCredentials)
+        .send(correctCreateUserDtos[1]);
+      expect(response2.status).toBe(201);
+      user2 = response2.body;
+
+      const response3 = await loginRequest(app).send({
+        loginOrEmail: correctCreateUserDtos[0].login,
+        password: correctCreateUserDtos[0].password,
+      });
+      expect(response3.status).toBe(200);
+      user1Token = `Bearer ${response3.body.accessToken}`;
+
+      const response4 = await loginRequest(app).send({
+        loginOrEmail: correctCreateUserDtos[1].login,
+        password: correctCreateUserDtos[1].password,
+      });
+      expect(response4.status).toBe(200);
+
+      const response5 = await createBlogsRequest(app)
+        .set(getBearerAuthHeader(user1Token))
+        .send(correctCreateBlogDtos[0]);
+      expect(response5.status).toBe(201);
+      expect(response5.body).toEqual(getBlogItem(correctCreateBlogDtos[0]));
+      blog1 = response5.body;
+    });
+
+    describe('/(UPDATE USER) update user ban status for specific blog', () => {
+      it('incorrect auth credentials or without them', async () => {
+        const response1 = await updateUserBanStatusForBlogsRequest(
+          app,
+          user2.id,
+        ).send(correctUpdateUserBanStatusForSpecificBlogDto(blog1.id));
+        expect(response1.status).toBe(401);
+
+        const response2 = await updateUserBanStatusForBlogsRequest(
+          app,
+          user2.id,
+        )
+          .set(getBearerAuthHeader(incorrectAccessToken))
+          .send(correctUpdateUserBanStatusForSpecificBlogDto(blog1.id));
+        expect(response2.status).toBe(401);
+      });
+
+      it('correct auth credentials but incorrect userId', async () => {
+        const response1 = await updateUserBanStatusForBlogsRequest(
+          app,
+          INVALID_ID,
+        )
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctUpdateUserBanStatusForSpecificBlogDto(blog1.id));
+        expect(response1.status).toBe(404);
+      });
+
+      it('correct auth credentials but incorrect input data', async () => {
+        const incorrectDtos = incorrectUpdateUserBanStatusForSpecificBlogDtos;
+        for (let i = 0; i <= incorrectDtos.length; i++) {
+          const response = await updateUserBanStatusForBlogsRequest(
+            app,
+            user1.id,
+          )
+            .set(getBearerAuthHeader(user1Token))
+            .send(incorrectDtos[i]);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual(
+            usersUpdateUserBanStatusForBlogBadQueryResponse,
+          );
+        }
+      });
+
+      it('correct auth credentials and correct input data', async () => {
+        const response1 = await updateUserBanStatusForBlogsRequest(
+          app,
+          user2.id,
+        )
+          .set(getBearerAuthHeader(user1Token))
+          .send(correctUpdateUserBanStatusForSpecificBlogDto(blog1.id));
+        expect(response1.status).toBe(204);
       });
     });
   });
