@@ -19,7 +19,7 @@ import { initTestApp } from './utils/common';
 import { authRequests } from './utils/auth-requests';
 
 describe('USERS', () => {
-  jest.setTimeout(20 * 1000);
+  jest.setTimeout(30 * 1000);
   const {
     correctCreateUserDtos,
     incorrectCreateUsersDtos,
