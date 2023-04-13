@@ -1,13 +1,15 @@
-import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { disconnect } from 'mongoose';
 import { initTestApp } from './utils/common';
 
 describe('AppController (e2e)', () => {
   jest.setTimeout(20 * 1000);
-  let app: INestApplication;
+  let app, mongoMS;
 
   beforeAll(async () => {
-    app = await initTestApp();
+    const { nestApp, mongoMemoryServer } = await initTestApp();
+    app = nestApp;
+    mongoMS = mongoMemoryServer;
   });
 
   it('/ (GET)', () => {
@@ -15,5 +17,11 @@ describe('AppController (e2e)', () => {
       .get('/')
       .expect(200)
       .expect('Hello World!');
+  });
+
+  afterAll(async () => {
+    await app.close();
+    await mongoMS.stop();
+    await disconnect();
   });
 });

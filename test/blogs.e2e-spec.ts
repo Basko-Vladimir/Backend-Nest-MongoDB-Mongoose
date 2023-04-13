@@ -1,3 +1,4 @@
+import { disconnect } from 'mongoose';
 import {
   auth,
   blogs,
@@ -78,14 +79,16 @@ describe('BLOGS', () => {
     getPostsByBlogIdAsUserRequest,
   } = publicBlogsRequests;
   const { getPostRequest } = publicPostsRequests;
-  let app;
+  let app, mongoMS;
   let user1, user2, user1Token, user2Token;
   let blog1, blog2, blog3;
   let post1, post2;
   let comment1, comment2;
 
   beforeAll(async () => {
-    app = await initTestApp();
+    const { nestApp, mongoMemoryServer } = await initTestApp();
+    app = nestApp;
+    mongoMS = mongoMemoryServer;
   });
 
   describe('Preparing data', () => {
@@ -881,5 +884,7 @@ describe('BLOGS', () => {
 
   afterAll(async () => {
     await app.close();
+    await mongoMS.stop();
+    await disconnect();
   });
 });

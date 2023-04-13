@@ -17,6 +17,7 @@ import {
 import { bloggerBlogsRequests } from './utils/blogs-requests';
 import { initTestApp } from './utils/common';
 import { authRequests } from './utils/auth-requests';
+import { disconnect } from 'mongoose';
 
 describe('USERS', () => {
   jest.setTimeout(30 * 1000);
@@ -53,13 +54,15 @@ describe('USERS', () => {
   const { correctCreateBlogDtos, getBlogItem } = blogs;
   const { loginRequest } = authRequests;
   const { createBlogsRequest } = bloggerBlogsRequests;
-  let app;
+  let app, mongoMS;
   let user1, user2, user3;
   let blog1;
-  let user1Token, user2Token;
+  let user1Token;
 
   beforeAll(async () => {
-    app = await initTestApp();
+    const { nestApp, mongoMemoryServer } = await initTestApp();
+    app = nestApp;
+    mongoMS = mongoMemoryServer;
   });
 
   describe('Admin API', () => {
@@ -382,5 +385,7 @@ describe('USERS', () => {
 
   afterAll(async () => {
     await app.close();
+    await mongoMS.stop();
+    await disconnect();
   });
 });

@@ -8,7 +8,6 @@ import {
   users,
   likes,
 } from './mockData';
-import { INestApplication } from '@nestjs/common';
 import { publicCommentsRequests } from './utils/comments-requests';
 import { adminUsersRequests } from './utils/users-requests';
 import { publicPostsRequests } from './utils/posts-requests';
@@ -20,6 +19,7 @@ import { authRequests } from './utils/auth-requests';
 import { LikeStatus } from '../src/common/enums';
 import { ICommentWithLikeInfoOutputModel } from '../src/comments/api/dto/comments-output-models.dto';
 import { initTestApp } from './utils/common';
+import { disconnect } from 'mongoose';
 
 describe('Comments', () => {
   jest.setTimeout(20 * 1000);
@@ -53,7 +53,7 @@ describe('Comments', () => {
     likeBadQueryResponse,
   } = likes;
   const { correctCreateUserDtos } = users;
-  let app: INestApplication;
+  let app, mongoMS;
   let post1, post2;
   let user1, user2, user3;
   let comment1;
@@ -61,7 +61,9 @@ describe('Comments', () => {
   let user1Token;
 
   beforeAll(async () => {
-    app = await initTestApp();
+    const { nestApp, mongoMemoryServer } = await initTestApp();
+    app = nestApp;
+    mongoMS = mongoMemoryServer;
   });
 
   describe('Preparing data', () => {
@@ -281,5 +283,7 @@ describe('Comments', () => {
 
   afterAll(async () => {
     await app.close();
+    await mongoMS.stop();
+    await disconnect();
   });
 });

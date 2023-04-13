@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { disconnect } from 'mongoose';
 import {
   blogs,
   INVALID_ID,
@@ -63,7 +63,7 @@ describe('Posts', () => {
   const { bindBlogWithUser } = adminBlogsRequests;
   const { loginRequest } = authRequests;
   const { createUserRequest } = adminUsersRequests;
-  let app: INestApplication;
+  let app, mongoMS;
   let post1, post2, post3;
   let comment1, comment2;
   let blog1;
@@ -71,7 +71,10 @@ describe('Posts', () => {
   let user1Token;
 
   beforeAll(async () => {
-    app = await initTestApp();
+    const { nestApp, mongoMemoryServer } = await initTestApp();
+    app = nestApp;
+    mongoMS = mongoMemoryServer;
+
     postsBadQueryResponse.errorsMessages.push({
       message: expect.any(String),
       field: 'blogId',
@@ -358,5 +361,7 @@ describe('Posts', () => {
 
   afterAll(async () => {
     await app.close();
+    await mongoMS.stop();
+    await disconnect();
   });
 });
